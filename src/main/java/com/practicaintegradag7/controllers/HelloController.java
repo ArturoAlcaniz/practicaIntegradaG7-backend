@@ -12,6 +12,6 @@ import java.util.Date;
 public class HelloController {
     @GetMapping("/api/hello")
     public String hello() {
-        return "Hola Mundo! La hora en el servidor es " + new Date() + "\n";
+        return "Hola Mundo!! La hora en el servidor es " + new Date() + "\n";
     }
 }
