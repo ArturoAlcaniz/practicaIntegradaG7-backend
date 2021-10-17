@@ -71,6 +71,14 @@
 		    <artifactId>jbossjta</artifactId>
 		    <version>4.16.6.Final</version>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/javax/javaee-api -->
+        <dependency>
+		    <groupId>javax</groupId>
+		    <artifactId>javaee-api</artifactId>
+		    <version>8.0</version>
+		    <scope>provided</scope>
+        </dependency>
         
         <!-- https://mvnrepository.com/artifact/javax/javaee-api -->
         <dependency>
