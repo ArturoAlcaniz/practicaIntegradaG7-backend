@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - Crear_citas
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
