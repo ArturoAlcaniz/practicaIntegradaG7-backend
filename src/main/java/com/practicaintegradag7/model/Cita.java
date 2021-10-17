@@ -1,5 +1,9 @@
 package com.practicaintegradag7.model;
 
+import java.time.LocalDateTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -12,34 +16,37 @@ public class Cita {
     @Column(name = "dni")
     private String dni;
 
-    @Column(name = "nombre")
-    private String nombre;
-
-    @Column(name = "apellidos")
-    private String apellidos;
-
-    @Column(name = "direccion")
-    private String direccion;
-
-    @Column(name = "email")
-    private String email;
-
-    @Column(name = "password")
-    private String password;
+    @Column(name = "fecha")
+    private LocalDateTime fecha;
 
     @ManyToOne
     private Centro centro;
 
-    public Cita(String dni, String nombre, String apellidos, String direccion, String email, String password) {
+    public Cita(String dni, LocalDateTime fecha) {
+    	
+    	if(!validateDNI(dni)) {
+    		throw new IllegalArgumentException("Dni is not valid!");
+    	}
+    	
     	this.dni = dni;
-    	this.nombre = nombre;
-    	this.apellidos = apellidos;
-    	this.direccion = direccion;
-    	this.email = email;
-    	this.password = password;
+    	this.fecha = fecha;
+    }
+    
+    private boolean validateDNI(String dni) {
+    	Pattern regexDni = Pattern.compile("[0-9]{7,8}[A-Z a-z]");
+    	Matcher compareDni = regexDni.matcher(dni); 
+    	return compareDni.matches();
     }
     
     public Centro getCentro() {
     	return centro;
+    }
+    
+    public String getDni() {
+    	return dni;
+    }
+    
+    public LocalDateTime getFecha() {
+    	return fecha;
     }
 }
