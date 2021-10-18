@@ -9,9 +9,4 @@ public class Lanzadora {
 	public static void main(String[] args) {
 		SpringApplication.run(Lanzadora.class, args);
 	}
-	
-	public static void p() {
-		//Prueba para el push
-		// Prueba de ruben pushhh
-	}
 }
