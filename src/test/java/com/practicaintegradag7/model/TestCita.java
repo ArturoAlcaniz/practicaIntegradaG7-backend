@@ -10,20 +10,26 @@ public class TestCita {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void checkValidationDni() {
-		Cita cita = new Cita("", LocalDateTime.of(2021, 10, 20, 12, 00));
+		Cita cita = new Cita("", LocalDateTime.of(2021, 10, 20, 12, 00), "");
 		cita.getDni();
 	}
 	
 	@Test
 	public void failWhenTheDniNotEquals() {
-		Cita cita = new Cita("01234567A", LocalDateTime.of(2021, 10, 20, 12, 00));
+		Cita cita = new Cita("01234567A", LocalDateTime.of(2021, 10, 20, 12, 00), "prueba");
 		assertEquals("01234567A", cita.getDni());
 	}
 	
 	@Test
 	public void failWhenTheDatetimeNotEquals() {
-		Cita cita = new Cita("01234567A", LocalDateTime.of(2021, 10, 20, 12, 00));
+		Cita cita = new Cita("01234567A", LocalDateTime.of(2021, 10, 20, 12, 00), "");
 		assertEquals(LocalDateTime.of(2021, 10, 20, 12, 00), cita.getFecha());
+	}
+	
+	@Test
+	public void failWhenCentroNotEquals() {
+		Cita cita = new Cita("01212121B", LocalDateTime.of(2021, 10, 20, 12, 00), "Centro 1");
+		assertEquals("Centro 1", cita.getCentro());
 	}
 
 }
