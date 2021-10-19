@@ -42,7 +42,7 @@ public class Centro {
 		if(vacunas < 0) {
 			throw new IllegalArgumentException("vacunas is not valid");
 		}
-		
+
 		this.nombre = nombre;
 		this.direccion = direccion;
 		this.vacunasDisponibles = vacunas;
