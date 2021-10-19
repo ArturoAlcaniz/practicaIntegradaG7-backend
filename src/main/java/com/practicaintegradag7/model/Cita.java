@@ -20,9 +20,9 @@ public class Cita {
     private LocalDateTime fecha;
 
     @ManyToOne
-    private String centro;
+    private Centro centro;
 
-    public Cita(String dni, LocalDateTime fecha, String centro) {
+    public Cita(String dni, LocalDateTime fecha) {
     	
     	if(!validateDNI(dni)) {
     		throw new IllegalArgumentException("Dni is not valid!");
@@ -30,7 +30,6 @@ public class Cita {
     	
     	this.dni = dni;
     	this.fecha = fecha;
-    	this.centro = centro;
     }
     
     private boolean validateDNI(String dni) {
@@ -39,7 +38,7 @@ public class Cita {
     	return compareDni.matches();
     }
     
-    public String getCentro() {
+    public Centro getCentro() {
     	return centro;
     }
     
