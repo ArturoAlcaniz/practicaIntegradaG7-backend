@@ -3,6 +3,8 @@ package com.practicaintegradag7.model;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,13 +33,21 @@ public class Cupo {
 	
 	public Cupo(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
 		
-		if(fechaInicio.isAfter(fechaFin)) {
+		if(!validateFechas(fechaInicio, fechaFin)) {
 			throw new IllegalArgumentException("Fecha de inicio no puede ser posterior a la fecha de fin");
 		}
 
 		this.fechaInicio = fechaInicio;
 		this.fechaFin = fechaFin;
 	
+	}
+	
+	private boolean validateFechas(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
+    	return fechaInicio.isBefore(fechaFin) && !fechaInicio.isBefore(LocalDateTime.now());
+    }
+	
+	public String id () {
+		return id;
 	}
 	
 	public LocalDateTime getFechaInicio() {
