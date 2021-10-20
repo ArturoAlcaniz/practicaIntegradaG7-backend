@@ -41,6 +41,9 @@ public class Usuario {
 	
 	public Usuario(String dni, String nombre, String apellidos, String email, String password, Centro centro,
 			String rol) {
+    	if(!validateDNI(dni)) {
+    		throw new IllegalArgumentException("Dni is not valid!");
+    	}
 
 		if (!validateEmail(email)) {
 			throw new IllegalArgumentException("Email is not valid!");
@@ -72,8 +75,14 @@ public class Usuario {
 		
 	}
 
+    private boolean validateDNI(String dni) {
+    	Pattern regexDni = Pattern.compile("[0-9]{7,8}[A-Z a-z]");
+    	Matcher compareDni = regexDni.matcher(dni); 
+    	return compareDni.matches();
+    }
+	
 	private boolean validateEmail(String email) {
-		Pattern regexEmail = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$");
+		Pattern regexEmail = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 		Matcher compareEmail = regexEmail.matcher(email);
 		return compareEmail.matches();
 	}
