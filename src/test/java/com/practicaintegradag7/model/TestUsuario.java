@@ -95,4 +95,5 @@ public class TestUsuario {
 				"paciente");
 		assertEquals(centro,usuario.getCentro());
 	}
+	
 }
