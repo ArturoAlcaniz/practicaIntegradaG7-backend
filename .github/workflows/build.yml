@@ -5,6 +5,7 @@ on:
       - master
       - Crear_citas
       - Crear_centros
+      - Crear_usuario
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
