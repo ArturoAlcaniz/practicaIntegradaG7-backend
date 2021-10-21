@@ -7,6 +7,7 @@ on:
       - Crear_cupos
       - Crear_centros
       - Crear_RepositoryCita
+      - Crear_usuario
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
