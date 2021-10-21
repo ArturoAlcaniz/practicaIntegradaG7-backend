@@ -1,11 +1,9 @@
 package com.practicaintegradag7.model;
 
-import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
@@ -87,11 +85,7 @@ public class Usuario {
 	
 	private boolean validateEmail(String email) {
 		EmailValidator validator = EmailValidator.getInstance();
-		if (validator.isValid(email)) {
-		   return true;
-		} else {
-		   return false;
-		}
+		return validator.isValid(email);
 	}
 	
 	private boolean validatePassword(String password) {
