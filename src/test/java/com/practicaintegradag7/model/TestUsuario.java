@@ -67,6 +67,12 @@ public class TestUsuario {
 		assertEquals("sanitario",usuario.getRol());
 	}
 
+	@Test
+	public void failWhenTheRolAdministradorNotEquals() {
+		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "elTiempo", new Centro("Centro 1", "Calle 1", 10),
+				"administrador");
+		assertEquals("administrador",usuario.getRol());
+	}
 	
 	@Test
 	public void failWhenTheNombreNotEquals() {
