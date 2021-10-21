@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -21,6 +22,7 @@ public class Cita implements Serializable {
     private String dni;
 
     @Column(name = "fecha")
+    @NotNull
     private LocalDateTime fecha;
 
     @ManyToOne
