@@ -53,7 +53,7 @@ public class Usuario {
 			throw new IllegalArgumentException("Password is not valid!");
 		}
 		
-		if (!validateRol(rol)) {
+		if (!validateRol(rol.toLowerCase())) {
 			throw new IllegalArgumentException("Rol is not valid!");
 		}
 		
@@ -71,7 +71,7 @@ public class Usuario {
 		this.email = email;
 		this.password = password;
 		this.centro = centro;
-		this.rol = rol;
+		this.rol = rol.toLowerCase();
 		
 	}
 
@@ -82,7 +82,7 @@ public class Usuario {
     }
 	
 	private boolean validateEmail(String email) {
-		Pattern regexEmail = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+		Pattern regexEmail = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 		Matcher compareEmail = regexEmail.matcher(email);
 		return compareEmail.matches();
 	}
