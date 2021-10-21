@@ -1,5 +1,6 @@
 package com.practicaintegradag7.model;
 
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,7 +9,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-@Entity
+import org.apache.commons.validator.EmailValidator;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "usuario")
 public class Usuario {
 
 	@Id
@@ -82,9 +86,12 @@ public class Usuario {
     }
 	
 	private boolean validateEmail(String email) {
-		Pattern regexEmail = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
-		Matcher compareEmail = regexEmail.matcher(email);
-		return compareEmail.matches();
+		EmailValidator validator = EmailValidator.getInstance();
+		if (validator.isValid(email)) {
+		   return true;
+		} else {
+		   return false;
+		}
 	}
 	
 	private boolean validatePassword(String password) {
