@@ -4,6 +4,7 @@ on:
     branches:
       - master
       - Crear_citas
+      - Crear_cupos
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
