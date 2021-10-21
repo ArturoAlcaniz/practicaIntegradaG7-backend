@@ -4,6 +4,7 @@ on:
     branches:
       - master
       - Crear_citas
+      - Crear_cupos
       - Crear_centros
       - Crear_RepositoryCita
       - Crear_usuario
