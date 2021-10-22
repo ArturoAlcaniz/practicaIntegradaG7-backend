@@ -21,6 +21,7 @@ public class CitaController {
 	
 	@Autowired
 	private CitaDao citaDao;
+
 	
 	@Autowired
 	private CitaValidator citaValidator;
