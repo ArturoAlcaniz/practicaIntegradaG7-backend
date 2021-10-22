@@ -10,7 +10,7 @@ import org.springframework.http.MediaType;
 import java.util.Date;
 import java.util.Map;
 
-@CrossOrigin
+@CrossOrigin(origins = {"http://localhost:3000", "https://iso-g7-frontend.herokuapp.com"})
 @RestController
 public class AppointmentController{
 	
