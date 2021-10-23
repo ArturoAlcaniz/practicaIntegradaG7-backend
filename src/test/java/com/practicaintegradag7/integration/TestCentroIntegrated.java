@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
+import com.practicaintegradag7.exceptions.VacunasNoValidasException;
 import com.practicaintegradag7.model.Centro;
 
 public class TestCentroIntegrated {
@@ -36,6 +37,8 @@ public class TestCentroIntegrated {
 			assertTrue(false);
 		}catch(NoSuchElementException ex) {
 			assertTrue(false);
+		}catch(VacunasNoValidasException ex) {
+			assertTrue(false);
 		}
 	}
 	
@@ -51,6 +54,8 @@ public class TestCentroIntegrated {
 			assertTrue(false);
 		} catch (CentroNotFoundException e) {
 			assertTrue(true);
+		} catch(VacunasNoValidasException e) {
+			assertTrue(false);
 		}
 	}
 }

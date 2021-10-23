@@ -9,13 +9,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
+import com.practicaintegradag7.exceptions.VacunasNoValidasException;
 
 @CrossOrigin(origins = {"http://localhost:3000", "https://iso-g7-frontend.herokuapp.com"})
 @RestController
 public class CentroController {
 	
 	@PostMapping("api/addVaccines")
-	public void addVacunas(@RequestBody Map<String, Object> info) throws CentroNotFoundException {
+	public void addVacunas(@RequestBody Map<String, Object> info) throws CentroNotFoundException, VacunasNoValidasException {
 		JSONObject jso = new JSONObject(info);
 		String centro = jso.getString("hospital");
 		int amount = jso.getInt("amount");
