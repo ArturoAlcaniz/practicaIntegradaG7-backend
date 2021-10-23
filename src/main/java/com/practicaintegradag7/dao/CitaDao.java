@@ -14,8 +14,8 @@ public class CitaDao {
 	@Autowired
 	public CitaRepository citaRepository;
 	
-	public void createCita(Cita cita) {
-		citaRepository.insert(cita);
+	public Cita createCita(Cita cita) {
+		return citaRepository.insert(cita);
 	}
 	
 	public List<Cita> getCitasByDni(String dni) {
