@@ -15,8 +15,8 @@ public class CentroDao {
 	@Autowired
 	public CentroRepository centroRepository;
 	
-	public void createCita(Centro centro) {
-		centroRepository.insert(centro);
+	public Centro createCentro(Centro centro) {
+		return centroRepository.insert(centro);
 	}
 	
 	public Optional<Centro> getCitasByDni(String id) {
