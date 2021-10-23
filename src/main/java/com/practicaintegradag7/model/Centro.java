@@ -64,4 +64,8 @@ public class Centro implements Serializable {
 	public Set<Cita> getCentroCitas() {
 		return centroCitas;
 	}
+	
+	public void setVacunas(int vacunas) {
+	this.vacunasDisponibles = vacunas;	
+	}
 }
