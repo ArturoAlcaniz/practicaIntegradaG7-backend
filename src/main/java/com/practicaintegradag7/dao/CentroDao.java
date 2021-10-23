@@ -25,6 +25,5 @@ public class CentroDao {
 	
 	public List<Centro> getAllCitas() {
 		return centroRepository.findAll();
-	}
-	
+	}	
 }

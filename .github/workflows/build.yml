@@ -9,6 +9,7 @@ on:
       - Crear_RepositoryCita
       - Crear_usuario
       - Crear_RepositoryCentro
+      - desarrollo
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
