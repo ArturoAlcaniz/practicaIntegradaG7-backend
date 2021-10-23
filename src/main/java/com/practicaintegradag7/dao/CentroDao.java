@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
+import com.practicaintegradag7.exceptions.VacunasNoValidasException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.repos.CentroRepository;
 
@@ -33,7 +34,8 @@ public class CentroDao {
 		return centroRepository.findAll();
 	}
 	
-	public void addVacunas(String centro, int amount) throws CentroNotFoundException{
+	public void addVacunas(String centro, int amount) throws CentroNotFoundException, VacunasNoValidasException{
+		if (amount < 0) throw new VacunasNoValidasException("El numero de vacunas a anadir debe ser mayor que 0");
 		Optional<Centro> og = centroRepository.findById(centro);
 		if(og.isPresent()) {
 			Centro c = og.get();
