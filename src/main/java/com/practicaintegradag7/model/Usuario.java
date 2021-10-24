@@ -5,9 +5,8 @@ import java.util.regex.Pattern;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
+import org.apache.commons.validator.EmailValidator;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "Usuario")
@@ -83,10 +82,9 @@ public class Usuario {
     	return compareDni.matches();
     }
 	
-	private boolean validateEmail(String email) {
-		Pattern regexEmail = Pattern.compile(".+@.+\\.[a-z]+");
-		Matcher compareEmail = regexEmail.matcher(email); 
-    	return compareEmail.matches();
+    private boolean validateEmail(String email) {
+		EmailValidator validator = EmailValidator.getInstance();
+		return validator.isValid(email);
 	}
 	
 	private boolean validatePassword(String password) {
