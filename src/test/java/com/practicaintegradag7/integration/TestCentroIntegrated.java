@@ -26,19 +26,18 @@ import com.practicaintegradag7.model.Centro;
 public class TestCentroIntegrated {
 	@Autowired
 	private final CentroDao aux = new CentroDao();
-	private final Centro prueba = new Centro("PRUEBA", "-", 20);
-	private boolean setUpDone = false;
+	private Centro prueba = new Centro("PRUEBA", "-", 20);
 	
 	@Before
 	public void before() {
-		if(!setUpDone) {
-			Centro c = aux.createCentro(prueba);
-			if(c.getNombre().equals(prueba.getNombre())) System.out.println("Centro de prueba anadido correctamente");
-			else {
-				System.out.println("Centro de prueba no anadido");
-				System.exit(1);
-			}
-			setUpDone = true;
+		Centro c = aux.createCentro(prueba);
+		if(c.getNombre().equals(prueba.getNombre())) {
+			System.out.println("Centro de prueba anadido correctamente");
+			this.prueba = c;
+		}
+		else {
+			System.out.println("Centro de prueba no anadido");
+			System.exit(1);
 		}
 	}
 	
@@ -46,9 +45,9 @@ public class TestCentroIntegrated {
 	public void testAddVacunas() {
 		try {
 			int nVacs = 10;
-			aux.addVacunas(prueba.getNombre(), nVacs);
+			aux.addVacunas(prueba.getId(), nVacs);
 			System.out.println("testAddVacunas - vacunas anadidas");
-			int vacunasRemotas = aux.buscarCentro(prueba.getNombre()).getVacunasDisponibles();
+			int vacunasRemotas = aux.buscarCentro(prueba.getId()).getVacunasDisponibles();
 			System.out.println("Vacunas remotas recogidas");
 			int vacunasTotales = prueba.getVacunasDisponibles() + nVacs;
 			assertEquals(vacunasRemotas, vacunasTotales);

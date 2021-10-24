@@ -47,7 +47,7 @@ public class CentroDao {
 	}
 	
 	public void deleteCentro(Centro c) throws CentroNotFoundException {
-		Optional<Centro> opt = centroRepository.findById(c.getNombre());
+		Optional<Centro> opt = centroRepository.findById(c.getId());
 		if(opt.isPresent()) centroRepository.delete(c);
 		else throw new CentroNotFoundException("Centro no encontrado");
 	}

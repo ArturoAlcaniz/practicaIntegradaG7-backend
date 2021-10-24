@@ -28,8 +28,8 @@ public class Centro implements Serializable {
 	@Column(name = "direccion")
 	private String direccion;
 	
-	@Column(name = "vacunasDisponibles")
-	private int vacunasDisponibles;
+	@Column(name = "vacunas")
+	private int vacunas;
 	
 	@OneToMany(
 			mappedBy = "centro",
@@ -46,7 +46,7 @@ public class Centro implements Serializable {
 
 		this.nombre = nombre;
 		this.direccion = direccion;
-		this.vacunasDisponibles = vacunas;
+		this.vacunas = vacunas;
 	}
 	
 	public String getNombre() {
@@ -58,7 +58,7 @@ public class Centro implements Serializable {
 	}
 	
 	public int getVacunasDisponibles() {
-		return vacunasDisponibles;
+		return vacunas;
 	}
 	
 	public Set<Cita> getCentroCitas() {
@@ -66,6 +66,10 @@ public class Centro implements Serializable {
 	}
 	
 	public void setVacunas(int vacunas) {
-	this.vacunasDisponibles = vacunas;	
+	this.vacunas = vacunas;	
+	}
+	
+	public String getId() {
+		return this.id;
 	}
 }
