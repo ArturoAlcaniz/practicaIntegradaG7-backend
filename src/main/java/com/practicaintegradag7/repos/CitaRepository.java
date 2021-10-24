@@ -13,5 +13,6 @@ import com.practicaintegradag7.model.Cita;
 public interface CitaRepository extends MongoRepository<Cita, String> {
 	
 	public List<Cita> findByDni(String cita);
+	public void deleteByDni(String cita);
 	
 }

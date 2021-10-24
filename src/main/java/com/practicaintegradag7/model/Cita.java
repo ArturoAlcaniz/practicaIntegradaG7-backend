@@ -1,6 +1,5 @@
 package com.practicaintegradag7.model;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,10 +11,8 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "cita")
-public class Cita implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+@Document(collection = "Cita")
+public class Cita {
 
 	@Id
     @Column(name = "dni")
