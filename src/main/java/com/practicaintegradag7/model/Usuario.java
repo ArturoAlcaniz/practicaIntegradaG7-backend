@@ -6,10 +6,11 @@ import java.util.regex.Pattern;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "usuario")
+@Document(collection = "Usuario")
 public class Usuario {
 
 	@Id
@@ -34,7 +35,7 @@ public class Usuario {
 	@Column(name = "password")
 	private String password;
 	
-	@ManyToOne
+	@Column(name = "centro")
 	private Centro centro;
 	
 	@Column(name = "rol")

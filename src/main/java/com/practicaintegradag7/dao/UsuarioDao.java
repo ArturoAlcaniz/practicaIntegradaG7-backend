@@ -18,7 +18,7 @@ public class UsuarioDao {
 		usuarioRepository.insert(usuario);
 	}
 	
-	public Usuario getUsuarioByDni(String dni) {
+	public List<Usuario> getUsuarioByDni(String dni) {
 		return usuarioRepository.findByDni(dni);
 	}
 	
