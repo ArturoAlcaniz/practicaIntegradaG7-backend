@@ -5,14 +5,14 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.VacunasNoValidasException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.repos.CentroRepository;
 
-@Service
+@Component
 public class CentroDao {
 
 	@Autowired
@@ -23,7 +23,9 @@ public class CentroDao {
 	}
 	
 	public Centro buscarCentro(String id) throws CentroNotFoundException, NoSuchElementException{
-		return centroRepository.findById(id).get();
+		Optional<Centro> opt = centroRepository.findById(id);
+		if(opt.isPresent()) return opt.get();
+		else throw new CentroNotFoundException("Centro no existe");
 	}
 	
 	public Optional<Centro> getCitasByDni(String id) {
@@ -42,5 +44,11 @@ public class CentroDao {
 			c.setVacunas(c.getVacunasDisponibles() + amount);
 			centroRepository.save(c);
 		} else throw new CentroNotFoundException("Centro "+centro+" no encontrado");
+	}
+	
+	public void deleteCentro(Centro c) throws CentroNotFoundException {
+		Optional<Centro> opt = centroRepository.findById(c.getNombre());
+		if(opt.isPresent()) centroRepository.delete(c);
+		else throw new CentroNotFoundException("Centro no encontrado");
 	}
 }

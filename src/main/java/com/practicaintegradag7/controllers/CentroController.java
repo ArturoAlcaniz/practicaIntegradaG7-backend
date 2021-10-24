@@ -2,6 +2,7 @@ package com.practicaintegradag7.controllers;
 
 import java.util.Map;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +17,7 @@ import com.practicaintegradag7.exceptions.VacunasNoValidasException;
 public class CentroController {
 	
 	@PostMapping("api/addVaccines")
-	public void addVacunas(@RequestBody Map<String, Object> info) throws CentroNotFoundException, VacunasNoValidasException {
+	public void addVacunas(@RequestBody Map<String, Object> info) throws CentroNotFoundException, VacunasNoValidasException, JSONException {
 		JSONObject jso = new JSONObject(info);
 		String centro = jso.getString("hospital");
 		int amount = jso.getInt("amount");

@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.MediaType;
 
@@ -15,7 +16,7 @@ import java.util.Map;
 public class AppointmentController{
 	
 	@PostMapping(path="/api/makeAppointment", consumes=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public String giveAppointment(@RequestBody Map<String, Object> info) {
+	public String giveAppointment(@RequestBody Map<String, Object> info) throws JSONException {
 		JSONObject jso = new JSONObject(info);
 		String user = jso.getString("user");
 		//Consultar BD, etc
