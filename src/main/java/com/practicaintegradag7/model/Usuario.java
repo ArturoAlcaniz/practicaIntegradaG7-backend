@@ -7,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import org.apache.commons.validator.EmailValidator;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "usuario")
@@ -84,8 +83,9 @@ public class Usuario {
     }
 	
 	private boolean validateEmail(String email) {
-		EmailValidator validator = EmailValidator.getInstance();
-		return validator.isValid(email);
+		Pattern regexEmail = Pattern.compile(".+@.+\\.[a-z]+");
+		Matcher compareEmail = regexEmail.matcher(email); 
+    	return compareEmail.matches();
 	}
 	
 	private boolean validatePassword(String password) {
