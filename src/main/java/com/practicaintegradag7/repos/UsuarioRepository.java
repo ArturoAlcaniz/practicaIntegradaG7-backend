@@ -13,7 +13,7 @@ import com.practicaintegradag7.model.Usuario;
 
 public interface UsuarioRepository extends MongoRepository<Usuario, String> {
 	
-	public List<Usuario> findByDni(String usuario);
+	public Usuario findByDni(String dni);
 	public void deleteByDni(String usuario);
 	
 }

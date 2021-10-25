@@ -14,16 +14,29 @@ public class UsuarioDao {
 	@Autowired
 	public UsuarioRepository usuarioRepository;
 	
-	public void createUsuario(Usuario usuario) {
-		usuarioRepository.insert(usuario);
+	public Usuario saveUsuario(Usuario usuario) {
+		
+		try {
+			if (!usuarioRepository.findByDni(usuario.getDni()).equals(null)) {
+				return null;
+			}
+			}catch(NullPointerException e) {
+				return usuarioRepository.save(usuario);
+			}
+		return null;
+		
 	}
 	
-	public List<Usuario> getUsuarioByDni(String dni) {
-		return usuarioRepository.findByDni(dni);
+	public Usuario getUsuarioByDni(String dni) {
+		return usuarioRepository.findByDni(dni); 
 	}
 	
 	public List<Usuario> getAllUsuarios() {
 		return usuarioRepository.findAll();
+	}
+	
+	public void deleteUsuarioByDni(String dni) {
+		usuarioRepository.deleteByDni(dni);
 	}
 
 }

@@ -1,7 +1,7 @@
 package com.practicaintegradag7.repos;
 
 import static org.junit.Assert.assertNotNull;
-
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,9 +21,25 @@ public class UsuarioRepositoryTest {
 	
 	@Test
 	public void shouldSaveUsuario() {
-		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
+	
+		Centro centro = new Centro("Hospital 1", "Calle Paloma", 3);
 		Usuario usuario = new Usuario("05718580F", "Francisco", "Morisco Parra", "franMorisco@gmail.com", "admin", centro, "Paciente");
-		assertNotNull(usuarioRepository.findByDni(usuario.getDni()));
+
+		assertNotNull(usuarioRepository.save(usuario));
 		usuarioRepository.deleteByDni(usuario.getDni());
+		
+	}
+	
+
+	@Test
+	public void shouldDeleteUsuario() {
+	
+		Centro centro = new Centro("Hospital 1", "Calle Paloma", 3);
+		Usuario usuario = new Usuario("05718580F", "Francisco", "Morisco Parra", "franMorisco@gmail.com", "admin", centro, "Paciente");
+		
+		usuarioRepository.save(usuario);
+		usuarioRepository.deleteByDni(usuario.getDni());
+		assertNull(usuarioRepository.findByDni(usuario.getDni()));
+		
 	}
 }
