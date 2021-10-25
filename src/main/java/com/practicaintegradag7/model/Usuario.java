@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.validator.EmailValidator;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -51,7 +52,7 @@ public class Usuario {
 			throw new IllegalArgumentException("Email is not valid!");
 		}
 		
-		if (!validatePassword(password)) {
+		if (!validatePasswordPolicy(password)) {
 			throw new IllegalArgumentException("Password is not valid!");
 		}
 		
@@ -71,7 +72,7 @@ public class Usuario {
 		this.nombre = nombre;
 		this.apellidos = apellidos;
 		this.email = email;
-		this.password = password;
+		this.password = DigestUtils.md5Hex(password);
 		this.centro = centro;
 		this.rol = rol.toLowerCase();
 		
@@ -88,8 +89,9 @@ public class Usuario {
 		return validator.isValid(email);
 	}
 	
-	private boolean validatePassword(String password) {
-		return password.length()>4;
+	private boolean validatePasswordPolicy(String password) {
+		String pattern = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}";
+		return password.matches(pattern);
 	}
 	
 	private boolean validateRol(String rol) {
