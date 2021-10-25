@@ -66,6 +66,7 @@ public class UsuarioDaoTest {
 		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
 				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
 		usuarioDao.saveUsuario(usuario);
+		System.out.println("Tamaño de la lista: " +usuarioDao.getAllUsuarios().size());
 		assertNotEquals(0, usuarioDao.getAllUsuarios().size());
 		usuarioDao.deleteUsuarioByDni(usuario.getDni());
 	}
