@@ -17,7 +17,7 @@ public class UsuarioDao {
 	public Usuario saveUsuario(Usuario usuario) {
 		
 		try {
-			if (!usuarioRepository.findByDni(usuario.getDni()).equals(null)) {
+			if (!(usuarioRepository.findByDni(usuario.getDni())==null)) {
 				return null;
 			}
 			}catch(NullPointerException e) {
