@@ -2,8 +2,6 @@ package com.practicaintegradag7.model;
 
 import static org.junit.Assert.*;
 
-import java.time.LocalDateTime;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 

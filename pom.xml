@@ -131,6 +131,12 @@
 		    <version>1.6</version>
 		</dependency>
         
+        <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+		<dependency>
+		    <groupId>commons-codec</groupId>
+		    <artifactId>commons-codec</artifactId>
+		</dependency>
+        
     </dependencies>
 
     <build>

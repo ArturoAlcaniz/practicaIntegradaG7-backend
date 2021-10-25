@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.practicaintegradag7.exceptions.CitaExceptions;
+import com.practicaintegradag7.exceptions.CitasLimitException;
 import com.practicaintegradag7.model.Cita;
 import com.practicaintegradag7.repos.CitaRepository;
 
@@ -15,7 +15,7 @@ public class CitaDao {
 	@Autowired
 	public CitaRepository citaRepository;
 	
-	public Cita createCita(Cita cita) {
+	public Cita createCita(Cita cita) throws CitasLimitException {
 		checkCitasLimit(cita);
 		return citaRepository.insert(cita);
 	}
@@ -28,9 +28,9 @@ public class CitaDao {
 		return citaRepository.findAll();
 	}
 	
-	private void checkCitasLimit(Cita cita) {
+	private void checkCitasLimit(Cita cita) throws CitasLimitException {
 		if(getCitasByDni(cita.getDni()).size() > 1) {
-			throw new CitaExceptions().dniAlreadyExist;
+			throw new CitasLimitException();
 		}
 	}
 }

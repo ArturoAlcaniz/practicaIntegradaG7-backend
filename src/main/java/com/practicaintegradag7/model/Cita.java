@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.practicaintegradag7.exceptions.CitaExceptions;
+import com.practicaintegradag7.exceptions.CitasDniNotValid;
 
 @Document(collection = "Cita")
 public class Cita {
@@ -27,10 +27,10 @@ public class Cita {
     @ManyToOne
     private Centro centro;
 
-    public Cita(String dni, LocalDateTime fecha) {
+    public Cita(String dni, LocalDateTime fecha) throws CitasDniNotValid {
     	
     	if(!validateDNI(dni)) {
-    		throw new CitaExceptions().dniWrongFormat;
+    		throw new CitasDniNotValid();
     	}
     	
     	this.dni = dni;
