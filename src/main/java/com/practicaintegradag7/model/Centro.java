@@ -48,7 +48,11 @@ public class Centro implements Serializable {
 		this.direccion = direccion;
 		this.vacunas = vacunas;
 	}
-	
+
+	public String getId() {
+		return id;
+	}
+
 	public String getNombre() {
 		return nombre;
 	}
@@ -56,20 +60,33 @@ public class Centro implements Serializable {
 	public String getDireccion() {
 		return direccion;
 	}
-	
-	public int getVacunasDisponibles() {
+
+	public int getVacunas() {
 		return vacunas;
 	}
-	
+
 	public Set<Cita> getCentroCitas() {
 		return centroCitas;
 	}
-	
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
+
 	public void setVacunas(int vacunas) {
-	this.vacunas = vacunas;	
+		this.vacunas = vacunas;
+	}
+
+	public void setCentroCitas(Set<Cita> centroCitas) {
+		this.centroCitas = centroCitas;
 	}
 	
-	public String getId() {
-		return this.id;
-	}
 }

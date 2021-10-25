@@ -10,6 +10,7 @@ on:
       - Crear_usuario
       - Crear_RepositoryCentro
       - desarrollo
+      - H12-2
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:

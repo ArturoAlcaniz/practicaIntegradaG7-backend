@@ -47,9 +47,9 @@ public class TestCentroIntegrated {
 			int nVacs = 10;
 			aux.addVacunas(prueba.getId(), nVacs);
 			System.out.println("testAddVacunas - vacunas anadidas");
-			int vacunasRemotas = aux.buscarCentro(prueba.getId()).getVacunasDisponibles();
+			int vacunasRemotas = aux.buscarCentro(prueba.getId()).getVacunas();
 			System.out.println("Vacunas remotas recogidas");
-			int vacunasTotales = prueba.getVacunasDisponibles() + nVacs;
+			int vacunasTotales = prueba.getVacunas() + nVacs;
 			assertEquals(vacunasRemotas, vacunasTotales);
 		}catch(CentroNotFoundException ex) {
 			fail(ex.getMessage());

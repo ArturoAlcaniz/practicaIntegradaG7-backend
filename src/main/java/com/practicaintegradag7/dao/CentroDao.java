@@ -46,7 +46,7 @@ public class CentroDao {
 		Optional<Centro> og = centroRepository.findById(centro);
 		if(og.isPresent()) {
 			Centro c = og.get();
-			c.setVacunas(c.getVacunasDisponibles() + amount);
+			c.setVacunas(c.getVacunas() + amount);
 			centroRepository.save(c);
 		} else throw new CentroNotFoundException("Centro "+centro+" no encontrado");
 	}
