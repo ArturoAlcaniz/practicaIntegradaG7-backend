@@ -2,6 +2,7 @@ package com.practicaintegradag7.dao;
 
 import java.util.List;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +16,19 @@ public class UsuarioDao {
 	public UsuarioRepository usuarioRepository;
 	
 	public Usuario saveUsuario(Usuario usuario) {
-
+		
+		if (!validatePasswordPolicy(usuario.getPassword())) {
+			throw new IllegalArgumentException("Password is not valid!");
+		}else {
+			
 			if (usuarioRepository.existsByDni(usuario.getDni()))
 				return null;
 			else
+			{
+				usuario.setPassword(DigestUtils.sha256Hex(usuario.getPassword()));
 				return usuarioRepository.save(usuario);
-		
+			}
+		}
 		
 	}
 	
@@ -35,5 +43,10 @@ public class UsuarioDao {
 	public void deleteUsuarioByDni(String dni) {
 		usuarioRepository.deleteByDni(dni);
 	}
+	
+	private boolean validatePasswordPolicy(String password) {
+		String pattern = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}";
+		return password.matches(pattern);
+}
 
 }

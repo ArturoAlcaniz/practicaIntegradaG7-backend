@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -24,8 +23,8 @@ public class Cita {
     @NotNull
     private LocalDateTime fecha;
 
-    @ManyToOne
-    private Centro centro;
+    @Column(name = "centroNombre")
+    private String centroNombre;
 
     public Cita(String dni, LocalDateTime fecha) throws CitasDniNotValid {
     	
@@ -43,12 +42,12 @@ public class Cita {
     	return compareDni.matches();
     }
     
-    public Centro getCentro() {
-    	return centro;
+    public String getCentro() {
+    	return centroNombre;
     }
     
     public void setCentro(Centro centro) {
-    	this.centro = centro;
+    	this.centroNombre = centro.getNombre();
     }
     
     public String getDni() {

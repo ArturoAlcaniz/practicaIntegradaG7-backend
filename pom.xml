@@ -54,7 +54,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
         </dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.data/spring-data-mongodb -->
@@ -97,7 +96,7 @@
 		    <artifactId>json</artifactId>
 		    <version>20210307</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-common -->
 		<dependency>
 		    <groupId>org.glassfish.jersey.core</groupId>
@@ -110,7 +109,7 @@
 		    <artifactId>yasson</artifactId>
 		    <version>1.0.6</version>
 		</dependency>
-
+		
 		<!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
 		<dependency>
 		    <groupId>org.jacoco</groupId>

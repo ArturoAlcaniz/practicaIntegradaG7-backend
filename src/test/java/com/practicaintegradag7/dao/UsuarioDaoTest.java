@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -28,7 +29,7 @@ public class UsuarioDaoTest {
 	public void shouldSaveUsuario() {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
-				"franMorisco@gmail.com", "admin", centro, "Paciente");
+				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
 		
 		assertNotNull(usuarioDao.saveUsuario(usuario));
 
@@ -38,21 +39,24 @@ public class UsuarioDaoTest {
 	@Test
 	public void shouldNotSaveUsuario() {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
-		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
-				"franMorisco@gmail.com", "admin", centro, "Paciente");
+		Usuario usuario = new Usuario("05718583J", "Julio", "Morisco Parra", 
+				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
+		Usuario usuarioMismoDni = new Usuario("05718583J", "Fernando", "Morisco Parra", 
+				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
 		
 		usuarioDao.saveUsuario(usuario);
-		assertNull(usuarioDao.saveUsuario(usuario));
+		assertNull(usuarioDao.saveUsuario(usuarioMismoDni));
 		usuarioDao.deleteUsuarioByDni(usuario.getDni());
 	}
 	
 	@Test
-	public void failWhenUsuarioNotEquals() {
+	public void failWhenUsuarioDniNotEquals() {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
-				"franMorisco@gmail.com", "admin", centro, "Paciente");
+				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
 		usuarioDao.saveUsuario(usuario);
-		assertNotEquals(usuario, usuarioDao.getUsuarioByDni(usuario.getDni()));
+		
+		assertEquals(usuario.getDni(), usuarioDao.getUsuarioByDni(usuario.getDni()).getDni());
 		usuarioDao.deleteUsuarioByDni(usuario.getDni());
 	}
 	
@@ -60,8 +64,9 @@ public class UsuarioDaoTest {
 	public void failWhenSizeIsZero() {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
-				"franMorisco@gmail.com", "admin", centro, "Paciente");
+				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
 		usuarioDao.saveUsuario(usuario);
+		System.out.println("Tamaño de la lista: " +usuarioDao.getAllUsuarios().size());
 		assertNotEquals(0, usuarioDao.getAllUsuarios().size());
 		usuarioDao.deleteUsuarioByDni(usuario.getDni());
 	}

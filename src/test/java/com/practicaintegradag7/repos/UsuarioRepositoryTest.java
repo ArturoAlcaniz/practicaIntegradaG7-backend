@@ -23,7 +23,7 @@ public class UsuarioRepositoryTest {
 	public void shouldSaveUsuario() {
 	
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 3);
-		Usuario usuario = new Usuario("05718580F", "Francisco", "Morisco Parra", "franMorisco@gmail.com", "admin", centro, "Paciente");
+		Usuario usuario = new Usuario("05718580F", "Francisco", "Morisco Parra", "franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
 
 		assertNotNull(usuarioRepository.save(usuario));
 		usuarioRepository.deleteByDni(usuario.getDni());
@@ -35,7 +35,7 @@ public class UsuarioRepositoryTest {
 	public void shouldDeleteUsuario() {
 	
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 3);
-		Usuario usuario = new Usuario("05718580F", "Francisco", "Morisco Parra", "franMorisco@gmail.com", "admin", centro, "Paciente");
+		Usuario usuario = new Usuario("05718580F", "Francisco", "Morisco Parra", "franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
 		
 		usuarioRepository.save(usuario);
 		usuarioRepository.deleteByDni(usuario.getDni());

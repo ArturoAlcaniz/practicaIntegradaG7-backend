@@ -13,6 +13,8 @@ on:
       - Crear_RepositoryCentro
       - Hash_en_contraseñas
       - desarrollo
+      - FixTests_UsuarioDaoRepository
+      - H12-2
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:

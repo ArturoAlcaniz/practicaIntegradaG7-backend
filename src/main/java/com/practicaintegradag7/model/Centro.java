@@ -22,7 +22,7 @@ public class Centro implements Serializable {
 	@NotNull
 	private String id;
 	
-	@Column(name = "nombre")
+	@Column(name = "nombre", unique=true)
 	private String nombre;
 	
 	@Column(name = "direccion")
@@ -48,7 +48,11 @@ public class Centro implements Serializable {
 		this.direccion = direccion;
 		this.vacunasDisponibles = vacunasDisponibles;
 	}
-	
+
+	public String getId() {
+		return id;
+	}
+
 	public String getNombre() {
 		return nombre;
 	}
@@ -56,12 +60,33 @@ public class Centro implements Serializable {
 	public String getDireccion() {
 		return direccion;
 	}
-	
-	public int getVacunasDisponibles() {
+
+	public int getVacunas() {
 		return vacunasDisponibles;
 	}
-	
+
 	public Set<Cita> getCentroCitas() {
 		return centroCitas;
 	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
+
+	public void setVacunas(int vacunasDisponibles) {
+		this.vacunasDisponibles = vacunasDisponibles;
+	}
+
+	public void setCentroCitas(Set<Cita> centroCitas) {
+		this.centroCitas = centroCitas;
+	}
+	
 }

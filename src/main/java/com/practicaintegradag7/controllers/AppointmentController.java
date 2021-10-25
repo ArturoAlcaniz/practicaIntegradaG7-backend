@@ -10,6 +10,7 @@ import com.practicaintegradag7.exceptions.CitasDniNotValid;
 import com.practicaintegradag7.exceptions.CitasLimitException;
 import com.practicaintegradag7.model.Cita;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -25,7 +26,7 @@ public class AppointmentController{
 	private CitaDao citaDao;
 	
 	@PostMapping(path="/api/makeAppointment", consumes=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Cita crearCita(@RequestBody Map<String, Object> datosCita) throws CitasDniNotValid, CitasLimitException{
+    public Cita crearCita(@RequestBody Map<String, Object> datosCita) throws CitasDniNotValid, CitasLimitException, JSONException{
 		JSONObject jso = new JSONObject(datosCita);
         String dni = jso.getString("dni");
         String fecha = jso.getString("fecha");
