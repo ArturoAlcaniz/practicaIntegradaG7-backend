@@ -11,7 +11,7 @@ public class TestUsuario {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void checkValidationDni() {
-		new Usuario("023", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", new Centro("Centro 1", "Calle 1", 10),
+		new Usuario("0234", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", new Centro("Centro 1", "Calle 1", 10),
 				"paciente");
 	}
 	
