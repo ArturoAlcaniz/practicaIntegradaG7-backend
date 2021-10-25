@@ -1,7 +1,6 @@
 package com.practicaintegradag7.dao;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +21,16 @@ public class CentroDao {
 		return centroRepository.insert(centro);
 	}
 	
-	public Centro buscarCentro(String id) throws CentroNotFoundException, NoSuchElementException{
+	public Centro buscarCentro(String id) throws CentroNotFoundException{
 		Optional<Centro> opt = centroRepository.findById(id);
 		if(opt.isPresent()) return opt.get();
-		else throw new CentroNotFoundException("Centro no existe");
+		else throw new CentroNotFoundException("El centro "+id+" no existe");
+	}
+	
+	public Centro buscarCentroByNombre(String centro) throws CentroNotFoundException {
+		Optional<Centro> opt = centroRepository.findByNombre(centro);
+		if(opt.isPresent()) return opt.get();
+		else throw new CentroNotFoundException("El centro "+centro+" no existe");
 	}
 	
 	public Optional<Centro> getCitasByDni(String id) {

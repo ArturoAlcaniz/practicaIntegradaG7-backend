@@ -22,7 +22,7 @@ public class Centro implements Serializable {
 	@NotNull
 	private String id;
 	
-	@Column(name = "nombre")
+	@Column(name = "nombre", unique=true)
 	private String nombre;
 	
 	@Column(name = "direccion")
