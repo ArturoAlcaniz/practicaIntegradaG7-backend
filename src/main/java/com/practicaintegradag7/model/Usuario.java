@@ -1,5 +1,7 @@
 package com.practicaintegradag7.model;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,7 +74,7 @@ public class Usuario {
 		this.nombre = nombre;
 		this.apellidos = apellidos;
 		this.email = email;
-		this.password = DigestUtils.md5Hex(password);
+		this.password = DigestUtils.sha256Hex(password);
 		this.centro = centro;
 		this.rol = rol.toLowerCase();
 		

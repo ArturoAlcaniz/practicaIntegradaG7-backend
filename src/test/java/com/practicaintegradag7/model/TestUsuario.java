@@ -51,7 +51,7 @@ public class TestUsuario {
 	public void failWhenThePasswordNotEquals() {
 		//Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", new Centro("Centro 1", "Calle 1", 10),"paciente");
 		Usuario usuario = new Usuario("01234567A", "A", "B", "a@a.es", "Iso+grupo7", new Centro("Centro 2", "Calle 2", 0), "paciente");
-		assertEquals(DigestUtils.md5Hex("Iso+grupo7"),usuario.getPassword());
+		assertEquals(DigestUtils.sha256Hex("Iso+grupo7"),usuario.getPassword());
 	}
 	
 	@Test
