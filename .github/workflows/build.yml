@@ -9,6 +9,7 @@ on:
       - Crear_RepositoryCita
       - Crear_usuario
       - Crear_RepositoryCentro
+      - Hash_en_contraseñas
       - desarrollo
   pull_request:
     types: [opened, synchronize, reopened]
