@@ -3,13 +3,13 @@ package com.practicaintegradag7.model;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
+@Document(collection = "Cupo")
 public class Cupo {
 	
 	@Id
@@ -23,8 +23,11 @@ public class Cupo {
 	@Column(name = "fechaFin")
 	private LocalDateTime fechaFin;
 	
+	@Column(name = "numeroCitas")
+	private int numeroCitas;
 	
-	public Cupo(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
+	
+	public Cupo(LocalDateTime fechaInicio, LocalDateTime fechaFin, int numeroCitas) {
 		
 		if(!validateFechas(fechaInicio, fechaFin)) {
 			throw new IllegalArgumentException("Fecha de inicio no puede ser posterior a la fecha de fin");
@@ -32,6 +35,7 @@ public class Cupo {
 
 		this.fechaInicio = fechaInicio;
 		this.fechaFin = fechaFin;
+		this.numeroCitas = numeroCitas;
 	
 	}
 	
@@ -39,7 +43,7 @@ public class Cupo {
     	return fechaInicio.isBefore(fechaFin) && !fechaInicio.isBefore(LocalDateTime.now());
     }
 	
-	public String id () {
+	public String id() {
 		return id;
 	}
 	
@@ -49,6 +53,10 @@ public class Cupo {
 
 	public LocalDateTime getFechaFin() {
 		return fechaFin;
+	}
+	
+	public int getNumeroCitas() {
+		return numeroCitas;
 	}
 
 

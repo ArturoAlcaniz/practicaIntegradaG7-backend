@@ -5,12 +5,12 @@ import java.util.regex.Pattern;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.validator.EmailValidator;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "usuario")
+@Document(collection = "Usuario")
 public class Usuario {
 
 	@Id
@@ -35,7 +35,7 @@ public class Usuario {
 	@Column(name = "password")
 	private String password;
 	
-	@ManyToOne
+	@Column(name = "centro")
 	private Centro centro;
 	
 	@Column(name = "rol")
@@ -51,7 +51,7 @@ public class Usuario {
 			throw new IllegalArgumentException("Email is not valid!");
 		}
 		
-		if (!validatePassword(password)) {
+		if (!validatePasswordPolicy(password)) {
 			throw new IllegalArgumentException("Password is not valid!");
 		}
 		
@@ -71,7 +71,7 @@ public class Usuario {
 		this.nombre = nombre;
 		this.apellidos = apellidos;
 		this.email = email;
-		this.password = password;
+		this.password = DigestUtils.sha256Hex(password);
 		this.centro = centro;
 		this.rol = rol.toLowerCase();
 		
@@ -83,13 +83,14 @@ public class Usuario {
     	return compareDni.matches();
     }
 	
-	private boolean validateEmail(String email) {
+    private boolean validateEmail(String email) {
 		EmailValidator validator = EmailValidator.getInstance();
 		return validator.isValid(email);
 	}
 	
-	private boolean validatePassword(String password) {
-		return password.length()>4;
+	private boolean validatePasswordPolicy(String password) {
+			String pattern = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}";
+			return password.matches(pattern);
 	}
 	
 	private boolean validateRol(String rol) {

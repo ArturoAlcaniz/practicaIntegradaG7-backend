@@ -27,5 +27,4 @@ public class TestCentro {
 		Centro centro = new Centro("Centro 1", "Calle 3", 100);
 		assertEquals(100, centro.getVacunas());
 	}
-
 }

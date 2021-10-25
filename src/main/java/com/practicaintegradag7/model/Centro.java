@@ -38,15 +38,15 @@ public class Centro implements Serializable {
 	)
 	private Set<Cita> centroCitas = new HashSet<>();
 	
-	public Centro(String nombre, String direccion, int vacunas) {
+	public Centro(String nombre, String direccion, int vacunasDisponibles) {
 		
-		if(vacunas < 0) {
+		if(vacunasDisponibles < 0) {
 			throw new IllegalArgumentException("vacunas is not valid");
 		}
 
 		this.nombre = nombre;
 		this.direccion = direccion;
-		this.vacunas = vacunas;
+		this.vacunas = vacunasDisponibles;
 	}
 
 	public String getId() {
