@@ -12,6 +12,7 @@ on:
       - Crear_RepositoryCentro
       - Hash_en_contraseñas
       - desarrollo
+      - H12-2
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
