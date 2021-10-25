@@ -15,15 +15,12 @@ public class UsuarioDao {
 	public UsuarioRepository usuarioRepository;
 	
 	public Usuario saveUsuario(Usuario usuario) {
-		
-		try {
-			if (!(usuarioRepository.findByDni(usuario.getDni())==null)) {
+
+			if (usuarioRepository.existsByDni(usuario.getDni()))
 				return null;
-			}
-			}catch(NullPointerException e) {
+			else
 				return usuarioRepository.save(usuario);
-			}
-		return null;
+		
 		
 	}
 	
