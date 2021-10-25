@@ -1,7 +1,6 @@
 package com.practicaintegradag7.model;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
 public class TestCentro {
@@ -26,7 +25,6 @@ public class TestCentro {
 	@Test
 	public void failIfVacunasDisponiblesNotEquals() {
 		Centro centro = new Centro("Centro 1", "Calle 3", 100);
-		assertEquals(100, centro.getVacunasDisponibles());
-	} 
-
+		assertEquals(100, centro.getVacunas());
+	}
 }
