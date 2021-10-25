@@ -1,7 +1,5 @@
 package com.practicaintegradag7.model;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -92,8 +90,8 @@ public class Usuario {
 	}
 	
 	private boolean validatePasswordPolicy(String password) {
-		String pattern = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}";
-		return password.matches(pattern);
+			String pattern = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}";
+			return password.matches(pattern);
 	}
 	
 	private boolean validateRol(String rol) {
