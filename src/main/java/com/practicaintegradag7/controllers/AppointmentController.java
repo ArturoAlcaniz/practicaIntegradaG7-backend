@@ -20,7 +20,6 @@ public class AppointmentController{
 		JSONObject jso = new JSONObject(info);
 		String user = jso.getString("user");
 		//Consultar BD, etc
-		System.out.println(user);
 		return "Fecha para "+user+" : "+new Date();
 	}
 }
