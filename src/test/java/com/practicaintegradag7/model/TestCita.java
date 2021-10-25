@@ -1,5 +1,6 @@
 package com.practicaintegradag7.model;
 
+import javax.ws.rs.ClientErrorException;
 import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDateTime;
@@ -8,7 +9,7 @@ import org.junit.Test;
 
 public class TestCita {
 	
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = ClientErrorException.class)
 	public void checkValidationDni() {
 		new Cita("", LocalDateTime.of(2021, 10, 20, 12, 00));
 	}
