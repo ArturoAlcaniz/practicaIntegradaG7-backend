@@ -11,4 +11,10 @@ import com.practicaintegradag7.model.Centro;
 @Repository
 @CrossOrigin(value = {})
 public interface CentroRepository extends MongoRepository<Centro, Serializable>{
+
+	static Centro findByNombre(String string) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }
