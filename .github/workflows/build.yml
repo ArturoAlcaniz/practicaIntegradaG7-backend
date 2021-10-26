@@ -11,6 +11,7 @@ on:
       - Crear_RepositoryUsuario_UsuarioDao
       - Crear_RepositoryCentro
       - Hash_en_contraseñas
+      - Crear_CuposRepository_CuposDao
       - desarrollo
       - FixTests_UsuarioDaoRepository
       - H12-2
