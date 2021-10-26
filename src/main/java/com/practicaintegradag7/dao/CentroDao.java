@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.VacunasNoValidasException;
+import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.repos.CentroRepository;
 
@@ -17,7 +18,8 @@ public class CentroDao {
 	@Autowired
 	public CentroRepository centroRepository;
 	
-	public Centro createCentro(Centro centro) {
+	public Centro createCentro(Centro centro) throws CentroExistException, CentroNotFoundException {
+		 existeCentro(centro.getNombre());
 		return centroRepository.insert(centro);
 	}
 	
@@ -39,6 +41,11 @@ public class CentroDao {
 	
 	public List<Centro> getAllCitas() {
 		return centroRepository.findAll();
+	}
+	
+	public void existeCentro(String nombre) throws CentroExistException {
+		Optional<Centro> opt = centroRepository.findByNombre(nombre);
+		if(opt.isPresent()) throw new CentroExistException("El centro que desea guardar ya existe.");	
 	}
 	
 	public void addVacunas(String centro, int amount) throws CentroNotFoundException, VacunasNoValidasException{
