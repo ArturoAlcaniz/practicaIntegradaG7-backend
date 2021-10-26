@@ -26,9 +26,9 @@ public class CitaRepositoryTest {
 	
 	@Test
 	public void shouldSaveCita() throws CitasDniNotValid {
-		Cita cita = new Cita("04234567A", LocalDateTime.of(2021, 10, 20, 12, 00));
+		Cita cita = new Cita("04234567A", LocalDateTime.of(2021, 10, 20, 12, 00), "");
 		Centro centro = centroRepository.findAll().get(0);
-		cita.setCentro(centro);
+		cita.setCentroNombre(centro);
 		citaRepository.save(cita);
 		System.out.println(citaRepository.findByDni(cita.getDni()));
 		assertNotNull(citaRepository.findByDni(cita.getDni()));

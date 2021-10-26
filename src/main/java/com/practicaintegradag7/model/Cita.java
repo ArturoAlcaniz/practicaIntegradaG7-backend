@@ -26,7 +26,7 @@ public class Cita {
     @Column(name = "centroNombre")
     private String centroNombre;
 
-    public Cita(String dni, LocalDateTime fecha) throws CitasDniNotValid {
+    public Cita(String dni, LocalDateTime fecha, String centroNombre) throws CitasDniNotValid {
     	
     	if(!validateDNI(dni)) {
     		throw new CitasDniNotValid();
@@ -34,6 +34,7 @@ public class Cita {
     	
     	this.dni = dni;
     	this.fecha = fecha;
+    	this.centroNombre = centroNombre;
     }
     
     private boolean validateDNI(String dni) {
@@ -42,11 +43,11 @@ public class Cita {
     	return compareDni.matches();
     }
     
-    public String getCentro() {
+    public String getCentroNombre() {
     	return centroNombre;
     }
     
-    public void setCentro(Centro centro) {
+    public void setCentroNombre(Centro centro) {
     	this.centroNombre = centro.getNombre();
     }
     

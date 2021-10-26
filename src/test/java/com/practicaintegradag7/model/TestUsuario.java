@@ -2,7 +2,6 @@ package com.practicaintegradag7.model;
 
 import static org.junit.Assert.*;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 
 public class TestUsuario {
