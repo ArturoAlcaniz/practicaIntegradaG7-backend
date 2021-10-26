@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
+import com.practicaintegradag7.exceptions.CentroNotFoundException;
+import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cupo;
+import com.practicaintegradag7.repos.CentroRepository;
 import com.practicaintegradag7.repos.CupoRepository;
 
 @Component
@@ -16,9 +19,13 @@ public class CupoDao {
 
 	@Autowired
 	public CupoRepository cupoRepository;
+	@Autowired
+	public CentroRepository centroRepository;
 	
-	public Cupo saveCupo(Cupo cupo) {
-		return cupoRepository.save(cupo);
+	public Cupo saveCupo(Cupo cupo) throws CentroNotFoundException {
+		Optional<Centro> opt = centroRepository.findByNombre(cupo.getCentro().getNombre());
+		if (opt.isPresent()) return cupoRepository.save(cupo);
+		else throw new CentroNotFoundException("El centro "+cupo.getCentro().getNombre()+" no existe");
 	}
 	
 	public Cupo getCupoById (String id) throws CupoNotFoundException {
@@ -29,11 +36,11 @@ public class CupoDao {
 	
 	//comprobar solo puede haber una fecha de inicio con un centro
 	
-	public Cupo getCupoByInicialDate (LocalDateTime fechaInicio) throws CupoNotFoundException {
-		Optional<Cupo> opt = cupoRepository.findById(fechaInicio);
+	/*public Cupo getCupoByInicialDateAndCentro (LocalDateTime fechaInicio, Centro centro) throws CupoNotFoundException {
+		Optional<Cupo> opt = cupoRepository.findByInitialDateAndCentro(fechaInicio, centro);
 		if(opt.isPresent()) return opt.get();
-		else throw new CupoNotFoundException("El cupo "+fechaInicio+" no existe");
-	}
+		else throw new CupoNotFoundException("El cupo del centro "+centro.getNombre()+" con fecha "+fechaInicio+" no existe");
+	}*/
 	
 	public List<Cupo> getAllCupos() {
 		return cupoRepository.findAll();
