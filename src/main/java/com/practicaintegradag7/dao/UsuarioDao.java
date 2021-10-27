@@ -2,10 +2,10 @@ package com.practicaintegradag7.dao;
 
 import java.util.List;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.model.Usuario;
 import com.practicaintegradag7.repos.UsuarioRepository;
 
@@ -15,7 +15,7 @@ public class UsuarioDao {
 	@Autowired
 	public UsuarioRepository usuarioRepository;
 	
-	public Usuario saveUsuario(Usuario usuario) {
+	public Usuario saveUsuario(Usuario usuario) throws CifradoContrasenaException {
 		
 		if (!validatePasswordPolicy(usuario.getPassword())) {
 			throw new IllegalArgumentException("Password is not valid!");
@@ -25,7 +25,7 @@ public class UsuarioDao {
 				return null;
 			else
 			{
-				usuario.setPassword(DigestUtils.sha256Hex(usuario.getPassword()));
+				usuario.encryptPassword();
 				return usuarioRepository.save(usuario);
 			}
 		}
