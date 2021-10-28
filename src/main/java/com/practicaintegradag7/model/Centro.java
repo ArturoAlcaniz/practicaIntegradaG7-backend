@@ -36,7 +36,7 @@ public class Centro implements Serializable {
 			cascade = { CascadeType.PERSIST, CascadeType.MERGE },
 			fetch = FetchType.EAGER
 	)
-	private Set<Cita> centroCitas = new HashSet<>();
+	private transient Set<Cita> centroCitas = new HashSet<>();
 	
 	public Centro(String nombre, String direccion, int vacunasDisponibles) {
 		
