@@ -14,6 +14,12 @@ public class TestCupo {
 		cupo.getFechaFin();
 	}
 	
+	@Test(expected = IllegalArgumentException.class)
+	public void checkValidationFechaActual() {
+		Cupo cupo = new Cupo(LocalDateTime.now().minusMinutes(15), LocalDateTime.now(), 10,new Centro("Centro 1", "Calle 1", 1));
+		cupo.getFechaFin();
+	}
+	
 	@Test
 	public void failWhenFechaInicioNotEquals() {
 		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,new Centro("Centro 1", "Calle 1", 1));

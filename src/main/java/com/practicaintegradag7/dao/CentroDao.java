@@ -18,7 +18,7 @@ public class CentroDao {
 	@Autowired
 	public CentroRepository centroRepository;
 	
-	public Centro createCentro(Centro centro) throws CentroExistException, CentroNotFoundException {
+	public Centro createCentro(Centro centro) throws CentroExistException {
 		 existeCentro(centro.getNombre());
 		return centroRepository.insert(centro);
 	}

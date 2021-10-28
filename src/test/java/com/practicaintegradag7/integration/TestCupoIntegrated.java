@@ -46,7 +46,7 @@ public class TestCupoIntegrated {
 	}
 	
 	@Test
-	public void shouldNotSaveCupo() throws CentroExistException, CentroNotFoundException, CupoExistException, CupoNotFoundException {
+	public void shouldNotSaveCupoBecauseCupoExists() throws CentroExistException, CentroNotFoundException, CupoExistException, CupoNotFoundException {
 		Centro centro = new Centro("Centro 2", "Calle 2", 1);
 		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
 		Cupo cupoIgual = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
@@ -65,6 +65,15 @@ public class TestCupoIntegrated {
 			cupoDao.deleteCupo(cupo);
 			centroDao.deleteCentro(centro);
 		}
+	}
+	
+	@Test (expected = CentroNotFoundException.class)
+	public void shouldNotSaveCupoBecauseCentroNotExists() throws CentroNotFoundException, CupoExistException  {
+		Centro centro = new Centro("Centro 2", "Calle 2", 1);
+		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
+		
+		cupoDao.saveCupo(cupo);
+		
 	}
 	
 	@Test
@@ -93,6 +102,44 @@ public class TestCupoIntegrated {
 		
 		cupoDao.deleteCupo(cupo);
 		centroDao.deleteCentro(centro);
+	}
+	
+	@Test
+	public void failWhenCupoIdNotFound() throws CentroExistException, CentroNotFoundException, CupoExistException, CupoNotFoundException {
+		Centro centro = new Centro("Centro 2", "Calle 2", 1);
+		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
+		
+		centroDao.createCentro(centro);
+		cupoDao.saveCupo(cupo);
+
+		try {
+		cupoDao.getCupoById("012345679A");
+		fail("CupoNotFoundException expected");
+
+		} catch (CupoNotFoundException e) {
+		}finally {
+			cupoDao.deleteCupo(cupo);
+			centroDao.deleteCentro(centro);
+		}
+	}
+	
+	@Test
+	public void failWhenCupoFechaInicioNotFound() throws CentroExistException, CentroNotFoundException, CupoExistException, CupoNotFoundException {
+		Centro centro = new Centro("Centro 2", "Calle 2", 1);
+		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
+		
+		centroDao.createCentro(centro);
+		cupoDao.saveCupo(cupo);
+
+		try {
+		cupoDao.getCupoByInicialDateAndCentro(cupo.getFechaInicio().plusYears(1), cupo.getCentro());
+		fail("CupoNotFoundException expected");
+
+		} catch (CupoNotFoundException e) {
+		}finally {
+			cupoDao.deleteCupo(cupo);
+			centroDao.deleteCentro(centro);
+		}
 	}
 	
 	@Test
@@ -135,5 +182,27 @@ public class TestCupoIntegrated {
 		
 		cupoDao.deleteCupo(cupo);
 		centroDao.deleteCentro(centro);
+	}
+	
+	@Test
+	public void failWhenNotFindAllCupo() throws CupoNotFoundException, CentroNotFoundException, CentroExistException, CupoExistException {
+		Centro centro = new Centro("Centro 2", "Calle 2", 1);
+		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
+		
+		centroDao.createCentro(centro);
+		cupoDao.saveCupo(cupo);
+		
+		assertNotNull(cupoDao.getAllCupos());	
+		
+		cupoDao.deleteCupo(cupo);
+		centroDao.deleteCentro(centro);
+	}
+	
+	@Test(expected = CupoNotFoundException.class)
+	public void shouldNotDeleteCupoNotExists() throws CupoNotFoundException {
+		Centro centro = new Centro("Centro 2", "Calle 2", 1);
+		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
+		
+		cupoDao.deleteCupo(cupo);
 	}
 }
