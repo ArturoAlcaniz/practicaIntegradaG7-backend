@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.VacunasNoValidasException;
-import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.repos.CentroRepository;
 
