@@ -77,6 +77,24 @@ class TestCentroIntegrated {
 		}
 	}
 	
+	@Test
+	void searchCentroByIdNotExist() {
+		try {
+			aux.buscarCentro("no existe");
+		} catch (CentroNotFoundException e) {
+			assertTrue(e.getMessage().contains("no existe"));
+		}
+	}
+	
+	@Test
+	void searchCentroByNameNotExist() {
+		try {
+			aux.buscarCentroByNombre("no existe");
+		} catch (CentroNotFoundException e) {
+			assertTrue(true);
+		}
+	}
+	
 	@AfterEach
 	public void after() {
 		try {
