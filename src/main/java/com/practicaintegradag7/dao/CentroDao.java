@@ -23,10 +23,6 @@ public class CentroDao {
 		return centroRepository.insert(centro);
 	}
 	
-	public void existeCentro(String nombre) throws CentroExistException {
-		Optional<Centro> opt = centroRepository.findByNombre(nombre);
-		if(opt.isPresent()) throw new CentroExistException("El centro que desea guardar ya existe.");	
-	}
 	
 	public Centro buscarCentro(String id) throws CentroNotFoundException{
 		Optional<Centro> opt = centroRepository.findById(id);
