@@ -10,8 +10,6 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.practicaintegradag7.exceptions.CitasDniNotValid;
-
 @Document(collection = "Cita")
 public class Cita {
 
@@ -26,10 +24,10 @@ public class Cita {
     @Column(name = "centroNombre")
     private String centroNombre;
 
-    public Cita(String dni, LocalDateTime fecha, String centroNombre) throws CitasDniNotValid {
+    public Cita(String dni, LocalDateTime fecha, String centroNombre) {
     	
     	if(!validateDNI(dni)) {
-    		throw new CitasDniNotValid();
+    		throw new IllegalArgumentException("Dni no es valido!");
     	}
     	
     	this.dni = dni;

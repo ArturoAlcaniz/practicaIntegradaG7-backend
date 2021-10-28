@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
-import com.practicaintegradag7.exceptions.CitasDniNotValid;
-import com.practicaintegradag7.exceptions.CitasLimitException;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
 import com.practicaintegradag7.model.Cita;
 import com.practicaintegradag7.model.Usuario;
@@ -25,15 +23,14 @@ public class CitaDao {
 	@Autowired
 	public UsuarioDao usuarioDao;
 	
-	public String createCita() throws CitasUsuarioNotAvailable, CitasDniNotValid {
+	public Cita createCita() throws CitasUsuarioNotAvailable {
 		Usuario usuario = findUsuarioAvailable();
 		String dni = usuario.getDni();
 		String fecha = "2021-10-30 11:30";
 		String centroNombre = usuario.getCentro().getNombre();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		Cita cita = new Cita(dni, LocalDateTime.parse(fecha, formatter), centroNombre);
-		citaRepository.save(cita);
-		return "Ha pedido cita correctamente para el "+fecha;
+		return citaRepository.save(cita);
 	}
 	
 	public List<Cita> getCitasByDni(String dni) {
@@ -42,12 +39,6 @@ public class CitaDao {
 	
 	public List<Cita> getAllCitas() {
 		return citaRepository.findAll();
-	}
-	
-	private void checkCitasLimit(Cita cita) throws CitasLimitException {
-		if(getCitasByDni(cita.getDni()).size() > 1) {
-			throw new CitasLimitException();
-		}
 	}
 	
 	private Usuario findUsuarioAvailable() throws CitasUsuarioNotAvailable {
@@ -62,5 +53,9 @@ public class CitaDao {
 	
 	private String findFechaAvailable() throws CitasCupoNotAvailable {
 		return "";
+	}
+	
+	public void deleteCita(Cita cita) {
+		citaRepository.deleteByDni(cita.getDni());
 	}
 }

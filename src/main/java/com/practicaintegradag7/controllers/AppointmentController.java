@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.practicaintegradag7.dao.CitaDao;
-import com.practicaintegradag7.exceptions.CitasDniNotValid;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,10 +17,10 @@ public class AppointmentController{
 	private CitaDao citaDao;
 	
 	@PostMapping(path="/api/citas/create")
-    public String crearCita() throws CitasDniNotValid, JSONException, CitasUsuarioNotAvailable {
+    public String crearCita() throws JSONException, CitasUsuarioNotAvailable {
 		JSONObject response = new JSONObject();
 		response.put("status", "200");
-		response.put("message", citaDao.createCita());
+		response.put("message", "Ha pedido cita correctamente para el "+citaDao.createCita().getFecha());
     	return response.toString();
     }
 }
