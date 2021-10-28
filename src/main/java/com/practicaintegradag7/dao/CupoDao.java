@@ -49,9 +49,9 @@ public class CupoDao {
 		return cupoRepository.findAll();
 	}
 	
-	public void updateCupo (Cupo cupo) throws CupoNotFoundException {
+	public Cupo updateCupo (Cupo cupo) throws CupoNotFoundException {
 		Optional<Cupo> opt = cupoRepository.findById(cupo.id());
-		if(opt.isPresent()) cupoRepository.save(cupo);
+		if(opt.isPresent()) return cupoRepository.save(cupo);
 		else throw new CupoNotFoundException("Cupo para modificar no encontrado");
 	}
 	
