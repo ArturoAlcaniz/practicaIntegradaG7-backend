@@ -20,12 +20,11 @@ public class UsuarioDao {
 		if (!validatePasswordPolicy(usuario.getPassword())) {
 			throw new IllegalArgumentException("Password is not valid!");
 		}else {
-			
+			usuario.encryptDNI();
 			if (usuarioRepository.existsByDni(usuario.getDni()))
 				return null;
 			else
 			{
-				usuario.encryptPassword();
 				return usuarioRepository.save(usuario);
 			}
 		}

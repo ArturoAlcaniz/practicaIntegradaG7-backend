@@ -25,7 +25,7 @@ public class UsuarioDaoTest {
 	private UsuarioDao usuarioDao;
 	
 	@Test
-	public void shouldSaveUsuario() {
+	public void shouldSaveUsuario() throws CifradoContrasenaException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
 				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
@@ -40,16 +40,20 @@ public class UsuarioDaoTest {
 	}
 	
 	@Test
-	public void shouldNotSaveUsuario() {
+	public void shouldNotSaveUsuario() throws CifradoContrasenaException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new Usuario("05718583J", "Julio", "Morisco Parra", 
 				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
-		Usuario usuarioMismoDni = new Usuario("05718583J", "Fernando", "Morisco Parra", 
+		Usuario usuarioMismoDni = new Usuario("05718583J", "Julio", "Parra Morisco", 
 				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
 		
 		try {
+			System.out.println("---------------------------------------------");
 			usuarioDao.saveUsuario(usuario);
-			assertNull(usuarioDao.saveUsuario(usuarioMismoDni));
+			System.out.println(usuario.getNombre()+" "+usuario.getApellidos()+" "+usuario.getDni());
+			Usuario aux = usuarioDao.saveUsuario(usuarioMismoDni);
+			System.out.println("-------"+usuarioMismoDni.getNombre()+" "+usuarioMismoDni.getApellidos()+" "+usuarioMismoDni.getDni());
+			assertNull(aux);
 		} catch (CifradoContrasenaException e) {
 			fail(e.getMessage());
 		}
@@ -63,7 +67,6 @@ public class UsuarioDaoTest {
 				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
 		try {
 			usuarioDao.saveUsuario(usuario);
-			usuario.encryptPassword();
 		} catch (CifradoContrasenaException e) {
 			fail(e.getMessage());
 		}
@@ -73,7 +76,7 @@ public class UsuarioDaoTest {
 	}
 	
 	@Test
-	public void failWhenSizeIsZero() {
+	public void failWhenSizeIsZero() throws CifradoContrasenaException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
 				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
@@ -86,5 +89,4 @@ public class UsuarioDaoTest {
 		assertNotEquals(0, usuarioDao.getAllUsuarios().size());
 		usuarioDao.deleteUsuarioByDni(usuario.getDni());
 	}
-	
 }

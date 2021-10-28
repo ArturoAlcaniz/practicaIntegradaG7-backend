@@ -1,5 +1,6 @@
 package com.practicaintegradag7.model;
 
+import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,14 +12,19 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.AlgorithmParameterSpec;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 @Document(collection = "Usuario")
@@ -85,6 +91,7 @@ public class Usuario {
 	}
 
     private boolean validateDNI(String dni) {
+    	if(dni.charAt(0) == 'a') return true;
     	Pattern regexDni = Pattern.compile("[0-9]{7,8}[A-Z a-z]");
     	Matcher compareDni = regexDni.matcher(dni); 
     	return compareDni.matches();
@@ -147,27 +154,34 @@ public class Usuario {
 	
 	/**
 	 * Encrypts own password via Cesar Cypher(3), then B64 encoding.
-	 * Appends a 'd' to the beggining after the procedure, to indiciate that this string is encoded.
+	 * Appends a 'd' to the beggining after the procedure, to indiciate that this string is encoded. 
 	 */
-	public void encryptPassword() throws CifradoContrasenaException {
+	public void encryptDNI() throws CifradoContrasenaException {
 		String cyph = cypher(this.dni, 3);
-		byte[] encrypted = new byte[0];
+		byte[] aux;
 		
 		try {
-			Key aesKey = new SecretKeySpec(this.nombre.getBytes(), "AES");
-			Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-			cipher.init(Cipher.ENCRYPT_MODE, aesKey);
-			encrypted = cipher.doFinal(cyph.getBytes());
-		} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
+			String keyS = this.nombre;
+			if(keyS.length() < 16)
+				while(keyS.length() < 16) keyS += 'a';
+			String flag = "a";
+	        Key aesKey = new SecretKeySpec(keyS.getBytes(), "AES");
+	        final Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+	        GCMParameterSpec parameterSpec = new GCMParameterSpec(128, flag.getBytes());
+	        cipher.init(Cipher.ENCRYPT_MODE, aesKey, parameterSpec);
+
+	        byte[] cipherText = cipher.doFinal(cyph.getBytes(StandardCharsets.UTF_8));
+
+	        ByteBuffer byteBuffer = ByteBuffer.allocate(flag.getBytes().length + cipherText.length);
+	        byteBuffer.put(flag.getBytes());
+	        byteBuffer.put(cipherText);
+	        
+	        aux = byteBuffer.array();
+		} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e) {
 			throw new CifradoContrasenaException(e.getMessage());
 		}
 		
-		StringBuilder sb = new StringBuilder();
-		for (byte b: encrypted) {
-		    sb.append((char)b);
-		}
-		
-		this.dni = sb.toString();
+		this.dni = "a" + Base64.getEncoder().encodeToString(aux);
 	}
 	
 	/**
@@ -197,23 +211,24 @@ public class Usuario {
 		return m1 + c + m2;
 	}
 	
-	public void decryptPassword() throws CifradoContrasenaException {
-		String pwd = this.dni;
-		Cipher cipher;
-		Key aesKey;
+	public void decryptDNI() throws CifradoContrasenaException {
+		String pwd = this.dni.substring(1);
 		String decyph;
 		
-		byte[] bytes = new byte[pwd.length()];
-		for (int i=0; i<pwd.length(); i++) {
-			bytes[i] = (byte) pwd.charAt(i);
-		}
+		byte[] bytes = Base64.getDecoder().decode(pwd.getBytes());
 		
 		try {
-			aesKey = new SecretKeySpec(this.nombre.getBytes(), "AES");
-			cipher = Cipher.getInstance("AES/GCM/NoPadding");
-			cipher.init(Cipher.DECRYPT_MODE, aesKey);
-			decyph = new String(cipher.doFinal(bytes));
-		} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
+			String keyS = this.nombre;
+			if(keyS.length() < 16)
+				while(keyS.length() < 16) keyS += 'a';
+			Key aesKey = new SecretKeySpec(keyS.getBytes(), "AES");
+			AlgorithmParameterSpec gcmIv = new GCMParameterSpec(128, bytes, 0, 1);
+			Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+	        cipher.init(Cipher.DECRYPT_MODE, aesKey, gcmIv);
+	        byte[] plainText = cipher.doFinal(bytes, 1, bytes.length - 1);
+
+	        decyph = new String(plainText, StandardCharsets.UTF_8);
+		} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e) {
 			throw new CifradoContrasenaException(e.getMessage());
 		}
 		
