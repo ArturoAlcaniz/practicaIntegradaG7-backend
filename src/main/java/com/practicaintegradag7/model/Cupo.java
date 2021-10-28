@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -26,8 +27,10 @@ public class Cupo {
 	@Column(name = "numeroCitas")
 	private int numeroCitas;
 	
+	@ManyToOne
+	private Centro centro;
 	
-	public Cupo(LocalDateTime fechaInicio, LocalDateTime fechaFin, int numeroCitas) {
+	public Cupo(LocalDateTime fechaInicio, LocalDateTime fechaFin, int numeroCitas, Centro centro) {
 		
 		if(!validateFechas(fechaInicio, fechaFin)) {
 			throw new IllegalArgumentException("Fecha de inicio no puede ser posterior a la fecha de fin");
@@ -36,6 +39,7 @@ public class Cupo {
 		this.fechaInicio = fechaInicio;
 		this.fechaFin = fechaFin;
 		this.numeroCitas = numeroCitas;
+		this.centro = centro;
 	
 	}
 	
@@ -59,5 +63,8 @@ public class Cupo {
 		return numeroCitas;
 	}
 
+	public Centro getCentro() {
+		return centro;
+	}
 
 }
