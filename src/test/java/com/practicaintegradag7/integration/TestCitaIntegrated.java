@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.practicaintegradag7.dao.CitaDao;
+import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
 import com.practicaintegradag7.model.Cita;
 
@@ -22,7 +23,7 @@ public class TestCitaIntegrated {
 	private Cita citaPrueba;
 
 	@Before
-	public void before() throws CitasUsuarioNotAvailable {
+	public void before() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable {
 		citaPrueba = citaDao.createCita();
 	}
 	

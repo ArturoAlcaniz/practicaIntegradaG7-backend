@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
 import com.practicaintegradag7.model.Cita;
+import com.practicaintegradag7.model.Cupo;
 import com.practicaintegradag7.model.Usuario;
 import com.practicaintegradag7.repos.CitaRepository;
 
@@ -23,10 +24,13 @@ public class CitaDao {
 	@Autowired
 	public UsuarioDao usuarioDao;
 	
-	public Cita createCita() throws CitasUsuarioNotAvailable {
+	@Autowired
+	public CupoDao cupoDao;
+	
+	public Cita createCita() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable {
 		Usuario usuario = findUsuarioAvailable();
 		String dni = usuario.getDni();
-		String fecha = "2021-10-30 11:30";
+		String fecha = findFechaAvailable(usuario.getCentro().getNombre());
 		String centroNombre = usuario.getCentro().getNombre();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		Cita cita = new Cita(dni, LocalDateTime.parse(fecha, formatter), centroNombre);
@@ -51,8 +55,15 @@ public class CitaDao {
 		return d.get();	
 	}
 	
-	private String findFechaAvailable() throws CitasCupoNotAvailable {
-		return "";
+	private String findFechaAvailable(String centro) throws CitasCupoNotAvailable {
+		List<Cupo> cupos = cupoDao.getAllCupos();
+		Optional<Cupo> c = cupos.stream().filter(cupo ->
+			cupo.getCentro().getNombre() == centro).findFirst();
+		if(!c.isPresent()) {
+			throw new CitasCupoNotAvailable();
+		}
+		
+		return c.get().getFechaInicio().toString();
 	}
 	
 	public void deleteCita(Cita cita) {
