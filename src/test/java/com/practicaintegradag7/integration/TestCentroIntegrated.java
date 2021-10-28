@@ -1,35 +1,34 @@
 package com.practicaintegradag7.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.nio.charset.Charset;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.VacunasNoValidasException;
 import com.practicaintegradag7.model.Centro;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class TestCentroIntegrated {
+class TestCentroIntegrated {
 	@Autowired
 	private final CentroDao aux = new CentroDao();
 	private Centro prueba = new Centro("PRUEBA", "-", 20);
 	
-	@Before
+	@BeforeEach
 	public void before() throws CentroExistException, CentroNotFoundException {
 		Centro c = aux.createCentro(prueba);
 		if(c.getNombre().equals(prueba.getNombre())) {
@@ -43,7 +42,7 @@ public class TestCentroIntegrated {
 	}
 	
 	@Test
-	public void testAddVacunas() {
+	void testAddVacunas() {
 		try {
 			int nVacs = 10;
 			aux.addVacunas(prueba.getId(), nVacs);
@@ -62,7 +61,7 @@ public class TestCentroIntegrated {
 	}
 	
 	@Test
-	public void addVacunasNonExistentCentro() {
+	void addVacunasNonExistentCentro() {
 		try {
 			byte[] array = new byte[7];
 		    new Random().nextBytes(array);
@@ -78,7 +77,7 @@ public class TestCentroIntegrated {
 		}
 	}
 	
-	@After
+	@AfterEach
 	public void after() {
 		try {
 			aux.deleteCentro(prueba);

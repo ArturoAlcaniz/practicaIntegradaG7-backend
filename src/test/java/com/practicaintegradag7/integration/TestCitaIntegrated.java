@@ -1,44 +1,159 @@
 package com.practicaintegradag7.integration;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Random;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
+import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.dao.CitaDao;
+import com.practicaintegradag7.dao.CupoDao;
+import com.practicaintegradag7.dao.UsuarioDao;
+import com.practicaintegradag7.exceptions.CentroExistException;
+import com.practicaintegradag7.exceptions.CentroNotFoundException;
+import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
+import com.practicaintegradag7.exceptions.CupoExistException;
+import com.practicaintegradag7.exceptions.CupoNotFoundException;
+import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cita;
+import com.practicaintegradag7.model.Cupo;
+import com.practicaintegradag7.model.Usuario;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class TestCitaIntegrated {
+@TestMethodOrder(OrderAnnotation.class)
+class TestCitaIntegrated {
 
 	@Autowired
 	private final CitaDao citaDao = new CitaDao();
-	private Cita citaPrueba;
+	
+	@Autowired
+	private final UsuarioDao usuarioDao = new UsuarioDao();
+	
+	@Autowired
+	private final CupoDao cupoDao = new CupoDao();
+	
+	@Autowired
+	private final CentroDao centroDao = new CentroDao();
+	
+	private static Cita citaPrueba;
+	private static Usuario usuarioPrueba;
+	private static Centro centroPrueba;
+	private static Cupo cupoPrueba;
+	
+	@Order(1)
+	@Test
+	void before() {
+		List<Usuario> usuarios = usuarioDao.getAllUsuarios();
+		for(int i=0; i<usuarios.size(); i++) {
+			usuarioDao.deleteUsuarioByDni(usuarios.get(i).getDni());
+		}
+		cupoDao.getAllCupos().forEach((p) -> { try {
+			cupoDao.deleteCupo(p);
+		} catch (CupoNotFoundException e) {
+		} });
+		Random random = new Random();
+		centroPrueba = new Centro("Centro Prueba Citas "+random.nextInt(100), "Calle 1", 1);
+		try {
+			centroDao.createCentro(centroPrueba);
+		} catch (CentroExistException e1) {
+			fail("CentroExistException not expected");
+		}
+	}
+	
+	@Order(2)
+	@Test
+	void failWhenNotUsuariosAvailable() throws CifradoContrasenaException {
+		try {
+			citaDao.createCita();
+		} catch (CitasUsuarioNotAvailable e) {
+		} catch (CitasCupoNotAvailable e) {
+			fail("CitasUsuarioNotAvailable expected");
+		}
+	}
+	
+	@Order(3)
+	@Test
+	void failWhenNotCuposAvailable() {
+		Random random = new Random();
+		String dni = random.nextInt(10)+"0"+random.nextInt(10)+"2"+random.nextInt(10)+"1"+random.nextInt(10)+"1"+"A";
+		System.out.println(centroPrueba.getNombre());
+		usuarioPrueba = new Usuario(dni, "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centroPrueba, "paciente");
+		try {
+			usuarioDao.saveUsuario(usuarioPrueba);
+			citaDao.createCita();
+		} catch (CitasUsuarioNotAvailable e) {
+			fail("CitasCupoNotAvailable expected");
+		} catch (CitasCupoNotAvailable e) {
+		} catch (CifradoContrasenaException e) {
+			fail("CitasCupoNotAvailable expected");
+		}
+	}
 
-	@Before
-	public void before() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable {
-		citaPrueba = citaDao.createCita();
-	}
-	
+	@Order(4)
 	@Test
-	public void findCitaCreated() {
-		Assert.assertTrue(citaDao.getCitasByDni(citaPrueba.getDni()).size() > 0);
+	void shouldSaveCita() throws CifradoContrasenaException {
+		cupoPrueba = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10, centroPrueba);
+		try {
+			cupoPrueba = cupoDao.saveCupo(cupoPrueba);
+			citaPrueba = citaDao.createCita();
+		} catch (CitasUsuarioNotAvailable e) {
+			fail("CitasUsuarioNotAvailable not expected");
+		} catch (CitasCupoNotAvailable e) {
+			fail("CitasCuposNotAvailable not expected");
+		} catch (CentroNotFoundException e) {
+			fail("CentroNotFoundException not expected");
+		} catch (CupoExistException e) {
+			fail("CupoExistException not expected");
+		}
 	}
 	
+	@Order(5)
 	@Test
-	public void findAllCitas() {
-		Assert.assertTrue(citaDao.getAllCitas().size() > 0);
+	void findAllCitas() {
+		Assertions.assertTrue(citaDao.getAllCitas().size() > 0);
 	}
 	
-	@After
-	public void after() {
+	@Order(6)
+	@Test
+	void zeroCitas() {
 		citaDao.deleteCita(citaPrueba);
+		Assertions.assertEquals(0, citaDao.getAllCitas().size());
 	}
+	
+	@Order(7)
+	@Test
+	void after() {
+		try {
+			if(centroPrueba != null) { 
+				centroDao.deleteCentro(centroPrueba);
+			}
+			if(cupoPrueba != null) {
+				cupoDao.deleteCupo(cupoPrueba);
+			}
+			if(usuarioPrueba != null) {
+				usuarioDao.deleteUsuarioByDni(usuarioPrueba.getDni());
+			}
+			if(citaPrueba != null) {
+				citaDao.deleteCita(citaPrueba);
+			}
+		} catch (CentroNotFoundException e) {
+			fail("CentroNotFoundException not expected");
+		} catch (CupoNotFoundException e) {
+			fail("CupoNotFoundException not expected");
+		}
+	}
+
 }

@@ -1,26 +1,29 @@
 package com.practicaintegradag7.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDateTime;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public class TestCita {
+class TestCita {
 	
-	@Test(expected = IllegalArgumentException.class)
-	public void checkValidationDni() {
-		new Cita("", LocalDateTime.of(2021, 10, 20, 12, 00), "");
+	@Test
+	void checkValidationDni() {
+		LocalDateTime fecha = LocalDateTime.of(2021, 10, 20, 12, 00);
+		Assertions.assertThrows(IllegalArgumentException.class, () ->
+			new Cita("", fecha, ""));
 	}
 	
 	@Test
-	public void failWhenTheDniNotEquals() {
+	void failWhenTheDniNotEquals() {
 		Cita cita = new Cita("01234567A", LocalDateTime.of(2021, 10, 20, 12, 00), "");
 		assertEquals("01234567A", cita.getDni());
 	}
 	
 	@Test
-	public void failWhenTheDatetimeNotEquals() {
+	void failWhenTheDatetimeNotEquals() {
 		Cita cita = new Cita("01234567A", LocalDateTime.of(2021, 10, 20, 12, 00), "");
 		assertEquals(LocalDateTime.of(2021, 10, 20, 12, 00), cita.getFecha());
 	}

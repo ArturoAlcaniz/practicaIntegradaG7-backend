@@ -62,13 +62,13 @@
 		    <artifactId>spring-data-mongodb</artifactId>
 		</dependency>
         
-        <!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
-		    <groupId>junit</groupId>
-		    <artifactId>junit</artifactId>
+		    <groupId>org.junit.jupiter</groupId>
+		    <artifactId>junit-jupiter</artifactId>
+		    <version>5.6.0</version>
 		    <scope>test</scope>
 		</dependency>
-        
+
         <!-- https://mvnrepository.com/artifact/org.hibernate.ogm/hibernate-ogm-mongodb -->
 		<dependency>
 		    <groupId>org.hibernate.ogm</groupId>
@@ -135,9 +135,8 @@
 		    <groupId>commons-codec</groupId>
 		    <artifactId>commons-codec</artifactId>
 		</dependency>
-        
+		
     </dependencies>
-
     <build>
         <plugins>
             <plugin>

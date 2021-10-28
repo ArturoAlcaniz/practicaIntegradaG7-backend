@@ -1,13 +1,13 @@
 package com.practicaintegradag7.dao;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
 import com.practicaintegradag7.model.Cita;
@@ -27,13 +27,13 @@ public class CitaDao {
 	@Autowired
 	public CupoDao cupoDao;
 	
-	public Cita createCita() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable {
+	public Cita createCita() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable, CifradoContrasenaException {
 		Usuario usuario = findUsuarioAvailable();
+		usuario.decryptDNI();
 		String dni = usuario.getDni();
-		String fecha = findFechaAvailable(usuario.getCentro().getNombre());
+		LocalDateTime fecha = findFechaAvailable(usuario.getCentro().getNombre());
 		String centroNombre = usuario.getCentro().getNombre();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-		Cita cita = new Cita(dni, LocalDateTime.parse(fecha, formatter), centroNombre);
+		Cita cita = new Cita(dni, fecha, centroNombre);
 		return citaRepository.save(cita);
 	}
 	
@@ -55,15 +55,15 @@ public class CitaDao {
 		return d.get();	
 	}
 	
-	private String findFechaAvailable(String centro) throws CitasCupoNotAvailable {
+	private LocalDateTime findFechaAvailable(String centro) throws CitasCupoNotAvailable {
 		List<Cupo> cupos = cupoDao.getAllCupos();
 		Optional<Cupo> c = cupos.stream().filter(cupo ->
-			cupo.getCentro().getNombre() == centro).findFirst();
+			cupo.getCentro().getNombre().equals(centro)).findFirst();
 		if(!c.isPresent()) {
 			throw new CitasCupoNotAvailable();
 		}
 		
-		return c.get().getFechaInicio().toString();
+		return c.get().getFechaInicio();
 	}
 	
 	public void deleteCita(Cita cita) {
