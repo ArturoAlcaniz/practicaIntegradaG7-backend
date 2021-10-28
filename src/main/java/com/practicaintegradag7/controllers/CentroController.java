@@ -7,7 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,7 +40,7 @@ public class CentroController {
 	}
 	
 	@PostMapping(path="api/centros/create")
-	public Centro crearCentro(@RequestBody Map<String, Object> datosCentro) throws JSONException, CentroExistException, CentroNotFoundException{
+	public Centro crearCentro(@RequestBody Map<String, Object> datosCentro) throws JSONException, CentroExistException{
 		JSONObject jso = new JSONObject(datosCentro);
 		String nombre = jso.getString("nombre");
 		String direccion = jso.getString("direccion");
