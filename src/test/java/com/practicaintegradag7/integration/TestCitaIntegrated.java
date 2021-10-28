@@ -1,5 +1,6 @@
 package com.practicaintegradag7.integration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.LocalDateTime;
@@ -79,6 +80,7 @@ class TestCitaIntegrated {
 		try {
 			citaDao.createCita();
 		} catch (CitasUsuarioNotAvailable e) {
+			assertEquals("Todos los usuarios tienen el maximo de citas", e.getMessage());
 		} catch (CitasCupoNotAvailable e) {
 			fail("CitasUsuarioNotAvailable expected");
 		}
@@ -97,6 +99,7 @@ class TestCitaIntegrated {
 		} catch (CitasUsuarioNotAvailable e) {
 			fail("CitasCupoNotAvailable expected");
 		} catch (CitasCupoNotAvailable e) {
+			assertEquals("No hay cupos disponibles", e.getMessage());
 		} catch (CifradoContrasenaException e) {
 			fail("CitasCupoNotAvailable expected");
 		}

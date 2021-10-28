@@ -71,7 +71,7 @@ class TestCentroIntegrated {
 			aux.addVacunas(randomCenter, nVacs);
 			fail("Vacunas anadidas a centro no existente");
 		} catch (CentroNotFoundException ex) {
-			assertTrue(true);
+			assertTrue(ex.getMessage().contains("no encontrado"));
 		} catch(VacunasNoValidasException ex) {
 			fail(ex.getMessage());
 		}
