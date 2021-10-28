@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.practicaintegradag7.dao.CentroDao;
+import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.VacunasNoValidasException;
 import com.practicaintegradag7.model.Centro;
@@ -29,7 +30,7 @@ public class TestCentroIntegrated {
 	private Centro prueba = new Centro("PRUEBA", "-", 20);
 	
 	@Before
-	public void before() {
+	public void before() throws CentroExistException, CentroNotFoundException {
 		Centro c = aux.createCentro(prueba);
 		if(c.getNombre().equals(prueba.getNombre())) {
 			System.out.println("Centro de prueba anadido correctamente");
