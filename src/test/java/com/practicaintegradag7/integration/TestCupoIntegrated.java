@@ -61,6 +61,7 @@ public class TestCupoIntegrated {
 		fail("CupoExistException expected");
 
 		} catch (CupoExistException e) {
+			e.getMessage();
 		}finally {
 			cupoDao.deleteCupo(cupo);
 			centroDao.deleteCentro(centro);
@@ -117,6 +118,7 @@ public class TestCupoIntegrated {
 		fail("CupoNotFoundException expected");
 
 		} catch (CupoNotFoundException e) {
+			e.getMessage();
 		}finally {
 			cupoDao.deleteCupo(cupo);
 			centroDao.deleteCentro(centro);
@@ -196,6 +198,14 @@ public class TestCupoIntegrated {
 		
 		cupoDao.deleteCupo(cupo);
 		centroDao.deleteCentro(centro);
+	}
+	
+	@Test(expected = CupoNotFoundException.class)
+	public void shouldNotUpdateCupoNotExists() throws CupoNotFoundException {
+		Centro centro = new Centro("Centro 2", "Calle 2", 1);
+		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
+		
+		cupoDao.updateCupo(cupo);
 	}
 	
 	@Test(expected = CupoNotFoundException.class)
