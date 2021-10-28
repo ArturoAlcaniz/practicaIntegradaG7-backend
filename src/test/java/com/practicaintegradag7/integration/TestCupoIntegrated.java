@@ -52,8 +52,12 @@ public class TestCupoIntegrated {
 		Cupo cupoIgual = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
 		
 		try {
-		centroDao.createCentro(centro);
-		cupoDao.saveCupo(cupo);
+			centroDao.createCentro(centro);
+		} catch (CentroExistException e) {
+			e.getMessage();
+		}
+		try {
+			cupoDao.saveCupo(cupo);
 		}catch (CupoExistException e) {
 		}
 		try {
