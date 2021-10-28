@@ -53,7 +53,7 @@ public class TestCupoIntegrated {
 		
 		try {
 			centroDao.createCentro(centro);
-		} catch (CentroExistException e) {
+		}catch (CentroExistException e) {
 			e.getMessage();
 		}
 		try {
@@ -68,6 +68,24 @@ public class TestCupoIntegrated {
 			e.getMessage();
 		}finally {
 			cupoDao.deleteCupo(cupo);
+			centroDao.deleteCentro(centro);
+		}
+	}
+	
+	@Test
+	public void shouldNotSaveCupoBecauseCentroAlreadyExists() throws CentroExistException, CentroNotFoundException  {
+		Centro centro = new Centro("Centro 2", "Calle 2", 1);
+		
+		try {
+			centroDao.createCentro(centro);
+		}catch (CentroExistException e) {
+			e.getMessage();
+		}try {
+			centroDao.createCentro(centro);
+			fail("ExistException expected");
+		}catch (CentroExistException e) {
+			e.getMessage();
+		}finally {
 			centroDao.deleteCentro(centro);
 		}
 	}
