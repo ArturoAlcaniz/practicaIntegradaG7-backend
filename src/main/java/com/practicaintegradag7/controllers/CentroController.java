@@ -49,6 +49,7 @@ public class CentroController {
 		Centro centro = new Centro(nombre, direccion, vacunas);
 		return centroDao.createCentro(centro);
 	}
+	
 	@GetMapping(path="api/centros/obtener")
 	public List<Centro> obtenerCentros(){
 		try {
