@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.VacunasNoValidasException;
 import com.practicaintegradag7.exceptions.CentroExistException;
@@ -21,6 +22,11 @@ public class CentroDao {
 	public Centro createCentro(Centro centro) throws CentroExistException{
 		 existeCentro(centro.getNombre());
 		return centroRepository.insert(centro);
+	}
+	
+	public void existeCentro(String nombre) throws CentroExistException {
+		Optional<Centro> opt = centroRepository.findByNombre(nombre);
+		if(opt.isPresent()) throw new CentroExistException("El centro que desea guardar ya existe.");	
 	}
 	
 	public Centro buscarCentro(String id) throws CentroNotFoundException{
