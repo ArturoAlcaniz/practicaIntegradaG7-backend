@@ -39,6 +39,7 @@ public class CentroController {
 		aux.addVacunas(c.getId(), amount);
 	}
 	
+	
 	@PostMapping(path="api/centros/create")
 	public Centro crearCentro(@RequestBody Map<String, Object> datosCentro) throws JSONException, CentroExistException, CentroNotFoundException{
 		JSONObject jso = new JSONObject(datosCentro);
