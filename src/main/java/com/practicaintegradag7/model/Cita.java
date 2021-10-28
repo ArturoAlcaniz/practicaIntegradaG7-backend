@@ -1,39 +1,38 @@
 package com.practicaintegradag7.model;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "cita")
-public class Cita implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+@Document(collection = "Cita")
+public class Cita {
 
 	@Id
     @Column(name = "dni")
     private String dni;
 
     @Column(name = "fecha")
+    @NotNull
     private LocalDateTime fecha;
 
-    @ManyToOne
-    private Centro centro;
+    @Column(name = "centroNombre")
+    private String centroNombre;
 
-    public Cita(String dni, LocalDateTime fecha) {
+    public Cita(String dni, LocalDateTime fecha, String centroNombre) {
     	
     	if(!validateDNI(dni)) {
-    		throw new IllegalArgumentException("Dni is not valid!");
+    		throw new IllegalArgumentException("Dni no es valido!");
     	}
     	
     	this.dni = dni;
     	this.fecha = fecha;
+    	this.centroNombre = centroNombre;
     }
     
     private boolean validateDNI(String dni) {
@@ -42,12 +41,12 @@ public class Cita implements Serializable {
     	return compareDni.matches();
     }
     
-    public Centro getCentro() {
-    	return centro;
+    public String getCentroNombre() {
+    	return centroNombre;
     }
     
-    public void setCentro(Centro centro) {
-    	this.centro = centro;
+    public void setCentroNombre(Centro centro) {
+    	this.centroNombre = centro.getNombre();
     }
     
     public String getDni() {

@@ -1,31 +1,31 @@
-package com.practicaintegradag7.dao;
+package com.practicaintegradag7.integration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Usuario;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class UsuarioDaoTest {
-	
+class TestUsuarioIntegrated {
+
 	@Autowired
 	private UsuarioDao usuarioDao;
 	
 	@Test
-	public void shouldSaveUsuario() throws CifradoContrasenaException {
+	void shouldSaveUsuario() throws CifradoContrasenaException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
 				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
@@ -40,7 +40,7 @@ public class UsuarioDaoTest {
 	}
 	
 	@Test
-	public void shouldNotSaveUsuario() throws CifradoContrasenaException {
+	void shouldNotSaveUsuario() throws CifradoContrasenaException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new Usuario("05718583J", "Julio", "Morisco Parra", 
 				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
@@ -48,11 +48,9 @@ public class UsuarioDaoTest {
 				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
 		
 		try {
-			System.out.println("---------------------------------------------");
 			usuarioDao.saveUsuario(usuario);
 			System.out.println(usuario.getNombre()+" "+usuario.getApellidos()+" "+usuario.getDni());
 			Usuario aux = usuarioDao.saveUsuario(usuarioMismoDni);
-			System.out.println("-------"+usuarioMismoDni.getNombre()+" "+usuarioMismoDni.getApellidos()+" "+usuarioMismoDni.getDni());
 			assertNull(aux);
 		} catch (CifradoContrasenaException e) {
 			fail(e.getMessage());
@@ -61,7 +59,7 @@ public class UsuarioDaoTest {
 	}
 	
 	@Test
-	public void failWhenUsuarioDniNotEquals() {
+	void failWhenUsuarioDniNotEquals() {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
 				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
@@ -76,7 +74,7 @@ public class UsuarioDaoTest {
 	}
 	
 	@Test
-	public void failWhenSizeIsZero() throws CifradoContrasenaException {
+	void failWhenSizeIsZero() throws CifradoContrasenaException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
 				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
@@ -85,7 +83,6 @@ public class UsuarioDaoTest {
 		} catch (CifradoContrasenaException e) {
 			fail(e.getMessage());
 		}
-		System.out.println("Tamaño de la lista: " +usuarioDao.getAllUsuarios().size());
 		assertNotEquals(0, usuarioDao.getAllUsuarios().size());
 		usuarioDao.deleteUsuarioByDni(usuario.getDni());
 	}
