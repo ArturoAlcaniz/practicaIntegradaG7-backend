@@ -1,14 +1,10 @@
 package com.practicaintegradag7.integration;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,10 +16,10 @@ import com.practicaintegradag7.dao.CupoDao;
 import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
+import com.practicaintegradag7.exceptions.CupoExistException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cupo;
-import com.practicaintegradag7.model.Usuario;
 import com.practicaintegradag7.repos.CupoRepository;
 
 @RunWith(SpringRunner.class)
@@ -35,9 +31,9 @@ public class TestCupoIntegrated {
 	private CupoDao cupoDao = new CupoDao();
 	@Autowired
 	private CentroDao centroDao = new CentroDao();
-	
+		
 	@Test
-	public void shouldSaveCupo() throws CupoNotFoundException, CentroNotFoundException, CentroExistException {
+	public void shouldSaveCupo() throws CupoNotFoundException, CentroNotFoundException, CentroExistException, CupoExistException {
 		Centro centro = new Centro("Centro 2", "Calle 2", 1);
 		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
 		
@@ -49,14 +45,58 @@ public class TestCupoIntegrated {
 		centroDao.deleteCentro(centro);
 	}
 	
-	//test que tiene que comprobar que no se puede crear otro cupo en el mismo centro y a la misma hora
 	@Test
-	public void shouldNotSaveCupo() {
-		assertEquals(true,true);
+	public void shouldNotSaveCupo() throws CentroExistException, CentroNotFoundException, CupoExistException, CupoNotFoundException {
+		Centro centro = new Centro("Centro 2", "Calle 2", 1);
+		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
+		Cupo cupoIgual = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
+		
+		try {
+		centroDao.createCentro(centro);
+		cupoDao.saveCupo(cupo);
+		}catch (CupoExistException e) {
+		}
+		try {
+		cupoDao.saveCupo(cupoIgual);
+		fail("CupoExistException expected");
+
+		} catch (CupoExistException e) {
+		}finally {
+			cupoDao.deleteCupo(cupo);
+			centroDao.deleteCentro(centro);
+		}
 	}
 	
 	@Test
-	public void failWhenCupoInitialDateNotEquals() throws CupoNotFoundException, CentroNotFoundException, CentroExistException {
+	public void failWhenNotGetCupo() throws CentroExistException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
+		Centro centro = new Centro("Centro 2", "Calle 2", 1);
+		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
+		
+		centroDao.createCentro(centro);
+		cupoDao.saveCupo(cupo);
+		
+		assertNotNull(cupoDao.getCupoByInicialDateAndCentro(cupo.getFechaInicio(), cupo.getCentro()));
+		
+		cupoDao.deleteCupo(cupo);
+		centroDao.deleteCentro(centro);
+	}
+	
+	@Test
+	public void failWhenCupoIdNotEquals() throws CupoNotFoundException, CentroNotFoundException, CentroExistException, CupoExistException {
+		Centro centro = new Centro("Centro 2", "Calle 2", 1);
+		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
+		
+		centroDao.createCentro(centro);
+		cupoDao.saveCupo(cupo);
+		
+		assertEquals(cupo.id(), cupoDao.getCupoByInicialDateAndCentro(cupo.getFechaInicio(), cupo.getCentro()).id());
+		
+		cupoDao.deleteCupo(cupo);
+		centroDao.deleteCentro(centro);
+	}
+	
+	@Test
+	public void failWhenCupoInitialDateNotEquals() throws CupoNotFoundException, CentroNotFoundException, CentroExistException, CupoExistException {
 		Centro centro = new Centro("Centro 2", "Calle 2", 1);
 		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
 		
@@ -70,7 +110,7 @@ public class TestCupoIntegrated {
 	}
 	
 	@Test
-	public void failWhenCupoCentroNotEquals() throws CupoNotFoundException, CentroNotFoundException, CentroExistException {
+	public void failWhenCupoCentroNotEquals() throws CupoNotFoundException, CentroNotFoundException, CentroExistException, CupoExistException {
 		Centro centro = new Centro("Centro 2", "Calle 2", 1);
 		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
 		
@@ -84,7 +124,7 @@ public class TestCupoIntegrated {
 	}	
 	
 	@Test
-	public void failWhenCupoNotFindById() throws CupoNotFoundException, CentroNotFoundException, CentroExistException {
+	public void failWhenCupoNotFindById() throws CupoNotFoundException, CentroNotFoundException, CentroExistException, CupoExistException {
 		Centro centro = new Centro("Centro 2", "Calle 2", 1);
 		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
 		

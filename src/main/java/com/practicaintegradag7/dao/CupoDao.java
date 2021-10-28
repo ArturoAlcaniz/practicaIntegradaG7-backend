@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
+import com.practicaintegradag7.exceptions.CupoExistException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cupo;
 import com.practicaintegradag7.repos.CentroRepository;
@@ -22,25 +23,27 @@ public class CupoDao {
 	@Autowired
 	public CentroRepository centroRepository;
 	
-	public Cupo saveCupo(Cupo cupo) throws CentroNotFoundException {
+	public Cupo saveCupo(Cupo cupo) throws CentroNotFoundException, CupoExistException {
 		Optional<Centro> opt = centroRepository.findByNombre(cupo.getCentro().getNombre());
-		if (opt.isPresent()) return cupoRepository.save(cupo);
-		else throw new CentroNotFoundException("El centro "+cupo.getCentro().getNombre()+" no existe");
+		if (opt.isPresent()) {
+			Optional<Cupo> cupoExistente = cupoRepository.findByFechaInicioAndCentro(cupo.getFechaInicio(), cupo.getCentro());
+			if (!cupoExistente.isPresent()) {
+				return cupoRepository.save(cupo);
+			} else throw new CupoExistException("El cupo que intentas crear ya existe");
+		} else throw new CentroNotFoundException("El centro "+cupo.getCentro().getNombre()+"no existe.");
 	}
 	
 	public Cupo getCupoById (String id) throws CupoNotFoundException {
 		Optional<Cupo> opt = cupoRepository.findById(id);
 		if(opt.isPresent()) return opt.get();
-		else throw new CupoNotFoundException("El cupo "+id+" no existe");
+		else throw new CupoNotFoundException("El cupo "+id+" no existe!");
 	}
 	
-	//comprobar solo puede haber una fecha de inicio con un centro
-	
-	/*public Cupo getCupoByInicialDateAndCentro (LocalDateTime fechaInicio, Centro centro) throws CupoNotFoundException {
-		Optional<Cupo> opt = cupoRepository.findByInitialDateAndCentro(fechaInicio, centro);
+	public Cupo getCupoByInicialDateAndCentro (LocalDateTime fechaInicio, Centro centro) throws CupoNotFoundException {
+		Optional<Cupo> opt = cupoRepository.findByFechaInicioAndCentro(fechaInicio, centro);
 		if(opt.isPresent()) return opt.get();
-		else throw new CupoNotFoundException("El cupo del centro "+centro.getNombre()+" con fecha "+fechaInicio+" no existe");
-	}*/
+		else throw new CupoNotFoundException("El cupo del centro "+centro.getNombre()+" con fecha "+fechaInicio+" no existe!!");
+	}
 	
 	public List<Cupo> getAllCupos() {
 		return cupoRepository.findAll();

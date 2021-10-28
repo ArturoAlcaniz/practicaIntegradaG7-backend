@@ -15,5 +15,9 @@ import com.practicaintegradag7.model.Cupo;
 @Repository
 public interface CupoRepository extends MongoRepository<Cupo, Serializable> {
 	@Query("{ 'id': ?0}")
-	Optional<Cupo> findById(String cupo);	
+	Optional<Cupo> findById(String cupo);
+	
+	@Query("{'fechaInicio': ?0, 'centro': ?1}")
+	Optional<Cupo> findByFechaInicioAndCentro(LocalDateTime fechaInicio, Centro centro);
+	
 }
