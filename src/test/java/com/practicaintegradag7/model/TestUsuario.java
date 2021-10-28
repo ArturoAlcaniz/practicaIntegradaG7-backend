@@ -1,11 +1,19 @@
 package com.practicaintegradag7.model;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-import java.time.LocalDateTime;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
-import org.apache.commons.codec.digest.DigestUtils;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 import org.junit.Test;
+
+import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 
 public class TestUsuario {
 	
@@ -105,4 +113,18 @@ public class TestUsuario {
 		assertEquals(centro,usuario.getCentro());
 	}
 	
+	@Test
+	public void encryptAndDecrypt() throws CifradoContrasenaException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+		String DNI = "05718738J";
+		Usuario usuario = new Usuario(DNI, "Francisco", "Morisco Parra", 
+				"franMorisco@gmail.com", "Iso+grupo7", null, "Paciente");
+		try {
+			usuario.encryptDNI();
+		} catch (CifradoContrasenaException e) {
+			fail(e.getMessage());
+		}
+		System.out.println(usuario.getDni()); //just to check
+		usuario.decryptDNI();
+		assertEquals(usuario.getDni(), DNI);
+	}
 }

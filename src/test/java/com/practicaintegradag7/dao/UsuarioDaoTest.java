@@ -5,8 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,9 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Usuario;
-import com.practicaintegradag7.repos.UsuarioRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -26,26 +25,38 @@ public class UsuarioDaoTest {
 	private UsuarioDao usuarioDao;
 	
 	@Test
-	public void shouldSaveUsuario() {
+	public void shouldSaveUsuario() throws CifradoContrasenaException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
 				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
 		
-		assertNotNull(usuarioDao.saveUsuario(usuario));
+		try {
+			assertNotNull(usuarioDao.saveUsuario(usuario));
+		} catch (CifradoContrasenaException e) {
+			fail(e.getMessage());
+		}
 
 		usuarioDao.deleteUsuarioByDni(usuario.getDni());
 	}
 	
 	@Test
-	public void shouldNotSaveUsuario() {
+	public void shouldNotSaveUsuario() throws CifradoContrasenaException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new Usuario("05718583J", "Julio", "Morisco Parra", 
 				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
-		Usuario usuarioMismoDni = new Usuario("05718583J", "Fernando", "Morisco Parra", 
+		Usuario usuarioMismoDni = new Usuario("05718583J", "Julio", "Parra Morisco", 
 				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
 		
-		usuarioDao.saveUsuario(usuario);
-		assertNull(usuarioDao.saveUsuario(usuarioMismoDni));
+		try {
+			System.out.println("---------------------------------------------");
+			usuarioDao.saveUsuario(usuario);
+			System.out.println(usuario.getNombre()+" "+usuario.getApellidos()+" "+usuario.getDni());
+			Usuario aux = usuarioDao.saveUsuario(usuarioMismoDni);
+			System.out.println("-------"+usuarioMismoDni.getNombre()+" "+usuarioMismoDni.getApellidos()+" "+usuarioMismoDni.getDni());
+			assertNull(aux);
+		} catch (CifradoContrasenaException e) {
+			fail(e.getMessage());
+		}
 		usuarioDao.deleteUsuarioByDni(usuario.getDni());
 	}
 	
@@ -54,21 +65,28 @@ public class UsuarioDaoTest {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
 				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
-		usuarioDao.saveUsuario(usuario);
+		try {
+			usuarioDao.saveUsuario(usuario);
+		} catch (CifradoContrasenaException e) {
+			fail(e.getMessage());
+		}
 		
 		assertEquals(usuario.getDni(), usuarioDao.getUsuarioByDni(usuario.getDni()).getDni());
 		usuarioDao.deleteUsuarioByDni(usuario.getDni());
 	}
 	
 	@Test
-	public void failWhenSizeIsZero() {
+	public void failWhenSizeIsZero() throws CifradoContrasenaException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
 				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
-		usuarioDao.saveUsuario(usuario);
+		try {
+			usuarioDao.saveUsuario(usuario);
+		} catch (CifradoContrasenaException e) {
+			fail(e.getMessage());
+		}
 		System.out.println("Tamaño de la lista: " +usuarioDao.getAllUsuarios().size());
 		assertNotEquals(0, usuarioDao.getAllUsuarios().size());
 		usuarioDao.deleteUsuarioByDni(usuario.getDni());
 	}
-	
 }
