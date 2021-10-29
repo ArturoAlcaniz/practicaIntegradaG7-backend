@@ -13,6 +13,8 @@ import javax.crypto.NoSuchPaddingException;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 
@@ -27,12 +29,13 @@ class TestUsuario {
 					"robertoBrasero@a3media.es", "Iso+grupo7", centro, "paciente"));
 	}
 	
-	@Test
-	void checkValidationEmail() {
-		Assertions.assertThrows(IllegalArgumentException.class, () ->
-			new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
-					"email_fail", "Iso+grupo7", centro, "paciente"));
-	}
+	@ParameterizedTest
+	@ValueSource(strings = {"emailfail@", "@emailfail", "roberto&example.com", "roberto#@example.me.org", })
+	void checkValidationEmail(String email) {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> 
+			new Usuario("01234567A", "Roberto", "Brasero Hidalgo", email, "Iso+grupo7", centro,
+				"paciente"));
+	}	
 	
 	@Test
 	void checkValidationRol() {
@@ -48,11 +51,13 @@ class TestUsuario {
 		assertEquals("01234567A",usuario.getDni());
 	}
 	
-	@Test
-	void failWhenTheEmailNotEquals() {
-		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
+	@ParameterizedTest
+	@ValueSource(strings = {"roberto@example.com", "roberto.brasero@example.co.in", "roberto1@example.me.org", "roberto_brasero@example.com",
+							"roberto-brasero@example.com"})
+	void failWhenTheEmailNotEquals(String email) {
+		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", email, "Iso+grupo7", centro,
 				"paciente");
-		assertEquals("robertoBrasero@a3media.es",usuario.getEmail());
+		Assertions.assertEquals(email, usuario.getEmail());
 	}
 	
 	@Test
