@@ -1,6 +1,7 @@
 package com.practicaintegradag7.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.LocalDateTime;
@@ -155,6 +156,12 @@ class TestCitaIntegrated {
 	}
 	
 	@Order(8)
+	@Test
+	void findCitaByDni() {		
+		assertTrue(citaDao.getCitasByDni(citaPrueba.getDni()).size() > 0);
+	}
+	
+	@Order(9)
 	@Test
 	void after() {
 		try {
