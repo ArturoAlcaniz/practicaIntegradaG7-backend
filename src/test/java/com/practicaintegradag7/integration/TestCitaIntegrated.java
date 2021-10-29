@@ -14,7 +14,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+
 import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.dao.CitaDao;
 import com.practicaintegradag7.dao.CupoDao;
@@ -30,11 +33,17 @@ import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cita;
 import com.practicaintegradag7.model.Cupo;
 import com.practicaintegradag7.model.Usuario;
+
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
 @TestMethodOrder(OrderAnnotation.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 class TestCitaIntegrated {
 
 	@Autowired
@@ -48,6 +57,9 @@ class TestCitaIntegrated {
 	
 	@Autowired
 	private final CentroDao centroDao = new CentroDao();
+	
+	@Autowired
+	private MockMvc mockMvc;
 	
 	private static Cita citaPrueba;
 	private static Usuario usuarioPrueba;
@@ -137,6 +149,12 @@ class TestCitaIntegrated {
 	}
 	
 	@Order(7)
+	@Test
+	void validSaveThenReturn200() throws Exception {
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/create").accept(MediaType.ALL)).andExpect(status().isOk());
+	}
+	
+	@Order(8)
 	@Test
 	void after() {
 		try {
