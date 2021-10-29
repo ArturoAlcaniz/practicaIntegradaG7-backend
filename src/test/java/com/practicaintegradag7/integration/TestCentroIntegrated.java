@@ -3,29 +3,43 @@ package com.practicaintegradag7.integration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.Charset;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
 import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.VacunasNoValidasException;
 import com.practicaintegradag7.model.Centro;
 
+
+
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
+@AutoConfigureMockMvc
 class TestCentroIntegrated {
 	@Autowired
 	private final CentroDao aux = new CentroDao();
+	
+	@Autowired
+	private MockMvc mockMvc;
+	
 	private Centro prueba = new Centro("PRUEBA", "-", 20);
 	
 	@BeforeEach
@@ -93,6 +107,16 @@ class TestCentroIntegrated {
 		} catch (CentroNotFoundException e) {
 			assertTrue(true);
 		}
+	}
+	
+	@Test
+	void shouldChangeVaccinesThenReturn200() throws Exception {
+		int vacunas = aux.buscarCentroByNombre(prueba.getNombre()).getVacunas();
+		JSONObject json = new JSONObject();
+		json.put("hospital", prueba.getNombre());
+		json.put("amount", 2);
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/addVaccines").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		assertEquals(vacunas+2, aux.buscarCentroByNombre(prueba.getNombre()).getVacunas());
 	}
 	
 	@AfterEach

@@ -27,10 +27,8 @@ public class CentroController {
 	@Autowired
 	private final CentroDao aux = new CentroDao();
 	
-	@Autowired
-	private CentroDao centroDao;
-	
-	@PostMapping("api/addVaccines")
+	@PostMapping(path="/api/addVaccines")
+
 	public void addVacunas(@RequestBody Map<String, Object> info) throws CentroNotFoundException, VacunasNoValidasException, JSONException {
 		JSONObject jso = new JSONObject(info);
 		String centro = jso.getString("hospital");
@@ -46,13 +44,13 @@ public class CentroController {
 		String direccion = jso.getString("direccion");
 		int vacunas = jso.getInt("vacunas");
 		Centro centro = new Centro(nombre, direccion, vacunas);
-		return centroDao.createCentro(centro);
+		return aux.createCentro(centro);
 	}
 	
 	@GetMapping(path="api/centros/obtener")
 	public List<Centro> obtenerCentros(){
 		try {
-			return centroDao.getAllCitas();
+			return aux.getAllCitas();
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}

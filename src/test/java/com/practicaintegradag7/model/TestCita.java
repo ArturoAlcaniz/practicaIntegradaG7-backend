@@ -27,5 +27,13 @@ class TestCita {
 		Cita cita = new Cita("01234567A", LocalDateTime.of(2021, 10, 20, 12, 00), "");
 		assertEquals(LocalDateTime.of(2021, 10, 20, 12, 00), cita.getFecha());
 	}
+	
+	@Test
+	void failWhenSetCentroNotWork() {
+		Cita cita = new Cita("01234567A", LocalDateTime.of(2021, 10, 20, 12, 00), "");
+		Centro centro = new Centro("Centro 1", "Calle 1", 1);
+		cita.setCentroNombre(centro);
+		assertEquals(centro.getNombre(), cita.getCentroNombre());
+	}
 
 }
