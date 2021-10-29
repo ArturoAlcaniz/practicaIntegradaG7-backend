@@ -1,6 +1,7 @@
 package com.practicaintegradag7.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.security.InvalidAlgorithmParameterException;
@@ -24,9 +25,13 @@ class TestUsuario {
 	
 	@Test
 	void checkValidationDni() {
-		Assertions.assertThrows(IllegalArgumentException.class, () -> 
+		try { 
 			new Usuario("0234M", "Roberto", "Brasero Hidalgo", 
-					"robertoBrasero@a3media.es", "Iso+grupo7", centro, "paciente"));
+					"robertoBrasero@a3media.es", "Iso+grupo7", centro, "paciente");
+			
+		} catch (IllegalArgumentException e) { 
+			assertTrue(true);
+		}
 	}
 	
 	@ParameterizedTest
@@ -134,5 +139,24 @@ class TestUsuario {
 		}
 		usuario.decryptDNI();
 		assertEquals(usuario.getDni(), DNI);
+	}
+	
+	@Test
+	void failWhenSetPasswordNotWork() {
+		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
+				"paciente");
+		usuario.setPassword("iso");
+		assertEquals("iso", usuario.getPassword());
+	}
+	
+	@Test
+	void failWhenNameIsLengthMoreThan16() {
+		Usuario usuario = new Usuario("01234567A", "Roberto fernando Roberto fernando Roberto fernando", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
+				"paciente");
+		try {
+			usuario.encryptDNI();
+		} catch (CifradoContrasenaException e) {
+			assertTrue(true);
+		}
 	}
 }

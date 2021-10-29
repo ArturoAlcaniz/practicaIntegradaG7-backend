@@ -143,31 +143,45 @@ class TestCitaIntegrated {
 	}
 	
 	@Order(6)
+	void failWhenCreateMoreThan2Citas() {
+		try {
+			citaDao.createCita();
+			citaDao.createCita();
+		} catch (CitasUsuarioNotAvailable e) {
+			assertTrue(true);
+		} catch (CitasCupoNotAvailable e) {
+			fail("CitasCupoNotAvailbale not expected");
+		} catch (CifradoContrasenaException e) {
+			fail("CifradoContraseñaException not expected");
+		}
+	}
+	
+	@Order(7)
 	@Test
 	void zeroCitas() {
 		citaDao.deleteCita(citaPrueba);
 		Assertions.assertEquals(0, citaDao.getAllCitas().size());
 	}
 	
-	@Order(7)
+	@Order(8)
 	@Test
 	void validSaveThenReturn200() throws Exception {
 		mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/create").accept(MediaType.ALL)).andExpect(status().isOk());
 	}
 	
-	@Order(8)
+	@Order(9)
 	@Test
 	void findCitaByDni() {		
 		assertTrue(citaDao.getCitasByDni(citaPrueba.getDni()).size() > 0);
 	}
 	
-	@Order(9)
+	@Order(10)
 	@Test
 	void checkCentroCita() {
 		assertEquals(citaDao.getCitasByDni(citaPrueba.getDni()).get(0).getCentroNombre(), centroPrueba.getNombre());
 	}
 	
-	@Order(9)
+	@Order(11)
 	@Test
 	void after() {
 		try {

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
@@ -85,5 +86,19 @@ class TestUsuarioIntegrated {
 		}
 		assertNotEquals(0, usuarioDao.getAllUsuarios().size());
 		usuarioDao.deleteUsuarioByDni(usuario.getDni());
+	}
+	
+	@Test
+	void failWhenPasswordNotValid() {
+		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
+		Usuario usuario = new Usuario("01118583J", "Francisco", "Morisco Parra", 
+				"franMorisco@gmail.com", "7", centro, "Paciente");
+		try {
+			usuarioDao.saveUsuario(usuario);
+		} catch (CifradoContrasenaException e) {
+			fail("IllegalArgumentException expected");
+		} catch (IllegalArgumentException e) {
+			assertTrue(e.toString().contains("not valid"));
+		}
 	}
 }
