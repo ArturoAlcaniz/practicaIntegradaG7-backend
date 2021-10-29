@@ -98,8 +98,9 @@ public class Usuario {
     }
 	
     private boolean validateEmail(String email) {
-		EmailValidator validator = EmailValidator.getInstance();
-		return validator.isValid(email);
+    	Pattern regexEmail = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");//("^(.+)@(.+)$");
+    	Matcher compareEmail = regexEmail.matcher(email); 
+    	return compareEmail.matches();
 	}
 	
 	
