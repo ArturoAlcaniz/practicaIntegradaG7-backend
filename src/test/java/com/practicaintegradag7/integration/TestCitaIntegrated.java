@@ -163,6 +163,12 @@ class TestCitaIntegrated {
 	
 	@Order(9)
 	@Test
+	void checkCentroCita() {
+		assertEquals(citaDao.getCitasByDni(citaPrueba.getDni()).get(0).getCentroNombre(), centroPrueba.getNombre());
+	}
+	
+	@Order(9)
+	@Test
 	void after() {
 		try {
 			if(centroPrueba != null) { 
