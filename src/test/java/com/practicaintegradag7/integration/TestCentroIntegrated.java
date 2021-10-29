@@ -109,6 +109,17 @@ class TestCentroIntegrated {
 	}
 	
 	@Test
+	void failVacunasNotValid() {
+		try {
+			aux.addVacunas(prueba.getNombre(), -1);
+		} catch (CentroNotFoundException e) {
+			fail("VacunasNoValidasException expected");
+		} catch (VacunasNoValidasException e) {
+			assertTrue(e.toString().contains("mayor que 0"));
+		}
+	}
+	
+	@Test
 	void shouldChangeVaccinesThenReturn200() throws Exception {
 		int vacunas = aux.buscarCentroByNombre(prueba.getNombre()).getVacunas();
 		JSONObject json = new JSONObject();
@@ -124,6 +135,11 @@ class TestCentroIntegrated {
 			aux.deleteCentro(prueba);
 		} catch (CentroNotFoundException ex) {
 			fail(ex.getMessage());
+		}
+		try {
+			aux.deleteCentro(prueba);
+		} catch (CentroNotFoundException e) {
+			assertTrue(e.toString().contains("no encontrado"));
 		}
 	}
 }

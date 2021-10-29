@@ -36,10 +36,6 @@ public class CentroDao {
 		else throw new CentroNotFoundException("El centro "+centro+" no existe");
 	}
 	
-	public Optional<Centro> getCitasByDni(String id) {
-		return centroRepository.findById(id);
-	}
-	
 	public List<Centro> getAllCitas() {
 		return centroRepository.findAll();
 	}
