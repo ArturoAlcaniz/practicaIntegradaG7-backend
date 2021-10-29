@@ -45,7 +45,6 @@ class CentroControllerTest {
 		json.put("direccion", centro.getDireccion());
 		json.put("vacunas", centro.getVacunas());
 		mockMvc.perform( MockMvcRequestBuilders.post("api/centros/create").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
-		
 	}
 	
 	@AfterEach
