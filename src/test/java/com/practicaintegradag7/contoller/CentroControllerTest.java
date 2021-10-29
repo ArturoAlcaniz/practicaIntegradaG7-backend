@@ -1,25 +1,23 @@
 package com.practicaintegradag7.contoller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Map;
+import org.json.JSONObject;
 
-import org.json.JSONException;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.practicaintegradag7.controllers.CentroController;
 import com.practicaintegradag7.dao.CentroDao;
-import com.practicaintegradag7.exceptions.CentroExistException;
+import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.model.Centro;
 
 @ExtendWith(SpringExtension.class)
@@ -30,22 +28,33 @@ class CentroControllerTest {
 	private Centro centro;
 	
 	@Autowired
-	private CentroController controller;
+	private MockMvc mockMvc;
+	
+	@Autowired
+	private CentroDao dao;
 	
 	@BeforeEach
-	public void before() {
-		centro = new Centro("Hospital 1", "Calle Paloma", 10);
+	void before() {
+		centro = new Centro("Hospital prueba", "--", 10);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Test
-	void crearCentroTest() {
+	void shouldChangeCentroThenReturn200() throws Exception{
+		JSONObject json = new JSONObject();
+		json.put("hospital", centro.getNombre());
+		json.put("direccion", centro.getDireccion());
+		json.put("vacunas", centro.getVacunas());
+		mockMvc.perform( MockMvcRequestBuilders.post("api/centros/create").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		
+	}
+	
+	@AfterEach
+	public void after() {
 		try {
-			controller.crearCentro((Map<String, Object>) centro);
-		} catch (JSONException e) {
-			fail(e.getMessage());
-		} catch (CentroExistException e) {
-			fail(e.getMessage());
+			dao.deleteCentro(centro);
+		} catch (CentroNotFoundException ex) {
+			fail(ex.getMessage());
 		}
 	}
+
 }
