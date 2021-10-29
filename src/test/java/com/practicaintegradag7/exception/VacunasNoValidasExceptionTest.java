@@ -7,27 +7,26 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import com.practicaintegradag7.exceptions.CentroExistException;
+import com.practicaintegradag7.exceptions.VacunasNoValidasException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class CentroExistExceptionTest {
-	
+public class VacunasNoValidasExceptionTest {
+
 	@Autowired
-	CentroExistException ex;
+	VacunasNoValidasException vac;
 	
 	@Before
 	public void before() {
-		ex = new CentroExistException("Error el centro ya existe");
+		vac = new VacunasNoValidasException("Vacunas no válidas");
 	}
 	
 	@Test
 	public void testCentroExistException () {
 		
-		String antiguo = ex.getMessage();
-		String nuevo = "Error el centro ya existe";
+		String antiguo = vac.getMessage();
+		String nuevo = "Vacunas no válidas";
 		assertEquals(antiguo, nuevo);
 		
 	}
-	
 }
