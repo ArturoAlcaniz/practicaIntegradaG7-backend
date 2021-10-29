@@ -162,10 +162,12 @@ public class Usuario {
 		byte[] aux;
 		
 		try {
-			String keyS = this.nombre;
-			if(keyS.length() < 16)
-				while(keyS.length() < 16) keyS += 'a';
+			StringBuilder builder = new StringBuilder();
+			builder.append(this.nombre);
+			if(builder.toString().length() < 16)
+				while(builder.toString().length() < 16) builder.append('a');
 			String flag = "a";
+			String keyS = builder.toString();
 	        Key aesKey = new SecretKeySpec(keyS.getBytes(), "AES");
 	        final Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
 	        GCMParameterSpec parameterSpec = new GCMParameterSpec(128, flag.getBytes());
@@ -219,9 +221,11 @@ public class Usuario {
 		byte[] bytes = Base64.getDecoder().decode(pwd.getBytes());
 		
 		try {
-			String keyS = this.nombre;
-			if(keyS.length() < 16)
-				while(keyS.length() < 16) keyS += 'a';
+			StringBuilder builder = new StringBuilder();
+			builder.append(this.nombre);
+			if(builder.toString().length() < 16)
+				while(builder.toString().length() < 16) builder.append('a');
+			String keyS = builder.toString();
 			Key aesKey = new SecretKeySpec(keyS.getBytes(), "AES");
 			AlgorithmParameterSpec gcmIv = new GCMParameterSpec(128, bytes, 0, 1);
 			Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
