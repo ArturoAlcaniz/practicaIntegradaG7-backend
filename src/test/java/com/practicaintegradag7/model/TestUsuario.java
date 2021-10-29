@@ -30,23 +30,40 @@ class TestUsuario {
 					"robertoBrasero@a3media.es", "Iso+grupo7", centro, "paciente");
 			
 		} catch (IllegalArgumentException e) { 
-			assertTrue(true);
+			assertTrue(e.toString().contains("Dni is not valid"));
 		}
 	}
 	
 	@ParameterizedTest
 	@ValueSource(strings = {"emailfail@", "@emailfail", "roberto&example.com", "roberto#@example.me.org", })
 	void checkValidationEmail(String email) {
-		Assertions.assertThrows(IllegalArgumentException.class, () -> 
+		try {
 			new Usuario("01234567A", "Roberto", "Brasero Hidalgo", email, "Iso+grupo7", centro,
-				"paciente"));
+				"paciente");
+		} catch (IllegalArgumentException e) {
+			assertTrue(e.toString().contains("Email is not valid"));
+		}
 	}	
 	
 	@Test
 	void checkValidationRol() {
-		Assertions.assertThrows(IllegalArgumentException.class, () ->
+		try {
 			new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
-					"robertoBrasero@a3media.es", "Iso+grupo7", centro, "obrero"));
+					"robertoBrasero@a3media.es", "Iso+grupo7", centro, "obrero");
+		} catch (IllegalArgumentException e) {
+			assertTrue(e.toString().contains("Rol is not valid"));
+		}
+	}
+	
+	@Test
+	void notFailCorrectRoles() {
+		new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
+				"robertoBrasero@a3media.es", "Iso+grupo7", centro, "administrador");
+		new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
+				"robertoBrasero@a3media.es", "Iso+grupo7", centro, "sanitario");
+		new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
+				"robertoBrasero@a3media.es", "Iso+grupo7", centro, "paciente");
+		assertTrue(true);
 	}
 	
 	@Test

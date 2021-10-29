@@ -101,4 +101,18 @@ class TestUsuarioIntegrated {
 			assertTrue(e.toString().contains("not valid"));
 		}
 	}
+	
+	@Test
+	void failWhenPasswordNotValid2() {
+		Centro centro = new Centro("Hospital", "Calle Paloma", 10);
+		Usuario usuario = new Usuario("01118583J", "Francisco", "Morisco Parra", 
+				"franMorisco@gmail.com", "a", centro, "Paciente");
+		try {
+			usuarioDao.saveUsuario(usuario);
+		} catch (CifradoContrasenaException e) {
+			fail("IllegalArgumentException expected");
+		} catch (IllegalArgumentException e) {
+			assertTrue(e.toString().contains("not valid"));
+		}
+	}
 }

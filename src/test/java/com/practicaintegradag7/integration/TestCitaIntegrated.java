@@ -63,7 +63,9 @@ class TestCitaIntegrated {
 	private MockMvc mockMvc;
 	
 	private static Cita citaPrueba;
+	private static Cita citaPrueba2;
 	private static Usuario usuarioPrueba;
+	private static Usuario usuarioPrueba2;
 	private static Centro centroPrueba;
 	private static Cupo cupoPrueba;
 	
@@ -104,7 +106,6 @@ class TestCitaIntegrated {
 	void failWhenNotCuposAvailable() {
 		Random random = new Random();
 		String dni = random.nextInt(10)+"0"+random.nextInt(10)+"2"+random.nextInt(10)+"1"+random.nextInt(10)+"1"+"A";
-		System.out.println(centroPrueba.getNombre());
 		usuarioPrueba = new Usuario(dni, "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centroPrueba, "paciente");
 		try {
 			usuarioDao.saveUsuario(usuarioPrueba);
@@ -183,6 +184,19 @@ class TestCitaIntegrated {
 	
 	@Order(11)
 	@Test
+	void findUsuarioWithCitasDifferentDni() throws CifradoContrasenaException, CitasUsuarioNotAvailable, CitasCupoNotAvailable {
+		Random random = new Random();
+		String dni = random.nextInt(10)+"0"+random.nextInt(10)+"2"+random.nextInt(10)+"1"+random.nextInt(10)+"1"+"A";
+		usuarioPrueba2 = new Usuario(dni, "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centroPrueba, "paciente");
+		usuarioDao.saveUsuario(usuarioPrueba2);
+		citaDao.createCita();
+		citaDao.createCita();
+		citaDao.createCita();
+		assertTrue(citaDao.getAllCitas().size() > 2);
+	}
+	
+	@Order(12)
+	@Test
 	void after() {
 		try {
 			if(centroPrueba != null) { 
@@ -196,6 +210,12 @@ class TestCitaIntegrated {
 			}
 			if(citaPrueba != null) {
 				citaDao.deleteCita(citaPrueba);
+			}
+			if(citaPrueba2 != null) {
+				citaDao.deleteCita(citaPrueba2);
+			}
+			if(usuarioPrueba2 != null) {
+				usuarioDao.deleteUsuarioByDni(usuarioPrueba2.getDni());
 			}
 		} catch (CentroNotFoundException e) {
 			fail("CentroNotFoundException not expected");
