@@ -32,7 +32,6 @@ class TestUsuario {
 	@ParameterizedTest
 	@ValueSource(strings = {"emailfail@", "@emailfail", "roberto&example.com", "roberto#@example.me.org", })
 	void checkValidationEmail(String email) {
-		Centro centro = new Centro("Centro 1", "Calle 1", 10);
 		Assertions.assertThrows(IllegalArgumentException.class, () -> 
 			new Usuario("01234567A", "Roberto", "Brasero Hidalgo", email, "Iso+grupo7", centro,
 				"paciente"));
@@ -52,11 +51,13 @@ class TestUsuario {
 		assertEquals("01234567A",usuario.getDni());
 	}
 	
-	@Test
-	void failWhenTheEmailNotEquals() {
-		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
+	@ParameterizedTest
+	@ValueSource(strings = {"roberto@example.com", "roberto.brasero@example.co.in", "roberto1@example.me.org", "roberto_brasero@example.com",
+							"roberto-brasero@example.com"})
+	void failWhenTheEmailNotEquals(String email) {
+		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", email, "Iso+grupo7", centro,
 				"paciente");
-		assertEquals("robertoBrasero@a3media.es",usuario.getEmail());
+		Assertions.assertEquals(email, usuario.getEmail());
 	}
 	
 	@Test
