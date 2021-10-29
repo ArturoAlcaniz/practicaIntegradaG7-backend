@@ -1,6 +1,5 @@
 package com.practicaintegradag7.model;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -33,6 +32,7 @@ class TestUsuario {
 	@ParameterizedTest
 	@ValueSource(strings = {"emailfail@", "@emailfail", "roberto&example.com", "roberto#@example.me.org", })
 	void checkValidationEmail(String email) {
+		Centro centro = new Centro("Centro 1", "Calle 1", 10);
 		Assertions.assertThrows(IllegalArgumentException.class, () -> 
 			new Usuario("01234567A", "Roberto", "Brasero Hidalgo", email, "Iso+grupo7", centro,
 				"paciente"));
@@ -49,78 +49,76 @@ class TestUsuario {
 	void failWhenTheDniNotEquals() {
 		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "hola@gmail.com", "Iso+grupo7", centro,
 				"paciente");
-		Assertions.assertEquals("01234567A",usuario.getDni());
+		assertEquals("01234567A",usuario.getDni());
 	}
 	
-	@ParameterizedTest
-	@ValueSource(strings = {"roberto@example.com", "roberto.brasero@example.co.in", "roberto1@example.me.org", "roberto_brasero@example.com",
-							"roberto-brasero@example.com"})
-	void failWhenTheEmailNotEquals(String email) {
-		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", email, "Iso+grupo7", new Centro("Centro 1", "Calle 1", 10),
+	@Test
+	void failWhenTheEmailNotEquals() {
+		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
 				"paciente");
-		Assertions.assertEquals(email, usuario.getEmail());
+		assertEquals("robertoBrasero@a3media.es",usuario.getEmail());
 	}
 	
 	@Test
 	void failWhenThePasswordNotEquals() {
 		Usuario usuario = new Usuario("01234567A", "A", "B", "a@a.es", "Iso+grupo7", centro, "paciente");
-		Assertions.assertEquals("Iso+grupo7",usuario.getPassword());
+		assertEquals("Iso+grupo7",usuario.getPassword());
 	}
 	
 	@Test
 	void failWhenTheRolPacienteNotEquals() {
 		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
 				"paciente");
-		Assertions.assertEquals("paciente",usuario.getRol());
+		assertEquals("paciente",usuario.getRol());
 	}
 
 	@Test
 	void failWhenTheRolSanitarioNotEquals() {
 		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
 				"sanitario");
-		Assertions.assertEquals("sanitario",usuario.getRol());
+		assertEquals("sanitario",usuario.getRol());
 	}
 
 	@Test
 	void failWhenTheRolAdministradorNotEquals() {
 		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
 				"Administrador");
-		Assertions.assertEquals("administrador",usuario.getRol());
+		assertEquals("administrador",usuario.getRol());
 	}
 	
 	@Test
 	void failWhenTheNombreNotEquals() {
 		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
 				"paciente");
-		Assertions.assertEquals("Roberto",usuario.getNombre());
+		assertEquals("Roberto",usuario.getNombre());
 	}
 
 	@Test
 	void failWhenTheApellidosNotEquals() {
 		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
 				"paciente");
-		Assertions.assertEquals("Brasero Hidalgo",usuario.getApellidos());
+		assertEquals("Brasero Hidalgo",usuario.getApellidos());
 	}
 
 	@Test
 	void failWhenThePrimeraDosisNotEquals() {
 		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
 				"paciente");
-		Assertions.assertEquals(false,usuario.isPrimeraDosis());
+		assertEquals(false,usuario.isPrimeraDosis());
 	}
 	
 	@Test
 	void failWhenTheSegundaDosisNotEquals() {
 		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
 				"paciente");
-		Assertions.assertEquals(false,usuario.isSegundaDosis());
+		assertEquals(false,usuario.isSegundaDosis());
 	}
 	
 	@Test
 	void failWhenTheCentroNotEquals() {
 		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
 				"paciente");
-		Assertions.assertEquals(centro,usuario.getCentro());
+		assertEquals(centro,usuario.getCentro());
 	}
 
 	@Test
@@ -134,6 +132,6 @@ class TestUsuario {
 			fail(e.getMessage());
 		}
 		usuario.decryptDNI();
-		Assertions.assertEquals(usuario.getDni(), DNI);
+		assertEquals(usuario.getDni(), DNI);
 	}
 }
