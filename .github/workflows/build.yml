@@ -16,6 +16,7 @@ on:
       - desarrollo
       - FixTests_UsuarioDaoRepository
       - H12-2
+      - ControllerCentro
       - MejorasFinSprint_validateEmail
   pull_request:
     types: [opened, synchronize, reopened]
