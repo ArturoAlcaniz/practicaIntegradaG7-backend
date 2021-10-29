@@ -20,7 +20,7 @@ public class CentroController {
 	@Autowired
 	private final CentroDao aux = new CentroDao();
 	
-	@PostMapping("api/addVaccines")
+	@PostMapping(path="/api/addVaccines")
 	public void addVacunas(@RequestBody Map<String, Object> info) throws CentroNotFoundException, VacunasNoValidasException, JSONException {
 		JSONObject jso = new JSONObject(info);
 		String centro = jso.getString("hospital");
