@@ -44,6 +44,7 @@ public class UsuarioDao {
 	}
 	
 	private boolean validatePasswordPolicy(String password) {
+		if(password.charAt(0) == 'a') return false;
 		String pattern = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}";
 		return password.matches(pattern);
 }
