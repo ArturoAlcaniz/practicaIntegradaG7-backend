@@ -1,5 +1,6 @@
 package com.practicaintegradag7.contoller;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,7 +46,15 @@ class CentroControllerTest {
 		json.put("direccion", centro.getDireccion());
 		json.put("vacunas", centro.getVacunas());
 		mockMvc.perform( MockMvcRequestBuilders.post("api/centros/create").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		dao.existeCentro(centro.getNombre());
+		assertTrue(true);
 	}
+	
+	@Test
+	void testObtenerCentros() throws Exception {
+		mockMvc.perform( MockMvcRequestBuilders.get("/api/centros/obtener").accept(MediaType.ALL)).andExpect(status().isOk());
+	}
+	
 	
 	@AfterEach
 	public void after() {

@@ -19,7 +19,7 @@ public class CentroDao {
 	public CentroRepository centroRepository;
 	
 	public Centro createCentro(Centro centro) throws CentroExistException{
-		 existeCentro(centro.getNombre());
+		existeCentro(centro.getNombre());
 		return centroRepository.insert(centro);
 	}
 	
