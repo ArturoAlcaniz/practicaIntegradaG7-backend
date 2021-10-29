@@ -1,4 +1,4 @@
-package com.practicaintegradag7.contoller;
+package com.practicaintegradag7.integration;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -23,7 +23,7 @@ import com.practicaintegradag7.model.Centro;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-class CentroControllerTest {
+class TestCentroController {
 	
 	@Autowired
 	private Centro centro;
