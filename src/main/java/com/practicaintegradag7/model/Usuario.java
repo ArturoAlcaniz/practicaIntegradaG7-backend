@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 import javax.persistence.Column;
 import javax.persistence.Id;
 
-import org.apache.commons.validator.EmailValidator;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
@@ -98,7 +97,7 @@ public class Usuario {
     }
 	
     private boolean validateEmail(String email) {
-    	Pattern regexEmail = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");//("^(.+)@(.+)$");
+    	Pattern regexEmail = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
     	Matcher compareEmail = regexEmail.matcher(email); 
     	return compareEmail.matches();
 	}

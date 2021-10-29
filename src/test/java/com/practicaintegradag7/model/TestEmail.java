@@ -1,19 +1,8 @@
 package com.practicaintegradag7.model;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 import org.junit.Test;
-
-import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 
 public class TestEmail {	
 	
