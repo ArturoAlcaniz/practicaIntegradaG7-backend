@@ -8,6 +8,7 @@ on:
       - Crear_centros
       - Crear_RepositoryCita
       - Crear_usuario
+      - Crear_CitaController
       - Crear_RepositoryUsuario_UsuarioDao
       - Crear_RepositoryCentro
       - Hash_en_contraseñas

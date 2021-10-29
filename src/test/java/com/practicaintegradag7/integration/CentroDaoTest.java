@@ -1,4 +1,4 @@
-package com.practicaintegradag7.dao;
+package com.practicaintegradag7.integration;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -9,6 +9,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.model.Centro;
 

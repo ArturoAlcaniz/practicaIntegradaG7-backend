@@ -1,46 +1,51 @@
 package com.practicaintegradag7.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDateTime;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public class TestCupo {
+class TestCupo {
 	
-	@Test(expected = IllegalArgumentException.class)
-	public void checkValidationFecha() {
-		Cupo cupo = new Cupo(LocalDateTime.now().plusMinutes(15), LocalDateTime.now(), 10,new Centro("Centro 1", "Calle 1", 1));
-		cupo.getFechaFin();
-	}
+	private static final Centro centro = new Centro("Centro 1", "Calle 1", 1); 
+	private static final LocalDateTime fechaInicio = LocalDateTime.now().plusMinutes(15);
+	private static final LocalDateTime fechaFin = LocalDateTime.now();
 	
-	@Test(expected = IllegalArgumentException.class)
-	public void checkValidationFechaActual() {
-		Cupo cupo = new Cupo(LocalDateTime.now().minusMinutes(15), LocalDateTime.now(), 10,new Centro("Centro 1", "Calle 1", 1));
-		cupo.getFechaFin();
+	
+	@Test
+	void checkValidationFecha() {
+		Assertions.assertThrows(IllegalArgumentException.class, () ->
+			new Cupo(fechaInicio, fechaFin, 10, centro));
 	}
 	
 	@Test
-	public void failWhenFechaInicioNotEquals() {
+	void checkValidationFechaActual() {
+		Assertions.assertThrows(IllegalArgumentException.class, () ->
+			new Cupo(fechaInicio, fechaFin, 10, centro));
+	}
+	
+	@Test
+	void failWhenFechaInicioNotEquals() {
 		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,new Centro("Centro 1", "Calle 1", 1));
 		assertEquals(LocalDateTime.of(2022, 10, 20, 12, 00), cupo.getFechaInicio());
 	}
 	
 	@Test
-	public void failWhenFechaFinNotEquals() {
+	void failWhenFechaFinNotEquals() {
 		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,new Centro("Centro 1", "Calle 1", 1));
 		assertEquals(LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), cupo.getFechaFin());
 	}
 	
 	@Test
-	public void failWhenNumeroCitasNotEquals() {
+	void failWhenNumeroCitasNotEquals() {
 		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,new Centro("Centro 1", "Calle 1", 1));
 		assertEquals(10, cupo.getNumeroCitas());
 	}
 
 	@Test
-	public void failWhenCentroNotEquals() {
-		Centro centro = new Centro("Centro 1", "Calle 1", 1);
+	void failWhenCentroNotEquals() {
 		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
 		assertEquals(centro, cupo.getCentro());
 	}
