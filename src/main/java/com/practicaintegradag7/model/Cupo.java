@@ -44,7 +44,7 @@ public class Cupo {
 	}
 	
 	private boolean validateFechas(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
-    	return fechaInicio.isBefore(fechaFin) && !fechaInicio.isBefore(LocalDateTime.now());
+    	return fechaInicio.isBefore(fechaFin);
     }
 	
 	public String id() {

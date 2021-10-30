@@ -29,7 +29,6 @@ public class CitaDao {
 	
 	public Cita createCita() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable, CifradoContrasenaException {
 		Usuario usuario = findUsuarioAvailable();
-		usuario.decryptDNI();
 		String dni = usuario.getDni();
 		LocalDateTime fecha = findFechaAvailable(usuario.getCentro().getNombre());
 		String centroNombre = usuario.getCentro().getNombre();
