@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
 import com.practicaintegradag7.model.Cita;
@@ -27,7 +26,7 @@ public class CitaDao {
 	@Autowired
 	public CupoDao cupoDao;
 	
-	public Cita createCita() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable, CifradoContrasenaException {
+	public Cita createCita() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable {
 		Usuario usuario = findUsuarioAvailable();
 		String dni = usuario.getDni();
 		LocalDateTime fecha = findFechaAvailable(usuario.getCentro().getNombre());

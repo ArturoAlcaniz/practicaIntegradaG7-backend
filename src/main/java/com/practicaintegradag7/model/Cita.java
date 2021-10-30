@@ -1,13 +1,9 @@
 package com.practicaintegradag7.model;
 
 import java.time.LocalDateTime;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
-
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "Cita")
