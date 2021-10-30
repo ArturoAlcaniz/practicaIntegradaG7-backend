@@ -11,11 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import com.practicaintegradag7.dao.UsuarioDao;
+import com.practicaintegradag7.dao.CentrooDao;
 import java.util.List;
 
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Usuario;
-import com.practicaintegradag7.repos.CentroRepository;
 
 @CrossOrigin(origins = {"http://localhost:3000", "https://iso-g7-frontend.herokuapp.com"})
 @RestController
@@ -23,6 +24,9 @@ public class UsuarioController {
 	
 	@Autowired
 	private UsuarioDao user;
+
+	@Autowired
+	private CentroDao dao;
 	
 	@PostMapping(path="api/usuario/create")
 	public Usuario crearUsuario(@RequestBody Map<String, Object> datosUsuario) {
@@ -32,7 +36,7 @@ public class UsuarioController {
 		String apellidos = jso.getString("apellidos");
 		String email = jso.getString("email");
 		String password = jso.getString("password");
-		Centro centro = CentroRepository.findByNombre(jso.getString("centro"));
+		Centro centro = dao.buscarCentroByNombre(jso.getString("centro"));
 		String rol = jso.getString("rol");
 		Usuario useri= new Usuario(dni, nombre, apellidos, email, password, centro, rol);
 		return user.saveUsuario(useri);
