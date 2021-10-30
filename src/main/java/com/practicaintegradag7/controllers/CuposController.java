@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.dao.CupoDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
+import com.practicaintegradag7.exceptions.CupoExistException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cupo;
 
