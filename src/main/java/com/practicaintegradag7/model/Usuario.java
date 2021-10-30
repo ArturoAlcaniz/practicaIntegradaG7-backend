@@ -60,10 +60,6 @@ public class Usuario {
 	
 	public Usuario(String dni, String nombre, String apellidos, String email, String password, Centro centro,
 			String rol) {
-    	if(!validateDNI(dni)) {
-    		throw new IllegalArgumentException("Dni is not valid!");
-    	}
-
 		if (!validateEmail(email)) {
 			throw new IllegalArgumentException("Email is not valid!");
 		}
@@ -93,13 +89,6 @@ public class Usuario {
 	public void hashPassword() {
 		this.password = DigestUtils.sha256Hex(password);
 	}
-
-    private boolean validateDNI(String dni) {
-    	if(dni.charAt(0) == 'a') return true;
-    	Pattern regexDni = Pattern.compile("[0-9]{7,8}[A-Z a-z]");
-    	Matcher compareDni = regexDni.matcher(dni); 
-    	return compareDni.matches();
-    }
 	
     private boolean validateEmail(String email) {
     	Pattern regexEmail = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");

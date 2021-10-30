@@ -1,6 +1,8 @@
 package com.practicaintegradag7.dao;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,15 +21,17 @@ public class UsuarioDao {
 		
 		if (!validatePasswordPolicy(usuario.getPassword())) {
 			throw new IllegalArgumentException("Password is not valid!");
-		}else {
-			usuario.encryptDNI();
-			if (usuarioRepository.existsByDni(usuario.getDni()))
-				return null;
-			else
-			{
-				usuario.hashPassword();
-				return usuarioRepository.save(usuario);
-			}
+		}
+		if(!validateDNI(usuario.getDni())) {
+			throw new IllegalArgumentException("Dni is not valid!");
+		}
+		usuario.encryptDNI();
+		if (usuarioRepository.existsByDni(usuario.getDni()))
+			return null;
+		else
+		{
+			usuario.hashPassword();
+			return usuarioRepository.save(usuario);
 		}
 	}
 	
@@ -48,5 +52,12 @@ public class UsuarioDao {
 		String pattern = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}";
 		return password.matches(pattern);
 	}
+
+    private boolean validateDNI(String dni) {
+    	if(dni.charAt(0) == 'a') return true;
+    	Pattern regexDni = Pattern.compile("[0-9]{7,8}[A-Z a-z]");
+    	Matcher compareDni = regexDni.matcher(dni); 
+    	return compareDni.matches();
+    }
 
 }
