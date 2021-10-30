@@ -17,13 +17,13 @@ import com.practicaintegradag7.model.Cupo;
 
 public class CuposController {
 	@Autowired
-	private final CentroDao aux;
+	private CentroDao aux;
 	@Autowired
-	private final CupoDao cupodao;
+	private CupoDao cupodao;
 	
 
 	@PostMapping(path="api/cupo/create")
-	public Cupo crearCupos(@RequestBody Map<String, Object> datosCupo) throws JSONException, CentroNotFoundException {
+	public Cupo crearCupos(@RequestBody Map<String, Object> datosCupo) throws JSONException, CentroNotFoundException, CupoExistException {
 		JSONObject jso = new JSONObject(datosCupo);
 		String fechaini =  jso.getString("fecha fin");
 		LocalDateTime fechainicio = LocalDateTime.parse(fechaini);
