@@ -25,10 +25,10 @@ public class UsuarioDao {
 				return null;
 			else
 			{
+				usuario.hashPassword();
 				return usuarioRepository.save(usuario);
 			}
 		}
-		
 	}
 	
 	public Usuario getUsuarioByDni(String dni) {
@@ -47,6 +47,6 @@ public class UsuarioDao {
 		if(password.charAt(0) == 'a') return false;
 		String pattern = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}";
 		return password.matches(pattern);
-}
+	}
 
 }

@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
@@ -87,6 +88,10 @@ public class Usuario {
 		this.centro = centro;
 		this.rol = rol.toLowerCase();
 		
+	}
+	
+	public void hashPassword() {
+		this.password = DigestUtils.sha256Hex(password);
 	}
 
     private boolean validateDNI(String dni) {
