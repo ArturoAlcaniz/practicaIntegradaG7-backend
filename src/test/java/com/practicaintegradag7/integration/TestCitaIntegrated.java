@@ -152,8 +152,6 @@ class TestCitaIntegrated {
 			assertTrue(true);
 		} catch (CitasCupoNotAvailable e) {
 			fail("CitasCupoNotAvailbale not expected");
-		} catch (CifradoContrasenaException e) {
-			fail("CifradoContraseñaException not expected");
 		}
 	}
 	

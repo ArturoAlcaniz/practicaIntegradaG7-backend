@@ -18,6 +18,7 @@ on:
       - H12-2
       - ControllerCentro
       - MejorasFinSprint_validateEmail
+      - Fix_errores_sonar
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
