@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import com.practicaintegradag7.dao.UsuarioDao;
-import com.practicaintegradag7.dao.CentrooDao;
+import com.practicaintegradag7.dao.CentroDao;
 import java.util.List;
 
 import com.practicaintegradag7.model.Centro;
