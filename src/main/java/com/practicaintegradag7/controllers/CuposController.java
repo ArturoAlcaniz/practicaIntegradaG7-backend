@@ -10,13 +10,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.practicaintegradag7.dao.CentroDao;
+import com.practicaintegradag7.dao.CupoDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cupo;
 
 public class CuposController {
 	@Autowired
-	private final CentroDao aux= new CentroDao();
+	private final CentroDao aux;
+	@Autowired
+	private final CupoDao cupodao;
 	
 
 	@PostMapping(path="api/cupo/create")
@@ -29,6 +32,7 @@ public class CuposController {
 		int numcitas = jso.getInt("numero citas");
 		Centro centro = aux.buscarCentroByNombre(jso.getString("centro"));
 		Cupo cupo= new Cupo(fechainicio, fechafin, numcitas, centro);
+		cupodao.saveCupo(cupo);
 		return cupo;
 		}
 
