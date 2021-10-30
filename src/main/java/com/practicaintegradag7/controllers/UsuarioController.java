@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import java.util.List;
 
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Usuario;
@@ -21,7 +22,7 @@ import com.practicaintegradag7.repos.CentroRepository;
 public class UsuarioController {
 	
 	@Autowired
-	private Usuario user;
+	private UsuarioDao user;
 	
 	@PostMapping(path="api/usuario/create")
 	public Usuario crearUsuario(@RequestBody Map<String, Object> datosUsuario) {
@@ -34,13 +35,13 @@ public class UsuarioController {
 		Centro centro = CentroRepository.findByNombre(jso.getString("centro"));
 		String rol = jso.getString("rol");
 		Usuario useri= new Usuario(dni, nombre, apellidos, email, password, centro, rol);
-		return user;
+		return user.saveUsuario(useri);
 	}
 	
 	@GetMapping(path="api/usuarios/obtener")
-	public boolean obtenerUsuario(){
+	public List<Usuario> obtenerUsuario(){
 		try {
-			return user.isPrimeraDosis();
+			return user.getAllUsuarios();
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
