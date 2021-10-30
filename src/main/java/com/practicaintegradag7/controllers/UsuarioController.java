@@ -29,7 +29,7 @@ public class UsuarioController {
 	private CentroDao dao;
 	
 	@PostMapping(path="api/usuario/create")
-	public Usuario crearUsuario(@RequestBody Map<String, Object> datosUsuario) {
+	public Usuario crearUsuario(@RequestBody Map<String, Object> datosUsuario) throws JSONException, CentroNotFoundException, CifradoContrasenaException {
 		JSONObject jso = new JSONObject(datosUsuario);
 		String dni = jso.getString("dni");
 		String nombre = jso.getString("nombre");
