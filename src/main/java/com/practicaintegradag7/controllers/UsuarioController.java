@@ -37,7 +37,7 @@ public class UsuarioController {
 		return user;
 	}
 	
-	@GetMapping(path="api//obtener")
+	@GetMapping(path="api/usuarios/obtener")
 	public boolean obtenerUsuario(){
 		try {
 			return user.isPrimeraDosis();
