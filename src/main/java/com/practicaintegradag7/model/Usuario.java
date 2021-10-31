@@ -58,7 +58,7 @@ public class Usuario {
 	@Column(name = "rol")
 	private String rol;
 	
-	public Usuario(String dni, String nombre, String apellidos, String email, String password, Centro centro,
+	/*public Usuario(String dni, String nombre, String apellidos, String email, String password, Centro centro,
 			String rol) {
 		if (!validateEmail(email)) {
 			throw new IllegalArgumentException("Email is not valid!");
@@ -84,12 +84,42 @@ public class Usuario {
 		this.centro = centro;
 		this.rol = rol.toLowerCase();
 		
+	}*/
+	
+	private Usuario() {
+		
 	}
 	
-	public void hashPassword() {
-		this.password = DigestUtils.sha256Hex(password);
+	Usuario(UsuarioBuilder builder){
+		if (!validateEmail(email)) {
+			throw new IllegalArgumentException("Email is not valid!");
+		}
+		
+		if (!validateRol(rol.toLowerCase())) {
+			throw new IllegalArgumentException("Rol is not valid!");
+		}
+		
+		if (rol.equalsIgnoreCase("paciente")) {
+			this.primeraDosis = false;
+			this.segundaDosis = false;
+		} else {
+			this.primeraDosis = true;
+			this.segundaDosis = true;
+		}
+		
+		this.dni = dni;
+		this.nombre = nombre;
+		this.apellidos = apellidos;
+		this.email = email;
+		this.password = password;
+		this.centro = centro;
+		this.rol = rol.toLowerCase();
 	}
 	
+//	public void hashPassword() {
+//		this.password = DigestUtils.sha256Hex(password);
+//	}
+//	
     private boolean validateEmail(String email) {
     	Pattern regexEmail = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
     	Matcher compareEmail = regexEmail.matcher(email); 
@@ -106,53 +136,53 @@ public class Usuario {
 		return validez;
 	}
 
-	public String getDni() {
-		return dni;
-	}
-
-	public String getNombre() {
-		return nombre;
-	}
-
-	public String getApellidos() {
-		return apellidos;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public boolean isPrimeraDosis() {
-		return primeraDosis;
-	}
-
-	public boolean isSegundaDosis() {
-		return segundaDosis;
-	}
-
-	public void setPrimeraDosis(boolean primeraDosis) {
-		this.primeraDosis = primeraDosis;
-	}
-	
-	public void setSegundaDosis(boolean segundaDosis) {
-		this.segundaDosis = segundaDosis;
-	}
-	
-	public String getPassword() {
-		return password;
-	}
-
-	public Centro getCentro() {
-		return centro;
-	}
-
-	public String getRol() {
-		return rol;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
+//	public String getDni() {
+//		return dni;
+//	}
+//
+//	public String getNombre() {
+//		return nombre;
+//	}
+//
+//	public String getApellidos() {
+//		return apellidos;
+//	}
+//
+//	public String getEmail() {
+//		return email;
+//	}
+//
+//	public boolean isPrimeraDosis() {
+//		return primeraDosis;
+//	}
+//
+//	public boolean isSegundaDosis() {
+//		return segundaDosis;
+//	}
+//
+//	public void setPrimeraDosis(boolean primeraDosis) {
+//		this.primeraDosis = primeraDosis;
+//	}
+//	
+//	public void setSegundaDosis(boolean segundaDosis) {
+//		this.segundaDosis = segundaDosis;
+//	}
+//	
+//	public String getPassword() {
+//		return password;
+//	}
+//
+//	public Centro getCentro() {
+//		return centro;
+//	}
+//
+//	public String getRol() {
+//		return rol;
+//	}
+//
+//	public void setPassword(String password) {
+//		this.password = password;
+//	}
 	
 	/**
 	 * Encrypts own password via Cesar Cypher(3), then B64 encoding.
