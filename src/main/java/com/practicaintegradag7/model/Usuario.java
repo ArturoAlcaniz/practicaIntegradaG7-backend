@@ -130,6 +130,14 @@ public class Usuario {
 		return segundaDosis;
 	}
 
+	public void setPrimeraDosis(boolean primeraDosis) {
+		this.primeraDosis = primeraDosis;
+	}
+	
+	public void setSegundaDosis(boolean segundaDosis) {
+		this.segundaDosis = segundaDosis;
+	}
+	
 	public String getPassword() {
 		return password;
 	}

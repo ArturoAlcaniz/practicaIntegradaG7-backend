@@ -23,23 +23,13 @@ class TestUsuario {
 	
 	private static final Centro centro = new Centro("Centro 1", "Calle 1", 10);
 	
-	@Test
-	void checkValidationDni() {
-		try { 
-			new Usuario("0234M", "Roberto", "Brasero Hidalgo", 
-					"robertoBrasero@a3media.es", "Iso+grupo7", centro, "paciente");
-			
-		} catch (IllegalArgumentException e) { 
-			assertTrue(e.toString().contains("Dni is not valid"));
-		}
-	}
-	
 	@ParameterizedTest
 	@ValueSource(strings = {"emailfail@", "@emailfail", "roberto&example.com", "roberto#@example.me.org", })
 	void checkValidationEmail(String email) {
 		try {
-			new Usuario("01234567A", "Roberto", "Brasero Hidalgo", email, "Iso+grupo7", centro,
+			Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", email, "Iso+grupo7", centro,
 				"paciente");
+			usuario.getEmail();
 		} catch (IllegalArgumentException e) {
 			assertTrue(e.toString().contains("Email is not valid"));
 		}
@@ -48,8 +38,9 @@ class TestUsuario {
 	@Test
 	void checkValidationRol() {
 		try {
-			new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
+			Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
 					"robertoBrasero@a3media.es", "Iso+grupo7", centro, "obrero");
+			usuario.getRol();
 		} catch (IllegalArgumentException e) {
 			assertTrue(e.toString().contains("Rol is not valid"));
 		}
@@ -124,17 +115,33 @@ class TestUsuario {
 	}
 
 	@Test
-	void failWhenThePrimeraDosisNotEquals() {
+	void failWhenThePrimeraDosisNotEqualsFalse() {
 		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
 				"paciente");
 		assertEquals(false,usuario.isPrimeraDosis());
 	}
 	
 	@Test
-	void failWhenTheSegundaDosisNotEquals() {
+	void failWhenTheSegundaDosisNotEqualsFalse() {
 		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
 				"paciente");
 		assertEquals(false,usuario.isSegundaDosis());
+	}
+	
+	@Test
+	void failWhenThePrimeraDosisNotEqualsTrue() {
+		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
+				"paciente");
+		usuario.setPrimeraDosis(true);
+		assertEquals(true,usuario.isPrimeraDosis());
+	}
+	
+	@Test
+	void failWhenTheSegundaDosisNotEqualsTrue() {
+		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
+				"paciente");
+		usuario.setSegundaDosis(true);
+		assertEquals(true,usuario.isSegundaDosis());
 	}
 	
 	@Test

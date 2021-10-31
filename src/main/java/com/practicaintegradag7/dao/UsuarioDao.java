@@ -54,7 +54,6 @@ public class UsuarioDao {
 	}
 
     private boolean validateDNI(String dni) {
-    	if(dni.charAt(0) == 'a') return true;
     	Pattern regexDni = Pattern.compile("[0-9]{7,8}[A-Z a-z]");
     	Matcher compareDni = regexDni.matcher(dni); 
     	return compareDni.matches();

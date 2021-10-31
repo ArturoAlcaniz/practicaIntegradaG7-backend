@@ -155,4 +155,18 @@ class TestUsuarioIntegrated {
 			assertTrue(e.toString().contains("not valid"));
 		}
 	}
+	
+	@Test
+	void failWhenUsuarioDniNotValid() {
+		Centro centro = new Centro("Hospital", "Calle Paloma", 10);
+		Usuario usuario = new Usuario("1", "Francisco", "Morisco Parra", 
+				"franMorisco@gmail.com", "a", centro, "Paciente");
+		try {
+			usuarioDao.saveUsuario(usuario);
+		} catch (CifradoContrasenaException e) {
+			fail("Exception not expected");
+		} catch (IllegalArgumentException e) {
+			assertTrue(e.toString().contains("not valid"));
+		}
+	}
 }
