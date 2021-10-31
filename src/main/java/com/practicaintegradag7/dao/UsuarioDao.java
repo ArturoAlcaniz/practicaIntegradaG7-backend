@@ -48,7 +48,7 @@ public class UsuarioDao {
 	}
 	
 	private boolean validatePasswordPolicy(String password) {
-		Pattern regexPassword = Pattern.compile("(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}");
+		Pattern regexPassword = Pattern.compile("(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=.-])(?=\\S+$).{8,}");
 		Matcher comparePassword = regexPassword.matcher(password);
 		return comparePassword.matches();
 	}

@@ -89,6 +89,23 @@ class TestUsuarioIntegrated {
 	}
 	
 	@Test
+	void shouldSaveUsuarioWithSetPassword() throws CifradoContrasenaException {
+		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
+		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
+				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
+		usuario.setPassword("Prueba123-45.");
+		try {
+			assertNotNull(usuarioDao.saveUsuario(usuario));
+		} catch (CifradoContrasenaException e) {
+			fail(e.getMessage());
+		}
+
+		usuario = usuarioDao.getUsuarioByDni(usuario.getDni());
+		usuarioDao.deleteUsuarioByDni(usuario.getDni());
+		assertTrue(true);
+	}
+	
+	@Test
 	void shouldSaveUsuarioWithController() throws Exception {
 		JSONObject json = new JSONObject();
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
