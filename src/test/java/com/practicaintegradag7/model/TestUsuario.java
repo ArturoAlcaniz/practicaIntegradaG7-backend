@@ -25,7 +25,7 @@ class TestUsuario {
 	
 	@ParameterizedTest
 	@ValueSource(strings = {"emailfail@", "@emailfail", "roberto&example.com", "roberto#@example.me.org", })
-	void checkValidationEmail(String email) {
+	void failWhenEmailNotValid(String email) {
 		try {
 			Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", email, "Iso+grupo7", centro,
 				"paciente");
@@ -36,7 +36,7 @@ class TestUsuario {
 	}	
 	
 	@Test
-	void checkValidationRol() {
+	void failWhenRolNotValid() {
 		try {
 			Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
 					"robertoBrasero@a3media.es", "Iso+grupo7", centro, "obrero");
@@ -48,13 +48,15 @@ class TestUsuario {
 	
 	@Test
 	void notFailCorrectRoles() {
-		new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
+		Usuario usuario1 = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
 				"robertoBrasero@a3media.es", "Iso+grupo7", centro, "administrador");
-		new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
+		Usuario usuario2 = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
 				"robertoBrasero@a3media.es", "Iso+grupo7", centro, "sanitario");
-		new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
+		Usuario usuario3 = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
 				"robertoBrasero@a3media.es", "Iso+grupo7", centro, "paciente");
-		assertTrue(true);
+		assertEquals("administrador", usuario1.getRol());
+		assertEquals("sanitario", usuario2.getRol());
+		assertEquals("paciente", usuario3.getRol());
 	}
 	
 	@Test
@@ -118,6 +120,7 @@ class TestUsuario {
 	void failWhenThePrimeraDosisNotEqualsFalse() {
 		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
 				"paciente");
+		usuario.setPrimeraDosis(false);
 		assertEquals(false,usuario.isPrimeraDosis());
 	}
 	
@@ -125,6 +128,7 @@ class TestUsuario {
 	void failWhenTheSegundaDosisNotEqualsFalse() {
 		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
 				"paciente");
+		usuario.setSegundaDosis(false);
 		assertEquals(false,usuario.isSegundaDosis());
 	}
 	
