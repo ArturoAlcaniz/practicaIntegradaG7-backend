@@ -16,11 +16,16 @@ import javax.crypto.NoSuchPaddingException;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
 class TestUsuario {
 	
 	private static final Centro centro = new Centro("Centro 1", "Calle 1", 10);
