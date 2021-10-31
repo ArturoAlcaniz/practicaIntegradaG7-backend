@@ -5,13 +5,11 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
@@ -51,10 +49,6 @@ public class UsuarioController {
 	
 	@GetMapping(path="api/usuarios/obtener")
 	public List<Usuario> obtenerUsuario(){
-		try {
-			return user.getAllUsuarios();
-		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		}
+		return user.getAllUsuarios();
 	}
 }

@@ -6,15 +6,11 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
-
 import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
@@ -28,7 +24,6 @@ public class CentroController {
 	private final CentroDao aux = new CentroDao();
 	
 	@PostMapping(path="/api/addVaccines")
-
 	public void addVacunas(@RequestBody Map<String, Object> info) throws CentroNotFoundException, VacunasNoValidasException, JSONException {
 		JSONObject jso = new JSONObject(info);
 		String centro = jso.getString("hospital");
@@ -47,12 +42,8 @@ public class CentroController {
 		return aux.createCentro(centro);
 	}
 	
-	@GetMapping(path="api/centros/obtener")
+	@GetMapping(path="/api/centros/obtener")
 	public List<Centro> obtenerCentros(){
-		try {
-			return aux.getAllCitas();
-		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		}
+		return aux.getAllCitas();
 	}
 }

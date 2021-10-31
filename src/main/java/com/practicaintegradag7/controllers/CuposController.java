@@ -31,7 +31,7 @@ public class CuposController {
 	private CupoDao cupodao;
 	
 
-	@PostMapping(path="api/cupo/create")
+	@PostMapping(path="/api/cupo/create")
 	public Cupo crearCupos(@RequestBody Map<String, Object> datosCupo) throws JSONException, CentroNotFoundException, CupoExistException {
 		JSONObject jso = new JSONObject(datosCupo);
 		String fechaini =  jso.getString("fechaini");
@@ -45,7 +45,7 @@ public class CuposController {
 		return cupo;
 	}
 	
-	@GetMapping(path="api/cupo/obtener")
+	@GetMapping(path="/api/cupo/obtener")
 	public List<Cupo> obtenerCupos() {
 		try {
 			return cupodao.getAllCupos();

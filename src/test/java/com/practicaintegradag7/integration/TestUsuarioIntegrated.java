@@ -6,13 +6,20 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.model.Centro;
@@ -20,10 +27,17 @@ import com.practicaintegradag7.model.Usuario;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
+@AutoConfigureMockMvc
 class TestUsuarioIntegrated {
 
 	@Autowired
 	private UsuarioDao usuarioDao;
+	
+	@Autowired
+	private CentroDao centroDao;
+	
+	@Autowired
+	private MockMvc mockMvc;
 	
 	@Test
 	void shouldSaveUsuario() throws CifradoContrasenaException {
@@ -38,6 +52,27 @@ class TestUsuarioIntegrated {
 		}
 
 		usuarioDao.deleteUsuarioByDni(usuario.getDni());
+	}
+	
+	@Test
+	void shouldSaveUsuarioWithController() throws Exception {
+		JSONObject json = new JSONObject();
+		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
+		centroDao.createCentro(centro);
+		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
+				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
+		json.put("dni", usuario.getDni());
+		json.put("nombre", usuario.getNombre());
+		json.put("apellidos", usuario.getApellidos());
+		json.put("email", usuario.getEmail());
+		json.put("password", usuario.getPassword());
+		json.put("centro", usuario.getCentro().getNombre());
+		json.put("rol", usuario.getRol());
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/usuario/create").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		usuario.encryptDNI();
+		assertNotNull(usuarioDao.getUsuarioByDni(usuario.getDni()));
+		usuarioDao.deleteUsuarioByDni(usuario.getDni());
+		centroDao.deleteCentro(centro);
 	}
 	
 	@Test
@@ -57,6 +92,11 @@ class TestUsuarioIntegrated {
 			fail(e.getMessage());
 		}
 		usuarioDao.deleteUsuarioByDni(usuario.getDni());
+	}
+	
+	@Test
+	void shouldObtainUsuariosWithController() throws Exception {
+		mockMvc.perform( MockMvcRequestBuilders.get("/api/usuarios/obtener").accept(MediaType.ALL)).andExpect(status().isOk());
 	}
 	
 	@Test
