@@ -208,12 +208,43 @@ class TestCitaIntegrated {
 				.build();
 		usuarioPrueba2 = usuarioDao.saveUsuario(usuarioPrueba2);
 		citaPrueba3 = citaDao.createCita();
+		if(citaPrueba3 != null) {
+			citaDao.deleteCita(citaPrueba3);
+		}
 		citaPrueba4 = citaDao.createCita();
+		if(citaPrueba4 != null) {
+			citaDao.deleteCita(citaPrueba4);
+		}
 		citaPrueba5 = citaDao.createCita();
+		if(citaPrueba5 != null) {
+			citaDao.deleteCita(citaPrueba5);
+		}
 		assertTrue(citaDao.getAllCitas().size() > 2);
 	}
 	
 	@Order(12)
+	@Test
+	void deleteCitasPrueba() {
+		if(citaPrueba != null) {
+			citaDao.deleteCita(citaPrueba);
+		}
+		if(citaPrueba2 != null) {
+			citaDao.deleteCita(citaPrueba2);
+		}
+	}
+	
+	@Order(13)
+	@Test
+	void deleteUsuarioPrueba() {
+		if(usuarioPrueba != null) {
+			usuarioDao.deleteUsuarioByDni(usuarioPrueba.getDni());
+		}
+		if(usuarioPrueba2 != null) {
+			usuarioDao.deleteUsuarioByDni(usuarioPrueba2.getDni());
+		}
+	}
+	
+	@Order(14)
 	@Test
 	void after() {
 		try {
@@ -222,27 +253,6 @@ class TestCitaIntegrated {
 			}
 			if(cupoPrueba != null) {
 				cupoDao.deleteCupo(cupoPrueba);
-			}
-			if(usuarioPrueba != null) {
-				usuarioDao.deleteUsuarioByDni(usuarioPrueba.getDni());
-			}
-			if(citaPrueba != null) {
-				citaDao.deleteCita(citaPrueba);
-			}
-			if(citaPrueba2 != null) {
-				citaDao.deleteCita(citaPrueba2);
-			}
-			if(citaPrueba3 != null) {
-				citaDao.deleteCita(citaPrueba3);
-			}
-			if(citaPrueba4 != null) {
-				citaDao.deleteCita(citaPrueba4);
-			}
-			if(citaPrueba5 != null) {
-				citaDao.deleteCita(citaPrueba5);
-			}
-			if(usuarioPrueba2 != null) {
-				usuarioDao.deleteUsuarioByDni(usuarioPrueba2.getDni());
 			}
 		} catch (CentroNotFoundException e) {
 			fail("CentroNotFoundException not expected");
