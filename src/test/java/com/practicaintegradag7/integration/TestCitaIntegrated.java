@@ -208,23 +208,31 @@ class TestCitaIntegrated {
 				.build();
 		usuarioPrueba2 = usuarioDao.saveUsuario(usuarioPrueba2);
 		citaPrueba3 = citaDao.createCita();
-		if(citaPrueba3 != null) {
-			citaDao.deleteCita(citaPrueba3);
-		}
 		citaPrueba4 = citaDao.createCita();
-		if(citaPrueba4 != null) {
-			citaDao.deleteCita(citaPrueba4);
-		}
 		citaPrueba5 = citaDao.createCita();
-		if(citaPrueba5 != null) {
-			citaDao.deleteCita(citaPrueba5);
-		}
 		assertTrue(citaDao.getAllCitas().size() > 2);
+
 	}
 	
 	@Order(12)
 	@Test
 	void deleteCitasPrueba() {
+		if(citaPrueba3 != null) {
+			citaDao.deleteCita(citaPrueba3);
+		}
+
+		if(citaPrueba4 != null) {
+			citaDao.deleteCita(citaPrueba4);
+		}
+
+		if(citaPrueba5 != null) {
+			citaDao.deleteCita(citaPrueba5);
+		}
+	}
+	
+	@Order(12)
+	@Test
+	void deleteCitasPrueba2() {
 		if(citaPrueba != null) {
 			citaDao.deleteCita(citaPrueba);
 		}
