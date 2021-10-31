@@ -58,17 +58,20 @@ public class Usuario {
 	@Column(name = "rol")
 	private String rol;
 	
-	public Usuario(String dni, String nombre, String apellidos, String email, String password, Centro centro,
-			String rol) {
-		if (!validateEmail(email)) {
+	Usuario() {
+		
+	}
+	
+	Usuario(UsuarioBuilder builder){
+		if (!validateEmail(builder.getEmail())) {
 			throw new IllegalArgumentException("Email is not valid!");
 		}
 		
-		if (!validateRol(rol.toLowerCase())) {
+		if (!validateRol(builder.getRol().toLowerCase())) {
 			throw new IllegalArgumentException("Rol is not valid!");
 		}
 		
-		if (rol.equalsIgnoreCase("paciente")) {
+		if (builder.getRol().equalsIgnoreCase("paciente")) {
 			this.primeraDosis = false;
 			this.segundaDosis = false;
 		} else {
@@ -76,14 +79,13 @@ public class Usuario {
 			this.segundaDosis = true;
 		}
 		
-		this.dni = dni;
-		this.nombre = nombre;
-		this.apellidos = apellidos;
-		this.email = email;
-		this.password = password;
-		this.centro = centro;
-		this.rol = rol.toLowerCase();
-		
+		this.dni = builder.getDni();
+		this.nombre = builder.getNombre();
+		this.apellidos = builder.getApellidos();
+		this.email = builder.getEmail();
+		this.password = builder.getPassword();
+		this.centro = builder.getCentro();
+		this.rol = builder.getRol().toLowerCase();
 	}
 	
 	public void hashPassword() {
@@ -106,53 +108,6 @@ public class Usuario {
 		return validez;
 	}
 
-	public String getDni() {
-		return dni;
-	}
-
-	public String getNombre() {
-		return nombre;
-	}
-
-	public String getApellidos() {
-		return apellidos;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public boolean isPrimeraDosis() {
-		return primeraDosis;
-	}
-
-	public boolean isSegundaDosis() {
-		return segundaDosis;
-	}
-
-	public void setPrimeraDosis(boolean primeraDosis) {
-		this.primeraDosis = primeraDosis;
-	}
-	
-	public void setSegundaDosis(boolean segundaDosis) {
-		this.segundaDosis = segundaDosis;
-	}
-	
-	public String getPassword() {
-		return password;
-	}
-
-	public Centro getCentro() {
-		return centro;
-	}
-
-	public String getRol() {
-		return rol;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
 	
 	/**
 	 * Encrypts own password via Cesar Cypher(3), then B64 encoding.
@@ -262,4 +217,49 @@ public class Usuario {
 		if((!lowercase && c > 90) || (lowercase && c > 122)) c += 26;
 		return m1 + c + m2;
 	}
+
+	public String getDni() {
+		return dni;
+	}
+
+	public Centro getCentro() {
+		return centro;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPrimeraDosis(boolean b) {
+		primeraDosis = b;
+	}
+
+	public boolean isPrimeraDosis() {
+		return primeraDosis;
+	}
+
+	public boolean isSegundaDosis() {
+		return segundaDosis;
+	}
+
+	public void setSegundaDosis(boolean b) {
+		segundaDosis = b;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public String getApellidos() {
+		return apellidos;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public String getRol() {
+		return rol;
+	}
+	
 }

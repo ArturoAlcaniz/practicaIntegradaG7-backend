@@ -28,9 +28,18 @@ class TestUsuario {
 	@ParameterizedTest
 	@ValueSource(strings = {"emailfail@", "@emailfail", "roberto&example.com", "roberto#@example.me.org", })
 	void failWhenEmailNotValid(String email) {
+		
+		UsuarioBuilder usuarioBuilder = new UsuarioBuilder()
+			.dni("01234567A")
+			.nombre("Roberto")
+			.apellidos("Brasero Hidalgo")
+			.email(email)
+			.password("Iso+grupo7")
+			.centro(centro)
+			.rol("paciente");
+		
 		try {
-			new Usuario("01234567A", "Roberto", "Brasero Hidalgo", email, "Iso+grupo7", centro,
-				"paciente");
+			usuarioBuilder.build();
 			fail("Exception expected");
 		} catch (IllegalArgumentException e) {
 			assertEquals("Email is not valid!", e.getMessage());
@@ -40,8 +49,15 @@ class TestUsuario {
 	@Test
 	void failWhenEmailValidIsNotValid() {
 		try {
-			Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "valido@hotmail.com", "Iso+grupo7", centro,
-					"paciente");
+			Usuario usuario = new UsuarioBuilder()
+					.dni("01234567A")
+					.nombre("Roberto")
+					.apellidos("Brasero Hidalgo")
+					.email("valido@hotmail.com")
+					.password("Iso+grupo7")
+					.centro(centro)
+					.rol("paciente")
+					.build();
 			assertEquals("valido@hotmail.com", usuario.getEmail());
 		} catch (IllegalArgumentException e) {
 			fail("Exception not expected");
@@ -50,9 +66,17 @@ class TestUsuario {
 	
 	@Test
 	void failWhenRolNotValid() {
+
+		UsuarioBuilder usuarioBuilder = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("obrero");
 		try {
-			new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
-					"robertoBrasero@a3media.es", "Iso+grupo7", centro, "obrero");
+			usuarioBuilder.build();
 			fail("Exception expected");
 		} catch (IllegalArgumentException e) {
 			assertEquals("Rol is not valid!", e.getMessage());
@@ -62,8 +86,15 @@ class TestUsuario {
 	@Test
 	void failWhenRolValidIsNotValid() {
 		try {
-			Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
-					"robertoBrasero@a3media.es", "Iso+grupo7", centro, "paciente");
+			Usuario usuario = new UsuarioBuilder()
+					.dni("01234567A")
+					.nombre("Roberto")
+					.apellidos("Brasero Hidalgo")
+					.email("robertoBrasero@a3media.es")
+					.password("Iso+grupo7")
+					.centro(centro)
+					.rol("paciente")
+					.build();
 			assertEquals("paciente", usuario.getRol());
 		} catch (IllegalArgumentException e) {
 			fail("Exception not expected");
@@ -72,12 +103,36 @@ class TestUsuario {
 	
 	@Test
 	void notFailCorrectRoles() {
-		Usuario usuario1 = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
-				"robertoBrasero@a3media.es", "Iso+grupo7", centro, "administrador");
-		Usuario usuario2 = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
-				"robertoBrasero@a3media.es", "Iso+grupo7", centro, "sanitario");
-		Usuario usuario3 = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
-				"robertoBrasero@a3media.es", "Iso+grupo7", centro, "paciente");
+		Usuario usuario1 = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("administrador")
+				.build();
+		
+		Usuario usuario2 = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("sanitario")
+				.build();
+		
+		Usuario usuario3 = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("paciente")
+				.build();
+		
 		assertEquals("administrador", usuario1.getRol());
 		assertEquals("sanitario", usuario2.getRol());
 		assertEquals("paciente", usuario3.getRol());
@@ -85,15 +140,29 @@ class TestUsuario {
 	
 	@Test
 	void failWhenTheDniNotEquals() {
-		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "hola@gmail.com", "Iso+grupo7", centro,
-				"paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("hola@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("paciente")
+				.build();
 		assertEquals("01234567A",usuario.getDni());
 	}
 	
 	@Test
 	void failWhenTheDniEquals() {
-		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "hola@gmail.com", "Iso+grupo7", centro,
-				"paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("hola@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("paciente")
+				.build();
 		assertNotEquals("01234267A",usuario.getDni());
 	}
 	
@@ -101,117 +170,207 @@ class TestUsuario {
 	@ValueSource(strings = {"roberto@example.com", "roberto.brasero@example.co.in", "roberto1@example.me.org", "roberto_brasero@example.com",
 							"roberto-brasero@example.com"})
 	void failWhenTheEmailNotEquals(String email) {
-		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", email, "Iso+grupo7", centro,
-				"paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email(email)
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("paciente")
+				.build();
 		Assertions.assertEquals(email, usuario.getEmail());
 	}
 	
 	@Test
 	void failWhenThePasswordNotEquals() {
-		Usuario usuario = new Usuario("01234567A", "A", "B", "a@a.es", "Iso+grupo7", centro, "paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("A")
+				.apellidos("B")
+				.email("a@a.es")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("paciente")
+				.build();
 		assertEquals("Iso+grupo7",usuario.getPassword());
 	}
 	
 	@Test
 	void failWhenTheRolPacienteNotEquals() {
-		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
-				"paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("paciente")
+				.build();
 		assertEquals("paciente",usuario.getRol());
 	}
 
 	@Test
 	void failWhenTheRolSanitarioNotEquals() {
-		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
-				"sanitario");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("sanitario")
+				.build();
 		assertEquals("sanitario",usuario.getRol());
 	}
 
 	@Test
 	void failWhenTheRolAdministradorNotEquals() {
-		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
-				"Administrador");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("Administrador")
+				.build();
 		assertEquals("administrador",usuario.getRol());
 	}
 	
 	@Test
 	void failWhenTheNombreNotEquals() {
-		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
-				"paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("paciente")
+				.build();
 		assertEquals("Roberto",usuario.getNombre());
 	}
 
 	@Test
 	void failWhenTheApellidosNotEquals() {
-		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
-				"paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("paciente")
+				.build();
 		assertEquals("Brasero Hidalgo",usuario.getApellidos());
 	}
 
 	@Test
 	void failWhenThePrimeraDosisNotEqualsFalse() {
-		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
-				"paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("paciente")
+				.build();
 		usuario.setPrimeraDosis(false);
 		assertFalse(usuario.isPrimeraDosis());
 	}
 	
 	@Test
 	void failWhenTheSegundaDosisNotEqualsFalse() {
-		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
-				"paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("paciente")
+				.build();
 		usuario.setSegundaDosis(false);
 		assertFalse(usuario.isSegundaDosis());
 	}
 	
 	@Test
 	void failWhenPrimeraDosisNotEqualsTrue() {
-		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
-				"paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("paciente")
+				.build();
 		usuario.setPrimeraDosis(true);
 		assertTrue(usuario.isPrimeraDosis());
 	}
 	
 	@Test
 	void failWhenSegundaDosisNotEqualsTrue() {
-		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
-				"paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("paciente")
+				.build();
 		usuario.setSegundaDosis(true);
 		assertTrue(usuario.isSegundaDosis());
 	}
 	
 	@Test
 	void failWhenTheCentroNotEquals() {
-		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
-				"paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("paciente")
+				.build();
 		assertEquals(centro,usuario.getCentro());
 	}
 
 	@Test
 	void encryptAndDecrypt() throws CifradoContrasenaException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
-		String DNI = "05718738J";
-		Usuario usuario = new Usuario(DNI, "Francisco", "Morisco Parra", 
-				"franMorisco@gmail.com", "Iso+grupo7", null, "Paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("05718738J")
+				.nombre("Francisco")
+				.apellidos("Morisco Parra")
+				.email("franMorisco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(null)
+				.rol("Paciente")
+				.build();
 		try {
 			usuario.encryptDNI();
 		} catch (CifradoContrasenaException e) {
 			fail(e.getMessage());
 		}
 		usuario.decryptDNI();
-		assertEquals(usuario.getDni(), DNI);
-	}
-	
-	@Test
-	void failWhenSetPasswordNotWork() {
-		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
-				"paciente");
-		usuario.setPassword("iso");
-		assertEquals("iso", usuario.getPassword());
+		assertEquals("05718738J", usuario.getDni());
 	}
 	
 	@Test
 	void failWhenNameIsLengthMoreThan16() {
-		Usuario usuario = new Usuario("01234567A", "Roberto fernando Roberto fernando Roberto fernando", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
-				"paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto fernando Roberto fernando Roberto fernando")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("paciente")
+				.build();
 		try {
 			usuario.encryptDNI();
 			fail("Exception expected");

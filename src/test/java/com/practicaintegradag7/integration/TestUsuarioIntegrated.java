@@ -24,6 +24,7 @@ import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Usuario;
+import com.practicaintegradag7.model.UsuarioBuilder;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -42,8 +43,15 @@ class TestUsuarioIntegrated {
 	@Test
 	void shouldSaveUsuario() throws CifradoContrasenaException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
-		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
-				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("05718583J")
+				.nombre("Francisco")
+				.apellidos("Morisco Parra")
+				.email("franMorisco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("Paciente")
+				.build();
 		
 		try {
 			assertNotNull(usuarioDao.saveUsuario(usuario));
@@ -58,8 +66,15 @@ class TestUsuarioIntegrated {
 	@Test
 	void shouldSaveUsuarioWithPrimeraDosis() throws CifradoContrasenaException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
-		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
-				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("05718583J")
+				.nombre("Francisco")
+				.apellidos("Morisco Parra") 
+				.email("franMorisco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("Paciente")
+				.build();
 		usuario.setPrimeraDosis(true);
 		try {
 			assertNotNull(usuarioDao.saveUsuario(usuario));
@@ -74,8 +89,15 @@ class TestUsuarioIntegrated {
 	@Test
 	void shouldSaveUsuarioWithSegundaDosis() throws CifradoContrasenaException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
-		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
-				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("05718583J")
+				.nombre("Francisco")
+				.apellidos("Morisco Parra")
+				.email("franMorisco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("Paciente")
+				.build();
 		usuario.setSegundaDosis(true);
 		try {
 			assertNotNull(usuarioDao.saveUsuario(usuario));
@@ -89,29 +111,19 @@ class TestUsuarioIntegrated {
 	}
 	
 	@Test
-	void shouldSaveUsuarioWithSetPassword() throws CifradoContrasenaException {
-		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
-		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
-				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
-		usuario.setPassword("Prueba123-45.");
-		try {
-			assertNotNull(usuarioDao.saveUsuario(usuario));
-		} catch (CifradoContrasenaException e) {
-			fail(e.getMessage());
-		}
-
-		usuario = usuarioDao.getUsuarioByDni(usuario.getDni());
-		usuarioDao.deleteUsuarioByDni(usuario.getDni());
-		assertTrue(true);
-	}
-	
-	@Test
 	void shouldSaveUsuarioWithController() throws Exception {
 		JSONObject json = new JSONObject();
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		centroDao.createCentro(centro);
-		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
-				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("05718583J")
+				.nombre("Francisco")
+				.apellidos("Morisco Parra")
+				.email("franMorisco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("Paciente")
+				.build();
 		json.put("dni", usuario.getDni());
 		json.put("nombre", usuario.getNombre());
 		json.put("apellidos", usuario.getApellidos());
@@ -129,10 +141,26 @@ class TestUsuarioIntegrated {
 	@Test
 	void shouldNotSaveUsuario() throws CifradoContrasenaException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
-		Usuario usuario = new Usuario("05718583J", "Julio", "Morisco Parra", 
-				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
-		Usuario usuarioMismoDni = new Usuario("05718583J", "Julio", "Parra Morisco", 
-				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
+		
+		Usuario usuario = new UsuarioBuilder()
+				.dni("05718583J")
+				.nombre("Julio")
+				.apellidos("Morisco Parra") 
+				.email("franMorisco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("Paciente")
+				.build();
+		
+		Usuario usuarioMismoDni = new UsuarioBuilder()
+				.dni("05718583J")
+				.nombre("Julio")
+				.apellidos("Parra Morisco")
+				.email("franMorisco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("Paciente")
+				.build();
 		
 		try {
 			usuarioDao.saveUsuario(usuario);
@@ -153,8 +181,15 @@ class TestUsuarioIntegrated {
 	@Test
 	void failWhenUsuarioDniNotEquals() {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
-		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
-				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("05718583J")
+				.nombre("Francisco")
+				.apellidos("Morisco Parra")
+				.email("franMorisco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("Paciente")
+				.build();
 		try {
 			usuarioDao.saveUsuario(usuario);
 		} catch (CifradoContrasenaException e) {
@@ -168,8 +203,15 @@ class TestUsuarioIntegrated {
 	@Test
 	void failWhenSizeIsZero() throws CifradoContrasenaException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
-		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
-				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("05718583J")
+				.nombre("Francisco")
+				.apellidos("Morisco Parra")
+				.email("franMorisco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("Paciente")
+				.build();
 		try {
 			usuarioDao.saveUsuario(usuario);
 		} catch (CifradoContrasenaException e) {
@@ -182,8 +224,15 @@ class TestUsuarioIntegrated {
 	@Test
 	void failWhenPasswordNotValid() throws CifradoContrasenaException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
-		Usuario usuario = new Usuario("01118583J", "Francisco", "Morisco Parra", 
-				"franMorisco@gmail.com", "7", centro, "Paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("01118583J")
+				.nombre("Francisco")
+				.apellidos("Morisco Parra")
+				.email("franMorisco@gmail.com")
+				.password("7")
+				.centro(centro)
+				.rol("Paciente")
+				.build();
 		try {
 			usuarioDao.saveUsuario(usuario);
 			fail("Exception expected");
@@ -195,8 +244,15 @@ class TestUsuarioIntegrated {
 	@Test
 	void failWhenPasswordNotValid2() {
 		Centro centro = new Centro("Hospital", "Calle Paloma", 10);
-		Usuario usuario = new Usuario("01118583J", "Francisco", "Morisco Parra", 
-				"franMorisco@gmail.com", "a", centro, "Paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("01118583J")
+				.nombre("Francisco")
+				.apellidos("Morisco Parra")
+				.email("franMorisco@gmail.com")
+				.password("a")
+				.centro(centro)
+				.rol("Paciente")
+				.build();
 		try {
 			usuarioDao.saveUsuario(usuario);
 			fail("IllegalArgumentException expected");
@@ -210,8 +266,15 @@ class TestUsuarioIntegrated {
 	@Test
 	void failWhenUsuarioDniNotValid() throws CifradoContrasenaException {
 		Centro centro = new Centro("Hospital", "Calle Paloma", 10);
-		Usuario usuario = new Usuario("1", "Francisco", "Morisco Parra", 
-				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("1")
+				.nombre("Francisco")
+				.apellidos("Morisco Parra")
+				.email("franMorisco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("Paciente")
+				.build();
 		try {
 			usuarioDao.saveUsuario(usuario);
 			fail("Exception expected");
