@@ -1,6 +1,7 @@
 package com.practicaintegradag7.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -30,6 +31,7 @@ class TestUsuario {
 			Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", email, "Iso+grupo7", centro,
 				"paciente");
 			usuario.getEmail();
+			fail("Exception expected");
 		} catch (IllegalArgumentException e) {
 			assertTrue(e.toString().contains("Email is not valid"));
 		}
@@ -41,6 +43,7 @@ class TestUsuario {
 			Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
 					"robertoBrasero@a3media.es", "Iso+grupo7", centro, "obrero");
 			usuario.getRol();
+			fail("Exception expected");
 		} catch (IllegalArgumentException e) {
 			assertTrue(e.toString().contains("Rol is not valid"));
 		}
@@ -64,6 +67,13 @@ class TestUsuario {
 		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "hola@gmail.com", "Iso+grupo7", centro,
 				"paciente");
 		assertEquals("01234567A",usuario.getDni());
+	}
+	
+	@Test
+	void failWhenTheDniEquals() {
+		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "hola@gmail.com", "Iso+grupo7", centro,
+				"paciente");
+		assertNotEquals("01234267A",usuario.getDni());
 	}
 	
 	@ParameterizedTest
@@ -183,19 +193,9 @@ class TestUsuario {
 				"paciente");
 		try {
 			usuario.encryptDNI();
+			fail("Exception expected");
 		} catch (CifradoContrasenaException e) {
 			assertTrue(true);
-		}
-	}
-	
-	@Test
-	void failIfDniNotValid2() {
-		try {
-			Usuario usuario = new Usuario("asd", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
-				"paciente");
-			usuario.getDni();
-		} catch (IllegalArgumentException e) {
-			assertEquals("Dni is not valid!", e.toString());
 		}
 	}
 }

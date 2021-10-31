@@ -129,16 +129,15 @@ class TestUsuarioIntegrated {
 	}
 	
 	@Test
-	void failWhenPasswordNotValid() {
+	void failWhenPasswordNotValid() throws CifradoContrasenaException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new Usuario("01118583J", "Francisco", "Morisco Parra", 
 				"franMorisco@gmail.com", "7", centro, "Paciente");
 		try {
 			usuarioDao.saveUsuario(usuario);
-		} catch (CifradoContrasenaException e) {
-			fail("IllegalArgumentException expected");
+			fail("Exception expected");
 		} catch (IllegalArgumentException e) {
-			assertTrue(e.toString().contains("not valid"));
+			assertEquals("Password is not valid!", e.getMessage());
 		}
 	}
 	
@@ -158,15 +157,12 @@ class TestUsuarioIntegrated {
 	}
 	
 	@Test
-	void failWhenUsuarioDniNotValid() {
+	void failWhenUsuarioDniNotValid() throws CifradoContrasenaException {
 		Centro centro = new Centro("Hospital", "Calle Paloma", 10);
-		Usuario usuario = new Usuario("1", "Francisco", "Morisco Parra", 
-				"franMorisco@gmail.com", "a", centro, "Paciente");
 		try {
+			Usuario usuario = new Usuario("1", "Francisco", "Morisco Parra", 
+					"franMorisco@gmail.com", "a", centro, "Paciente");
 			usuarioDao.saveUsuario(usuario);
-			fail("IllegalArgumentException expected");
-		} catch (CifradoContrasenaException e) {
-			fail("CifradoContrasenaException not expected");
 		} catch (IllegalArgumentException e) {
 			assertTrue(e.toString().contains("not valid"));
 		}
