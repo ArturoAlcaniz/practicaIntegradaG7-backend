@@ -2,16 +2,23 @@ package com.practicaintegradag7.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
 
+import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.practicaintegradag7.dao.CupoDao;
 import com.practicaintegradag7.dao.CentroDao;
@@ -21,18 +28,19 @@ import com.practicaintegradag7.exceptions.CupoExistException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cupo;
-import com.practicaintegradag7.repos.CupoRepository;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
+@AutoConfigureMockMvc
 class TestCupoIntegrated {
-	@Autowired
-	private CupoRepository cupoRepository;
+
 	@Autowired
 	private CupoDao cupoDao = new CupoDao();
 	@Autowired
 	private CentroDao centroDao = new CentroDao();
-		
+	@Autowired
+	private MockMvc mockMvc;
+	
 	@Test
 	void shouldSaveCupo() throws CupoNotFoundException, CentroNotFoundException, CentroExistException, CupoExistException {
 		Centro centro = new Centro("Centro 2", "Calle 2", 1);
@@ -42,6 +50,46 @@ class TestCupoIntegrated {
 		
 		assertNotNull(cupoDao.saveCupo(cupo));
 
+		cupoDao.deleteCupo(cupo);
+		centroDao.deleteCentro(centro);
+	}
+	
+	@Test
+	void shouldSaveCupoWithController() throws Exception {
+		Centro centro = new Centro("Centro 2", "Calle 2", 10);
+		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 13,centro);
+		centroDao.createCentro(centro);
+		JSONObject json = new JSONObject();
+		json.put("fechaini", cupo.getFechaInicio().toString());
+		json.put("fechafin", cupo.getFechaFin().toString());
+		json.put("ncitas", cupo.getNumeroCitas());
+		json.put("centro", cupo.getCentro().getNombre());
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/cupo/create").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		cupoDao.deleteCupo(cupoDao.getCupoByInicialDateAndCentro(cupo.getFechaInicio(), centro));
+		centroDao.deleteCentro(centro);
+	}
+	
+	@Test
+	void failWhenExceptionNotHappen() {
+		Centro centro = new Centro("Centro 2", "Calle 2", 10);
+		try {
+			cupoDao.getCupoByInicialDateAndCentro(LocalDateTime.of(2022, 11, 11, 11, 00), centro);
+			fail("CupoNotFoundException expected");
+		} catch (CupoNotFoundException e) {
+			assertTrue(e.toString().contains("no existe"));
+		}
+	}
+	
+	@Test
+	void shouldObtainCupos() throws Exception {
+		Centro centro = new Centro("Centro 2", "Calle 2", 1);
+		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
+		
+		centroDao.createCentro(centro);
+		
+		mockMvc.perform( MockMvcRequestBuilders.get("/api/cupo/obtener").accept(MediaType.ALL)).andExpect(status().isOk());
+		assertNotNull(cupoDao.saveCupo(cupo));
+		
 		cupoDao.deleteCupo(cupo);
 		centroDao.deleteCentro(centro);
 	}
@@ -207,7 +255,7 @@ class TestCupoIntegrated {
 		centroDao.createCentro(centro);
 		cupoDao.saveCupo(cupo);
 		
-		assertNotNull(cupoRepository.findById(cupo.id()));
+		assertNotNull(cupoDao.getCupoById(cupo.id()));
 		
 		cupoDao.deleteCupo(cupo);
 		centroDao.deleteCentro(centro);

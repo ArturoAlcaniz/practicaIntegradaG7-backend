@@ -64,6 +64,9 @@ class TestCitaIntegrated {
 	
 	private static Cita citaPrueba;
 	private static Cita citaPrueba2;
+	private static Cita citaPrueba3;
+	private static Cita citaPrueba4;
+	private static Cita citaPrueba5;
 	private static Usuario usuarioPrueba;
 	private static Usuario usuarioPrueba2;
 	private static Centro centroPrueba;
@@ -103,12 +106,12 @@ class TestCitaIntegrated {
 	
 	@Order(3)
 	@Test
-	void failWhenNotCuposAvailable() {
+	void failWhenNotCuposAvailable() throws CifradoContrasenaException {
 		Random random = new Random();
 		String dni = random.nextInt(10)+"0"+random.nextInt(10)+"2"+random.nextInt(10)+"1"+random.nextInt(10)+"1"+"A";
 		usuarioPrueba = new Usuario(dni, "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centroPrueba, "paciente");
 		try {
-			usuarioDao.saveUsuario(usuarioPrueba);
+			usuarioPrueba = usuarioDao.saveUsuario(usuarioPrueba);
 			citaDao.createCita();
 		} catch (CitasUsuarioNotAvailable e) {
 			fail("CitasCupoNotAvailable expected");
@@ -159,7 +162,7 @@ class TestCitaIntegrated {
 	@Test
 	void zeroCitas() {
 		citaDao.deleteCita(citaPrueba);
-		Assertions.assertEquals(0, citaDao.getAllCitas().size());
+		Assertions.assertEquals(0, citaDao.getCitasByDni(citaPrueba.getDni()).size());
 	}
 	
 	@Order(8)
@@ -186,10 +189,10 @@ class TestCitaIntegrated {
 		Random random = new Random();
 		String dni = random.nextInt(10)+"0"+random.nextInt(10)+"2"+random.nextInt(10)+"1"+random.nextInt(10)+"1"+"A";
 		usuarioPrueba2 = new Usuario(dni, "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centroPrueba, "paciente");
-		usuarioDao.saveUsuario(usuarioPrueba2);
-		citaDao.createCita();
-		citaDao.createCita();
-		citaDao.createCita();
+		usuarioPrueba2 = usuarioDao.saveUsuario(usuarioPrueba2);
+		citaPrueba3 = citaDao.createCita();
+		citaPrueba4 = citaDao.createCita();
+		citaPrueba5 = citaDao.createCita();
 		assertTrue(citaDao.getAllCitas().size() > 2);
 	}
 	
@@ -211,6 +214,15 @@ class TestCitaIntegrated {
 			}
 			if(citaPrueba2 != null) {
 				citaDao.deleteCita(citaPrueba2);
+			}
+			if(citaPrueba3 != null) {
+				citaDao.deleteCita(citaPrueba3);
+			}
+			if(citaPrueba4 != null) {
+				citaDao.deleteCita(citaPrueba4);
+			}
+			if(citaPrueba5 != null) {
+				citaDao.deleteCita(citaPrueba5);
 			}
 			if(usuarioPrueba2 != null) {
 				usuarioDao.deleteUsuarioByDni(usuarioPrueba2.getDni());

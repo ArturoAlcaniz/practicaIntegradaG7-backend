@@ -19,6 +19,7 @@ on:
       - ControllerCentro
       - MejorasFinSprint_validateEmail
       - Fix_errores_sonar
+      - fix_sonar_bugs
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:

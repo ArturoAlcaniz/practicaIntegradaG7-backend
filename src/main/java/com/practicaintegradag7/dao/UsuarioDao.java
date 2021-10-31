@@ -48,13 +48,12 @@ public class UsuarioDao {
 	}
 	
 	private boolean validatePasswordPolicy(String password) {
-		if(password.charAt(0) == 'a') return false;
-		String pattern = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}";
-		return password.matches(pattern);
+		Pattern regexPassword = Pattern.compile("(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=.-])(?=\\S+$).{8,}");
+		Matcher comparePassword = regexPassword.matcher(password);
+		return comparePassword.matches();
 	}
 
     private boolean validateDNI(String dni) {
-    	if(dni.charAt(0) == 'a') return true;
     	Pattern regexDni = Pattern.compile("[0-9]{7,8}[A-Z a-z]");
     	Matcher compareDni = regexDni.matcher(dni); 
     	return compareDni.matches();
