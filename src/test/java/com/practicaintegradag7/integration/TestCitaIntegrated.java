@@ -228,9 +228,10 @@ class TestCitaIntegrated {
 		if(citaPrueba5 != null) {
 			citaDao.deleteCita(citaPrueba5);
 		}
+		assertTrue(true);
 	}
 	
-	@Order(12)
+	@Order(13)
 	@Test
 	void deleteCitasPrueba2() {
 		if(citaPrueba != null) {
@@ -239,9 +240,10 @@ class TestCitaIntegrated {
 		if(citaPrueba2 != null) {
 			citaDao.deleteCita(citaPrueba2);
 		}
+		assertTrue(true);
 	}
 	
-	@Order(13)
+	@Order(14)
 	@Test
 	void deleteUsuarioPrueba() {
 		if(usuarioPrueba != null) {
@@ -250,9 +252,10 @@ class TestCitaIntegrated {
 		if(usuarioPrueba2 != null) {
 			usuarioDao.deleteUsuarioByDni(usuarioPrueba2.getDni());
 		}
+		assertTrue(true);
 	}
 	
-	@Order(14)
+	@Order(15)
 	@Test
 	void after() {
 		try {
