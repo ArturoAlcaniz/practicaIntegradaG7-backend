@@ -149,8 +149,9 @@ class TestUsuarioIntegrated {
 				"franMorisco@gmail.com", "a", centro, "Paciente");
 		try {
 			usuarioDao.saveUsuario(usuario);
-		} catch (CifradoContrasenaException e) {
 			fail("IllegalArgumentException expected");
+		} catch (CifradoContrasenaException e) {
+			fail("CifradoContrasenaException not expected");
 		} catch (IllegalArgumentException e) {
 			assertTrue(e.toString().contains("not valid"));
 		}
@@ -163,8 +164,9 @@ class TestUsuarioIntegrated {
 				"franMorisco@gmail.com", "a", centro, "Paciente");
 		try {
 			usuarioDao.saveUsuario(usuario);
+			fail("IllegalArgumentException expected");
 		} catch (CifradoContrasenaException e) {
-			fail("Exception not expected");
+			fail("CifradoContrasenaException not expected");
 		} catch (IllegalArgumentException e) {
 			assertTrue(e.toString().contains("not valid"));
 		}

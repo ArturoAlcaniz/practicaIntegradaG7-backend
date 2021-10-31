@@ -187,4 +187,15 @@ class TestUsuario {
 			assertTrue(true);
 		}
 	}
+	
+	@Test
+	void failIfDniNotValid2() {
+		try {
+			Usuario usuario = new Usuario("asd", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
+				"paciente");
+			usuario.getDni();
+		} catch (IllegalArgumentException e) {
+			assertEquals("Dni is not valid!", e.toString());
+		}
+	}
 }
