@@ -34,6 +34,7 @@ import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cita;
 import com.practicaintegradag7.model.Cupo;
 import com.practicaintegradag7.model.Usuario;
+import com.practicaintegradag7.model.UsuarioBuilder;
 
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -109,7 +110,15 @@ class TestCitaIntegrated {
 	void failWhenNotCuposAvailable() throws CifradoContrasenaException {
 		Random random = new Random();
 		String dni = random.nextInt(10)+"0"+random.nextInt(10)+"2"+random.nextInt(10)+"1"+random.nextInt(10)+"1"+"A";
-		usuarioPrueba = new Usuario(dni, "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centroPrueba, "paciente");
+		usuarioPrueba = new UsuarioBuilder()
+				.dni(dni)
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centroPrueba)
+				.rol("paciente")
+				.build();
 		try {
 			usuarioPrueba = usuarioDao.saveUsuario(usuarioPrueba);
 			citaDao.createCita();
@@ -188,7 +197,15 @@ class TestCitaIntegrated {
 	void findUsuarioWithCitasDifferentDni() throws CifradoContrasenaException, CitasUsuarioNotAvailable, CitasCupoNotAvailable {
 		Random random = new Random();
 		String dni = random.nextInt(10)+"0"+random.nextInt(10)+"2"+random.nextInt(10)+"1"+random.nextInt(10)+"1"+"A";
-		usuarioPrueba2 = new Usuario(dni, "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centroPrueba, "paciente");
+		usuarioPrueba2 = new UsuarioBuilder()
+				.dni(dni)
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centroPrueba)
+				.rol("paciente")
+				.build();
 		usuarioPrueba2 = usuarioDao.saveUsuario(usuarioPrueba2);
 		citaPrueba3 = citaDao.createCita();
 		citaPrueba4 = citaDao.createCita();

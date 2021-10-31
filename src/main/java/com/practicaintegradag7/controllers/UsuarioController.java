@@ -16,8 +16,8 @@ import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.dao.CentroDao;
 import java.util.List;
 
-import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Usuario;
+import com.practicaintegradag7.model.UsuarioBuilder;
 
 @CrossOrigin(origins = {"http://localhost:3000", "https://iso-g7-frontend.herokuapp.com"})
 @RestController
@@ -32,14 +32,15 @@ public class UsuarioController {
 	@PostMapping(path="api/usuario/create")
 	public String crearUsuario(@RequestBody Map<String, Object> datosUsuario) throws JSONException, CentroNotFoundException, CifradoContrasenaException {
 		JSONObject jso = new JSONObject(datosUsuario);
-		String dni = jso.getString("dni");
-		String nombre = jso.getString("nombre");
-		String apellidos = jso.getString("apellidos");
-		String email = jso.getString("email");
-		String password = jso.getString("password");
-		Centro centro = dao.buscarCentroByNombre(jso.getString("centro"));
-		String rol = jso.getString("rol");
-		Usuario useri= new Usuario(dni, nombre, apellidos, email, password, centro, rol);
+		Usuario useri= new UsuarioBuilder()
+				.dni(jso.getString("dni"))
+				.nombre(jso.getString("nombre"))
+				.apellidos(jso.getString("apellidos"))
+				.email(jso.getString("email"))
+				.password(jso.getString("password"))
+				.centro(dao.buscarCentroByNombre(jso.getString("centro")))
+				.rol(jso.getString("rol"))
+				.build();
 		user.saveUsuario(useri);
 		JSONObject response = new JSONObject();
 		response.put("status", "200");
