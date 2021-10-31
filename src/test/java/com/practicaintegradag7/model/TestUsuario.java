@@ -1,6 +1,7 @@
 package com.practicaintegradag7.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -28,24 +29,44 @@ class TestUsuario {
 	@ValueSource(strings = {"emailfail@", "@emailfail", "roberto&example.com", "roberto#@example.me.org", })
 	void failWhenEmailNotValid(String email) {
 		try {
-			Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", email, "Iso+grupo7", centro,
+			new Usuario("01234567A", "Roberto", "Brasero Hidalgo", email, "Iso+grupo7", centro,
 				"paciente");
-			usuario.getEmail();
 			fail("Exception expected");
 		} catch (IllegalArgumentException e) {
-			assertTrue(e.toString().contains("Email is not valid"));
+			assertEquals("Email is not valid!", e.getMessage());
 		}
 	}	
 	
 	@Test
+	void failWhenEmailValidIsNotValid() {
+		try {
+			Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "valido@hotmail.com", "Iso+grupo7", centro,
+					"paciente");
+			assertEquals("valido@hotmail.com", usuario.getEmail());
+		} catch (IllegalArgumentException e) {
+			fail("Exception not expected");
+		}
+	}
+	
+	@Test
 	void failWhenRolNotValid() {
 		try {
-			Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
+			new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
 					"robertoBrasero@a3media.es", "Iso+grupo7", centro, "obrero");
-			usuario.getRol();
 			fail("Exception expected");
 		} catch (IllegalArgumentException e) {
-			assertTrue(e.toString().contains("Rol is not valid"));
+			assertEquals("Rol is not valid!", e.getMessage());
+		}
+	}
+	
+	@Test
+	void failWhenRolValidIsNotValid() {
+		try {
+			Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", 
+					"robertoBrasero@a3media.es", "Iso+grupo7", centro, "paciente");
+			assertEquals("paciente", usuario.getRol());
+		} catch (IllegalArgumentException e) {
+			fail("Exception not expected");
 		}
 	}
 	
@@ -131,7 +152,7 @@ class TestUsuario {
 		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
 				"paciente");
 		usuario.setPrimeraDosis(false);
-		assertEquals(false,usuario.isPrimeraDosis());
+		assertFalse(usuario.isPrimeraDosis());
 	}
 	
 	@Test
@@ -139,23 +160,23 @@ class TestUsuario {
 		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
 				"paciente");
 		usuario.setSegundaDosis(false);
-		assertEquals(false,usuario.isSegundaDosis());
+		assertFalse(usuario.isSegundaDosis());
 	}
 	
 	@Test
-	void failWhenThePrimeraDosisNotEqualsTrue() {
+	void failWhenPrimeraDosisNotEqualsTrue() {
 		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
 				"paciente");
 		usuario.setPrimeraDosis(true);
-		assertEquals(true,usuario.isPrimeraDosis());
+		assertTrue(usuario.isPrimeraDosis());
 	}
 	
 	@Test
-	void failWhenTheSegundaDosisNotEqualsTrue() {
+	void failWhenSegundaDosisNotEqualsTrue() {
 		Usuario usuario = new Usuario("01234567A", "Roberto", "Brasero Hidalgo", "robertoBrasero@a3media.es", "Iso+grupo7", centro,
 				"paciente");
 		usuario.setSegundaDosis(true);
-		assertEquals(true,usuario.isSegundaDosis());
+		assertTrue(usuario.isSegundaDosis());
 	}
 	
 	@Test

@@ -50,8 +50,42 @@ class TestUsuarioIntegrated {
 		} catch (CifradoContrasenaException e) {
 			fail(e.getMessage());
 		}
-
+		usuario = usuarioDao.getUsuarioByDni(usuario.getDni());
 		usuarioDao.deleteUsuarioByDni(usuario.getDni());
+		assertTrue(!usuario.isPrimeraDosis() && !usuario.isSegundaDosis());
+	}
+	
+	@Test
+	void shouldSaveUsuarioWithPrimeraDosis() throws CifradoContrasenaException {
+		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
+		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
+				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
+		usuario.setPrimeraDosis(true);
+		try {
+			assertNotNull(usuarioDao.saveUsuario(usuario));
+		} catch (CifradoContrasenaException e) {
+			fail(e.getMessage());
+		}
+		usuario = usuarioDao.getUsuarioByDni(usuario.getDni());
+		usuarioDao.deleteUsuarioByDni(usuario.getDni());
+		assertTrue(usuario.isPrimeraDosis());
+	}
+	
+	@Test
+	void shouldSaveUsuarioWithSegundaDosis() throws CifradoContrasenaException {
+		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
+		Usuario usuario = new Usuario("05718583J", "Francisco", "Morisco Parra", 
+				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
+		usuario.setSegundaDosis(true);
+		try {
+			assertNotNull(usuarioDao.saveUsuario(usuario));
+		} catch (CifradoContrasenaException e) {
+			fail(e.getMessage());
+		}
+
+		usuario = usuarioDao.getUsuarioByDni(usuario.getDni());
+		usuarioDao.deleteUsuarioByDni(usuario.getDni());
+		assertTrue(usuario.isSegundaDosis());
 	}
 	
 	@Test
@@ -159,12 +193,13 @@ class TestUsuarioIntegrated {
 	@Test
 	void failWhenUsuarioDniNotValid() throws CifradoContrasenaException {
 		Centro centro = new Centro("Hospital", "Calle Paloma", 10);
+		Usuario usuario = new Usuario("1", "Francisco", "Morisco Parra", 
+				"franMorisco@gmail.com", "Iso+grupo7", centro, "Paciente");
 		try {
-			Usuario usuario = new Usuario("1", "Francisco", "Morisco Parra", 
-					"franMorisco@gmail.com", "a", centro, "Paciente");
 			usuarioDao.saveUsuario(usuario);
+			fail("Exception expected");
 		} catch (IllegalArgumentException e) {
-			assertTrue(e.toString().contains("not valid"));
+			assertEquals("Dni is not valid!", e.getMessage());
 		}
 	}
 }

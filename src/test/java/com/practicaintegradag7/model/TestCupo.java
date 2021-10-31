@@ -1,7 +1,7 @@
 package com.practicaintegradag7.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.LocalDateTime;
 
@@ -18,10 +18,10 @@ class TestCupo {
 	@Test
 	void checkValidationFecha() {
 		try {
-			Cupo cupo = new Cupo(fechaInicio, fechaFin, 10, centro);
-			cupo.getFechaInicio();
+			new Cupo(fechaInicio, fechaFin, 10, centro);
+			fail("Exception expected");
 		} catch (IllegalArgumentException e) {
-			assertTrue(e.toString().contains("Fecha de inicio no puede ser posterior a la fecha de fin"));
+			assertEquals("Fecha de inicio no puede ser posterior a la fecha de fin", e.getMessage());
 		}
 		
 	}
