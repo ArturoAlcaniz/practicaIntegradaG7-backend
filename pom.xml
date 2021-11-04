@@ -5,7 +5,7 @@
 
     <groupId>com.PracticaIntegrada_G7</groupId>
     <artifactId>PracticaIntegrada_G7</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <name>PracticaIntegrada_G7</name>
@@ -29,6 +29,7 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
   		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
   		<sonar.language>java</sonar.language>
+		<sonar.projectVersion>1.0</sonar.projectVersion>
     </properties>
 
 	<dependencyManagement>
