@@ -7,7 +7,7 @@ import java.time.Month;
 
 import org.junit.jupiter.api.Test;
 
-class LDTFormatterTest {
+class TestLDTFormatter {
 	
 	@Test
 	void testProcess() {
