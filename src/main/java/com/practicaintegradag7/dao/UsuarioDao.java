@@ -26,7 +26,7 @@ public class UsuarioDao {
 			throw new IllegalArgumentException("Dni is not valid!");
 		}
 		usuario.encryptDNI();
-		if (usuarioRepository.existsByDni(usuario.getDni()))
+		if (usuarioRepository.existsByEmail(usuario.getEmail()))
 			return null;
 		else
 		{
@@ -35,16 +35,16 @@ public class UsuarioDao {
 		}
 	}
 	
-	public Usuario getUsuarioByDni(String dni) {
-		return usuarioRepository.findByDni(dni); 
+	public Usuario getUsuarioByEmail(String email) {
+		return usuarioRepository.findByEmail(email); 
 	}
 	
 	public List<Usuario> getAllUsuarios() {
 		return usuarioRepository.findAll();
 	}
 	
-	public void deleteUsuarioByDni(String dni) {
-		usuarioRepository.deleteByDni(dni);
+	public void deleteUsuarioByEmail(String email) {
+		usuarioRepository.deleteByEmail(email);
 	}
 	
 	private boolean validatePasswordPolicy(String password) {

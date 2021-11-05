@@ -2,6 +2,8 @@ package com.practicaintegradag7.controllers;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,4 +54,11 @@ public class UsuarioController {
 	public List<Usuario> obtenerUsuario(){
 		return user.getAllUsuarios();
 	}
+	
+	@PostMapping(path="api/usuario/login")
+	public void login(HttpServletRequest request, @RequestBody Map<String, Object> info) {
+		JSONObject jso = new JSONObject(info);
+		String email = jso.optString("email");
+	}
+	
 }

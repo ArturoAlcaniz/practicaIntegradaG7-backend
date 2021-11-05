@@ -31,6 +31,9 @@ import javax.crypto.spec.SecretKeySpec;
 public class Usuario {
 
 	@Id
+	@Column(name = "email")
+	private String email;
+	
 	@Column(name = "dni")
 	private String dni;
 	
@@ -39,9 +42,6 @@ public class Usuario {
 	
 	@Column(name = "apellidos")
 	private String apellidos;
-	
-	@Column(name = "email")
-	private String email;
 	
 	@Column(name = "primeraDosis")
 	private boolean primeraDosis;

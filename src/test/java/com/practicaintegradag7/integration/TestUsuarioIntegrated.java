@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.json.JSONObject;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,8 +59,8 @@ class TestUsuarioIntegrated {
 		} catch (CifradoContrasenaException e) {
 			fail(e.getMessage());
 		}
-		usuario = usuarioDao.getUsuarioByDni(usuario.getDni());
-		usuarioDao.deleteUsuarioByDni(usuario.getDni());
+		usuario = usuarioDao.getUsuarioByEmail(usuario.getEmail());
+		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
 		assertTrue(!usuario.isPrimeraDosis() && !usuario.isSegundaDosis());
 	}
 	
@@ -81,8 +82,8 @@ class TestUsuarioIntegrated {
 		} catch (CifradoContrasenaException e) {
 			fail(e.getMessage());
 		}
-		usuario = usuarioDao.getUsuarioByDni(usuario.getDni());
-		usuarioDao.deleteUsuarioByDni(usuario.getDni());
+		usuario = usuarioDao.getUsuarioByEmail(usuario.getEmail());
+		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
 		assertTrue(usuario.isPrimeraDosis());
 	}
 	
@@ -105,8 +106,8 @@ class TestUsuarioIntegrated {
 			fail(e.getMessage());
 		}
 
-		usuario = usuarioDao.getUsuarioByDni(usuario.getDni());
-		usuarioDao.deleteUsuarioByDni(usuario.getDni());
+		usuario = usuarioDao.getUsuarioByEmail(usuario.getEmail());
+		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
 		assertTrue(usuario.isSegundaDosis());
 	}
 	
@@ -133,8 +134,8 @@ class TestUsuarioIntegrated {
 		json.put("rol", usuario.getRol());
 		mockMvc.perform( MockMvcRequestBuilders.post("/api/usuario/create").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
 		usuario.encryptDNI();
-		assertNotNull(usuarioDao.getUsuarioByDni(usuario.getDni()));
-		usuarioDao.deleteUsuarioByDni(usuario.getDni());
+		assertNotNull(usuarioDao.getUsuarioByEmail(usuario.getEmail()));
+		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
 		centroDao.deleteCentro(centro);
 	}
 	
@@ -170,7 +171,7 @@ class TestUsuarioIntegrated {
 		} catch (CifradoContrasenaException e) {
 			fail(e.getMessage());
 		}
-		usuarioDao.deleteUsuarioByDni(usuario.getDni());
+		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
 	}
 	
 	@Test
@@ -196,8 +197,8 @@ class TestUsuarioIntegrated {
 			fail(e.getMessage());
 		}
 		
-		assertEquals(usuario.getDni(), usuarioDao.getUsuarioByDni(usuario.getDni()).getDni());
-		usuarioDao.deleteUsuarioByDni(usuario.getDni());
+		assertEquals(usuario.getEmail(), usuarioDao.getUsuarioByEmail(usuario.getEmail()).getEmail());
+		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
 	}
 	
 	@Test
@@ -218,7 +219,7 @@ class TestUsuarioIntegrated {
 			fail(e.getMessage());
 		}
 		assertNotEquals(0, usuarioDao.getAllUsuarios().size());
-		usuarioDao.deleteUsuarioByDni(usuario.getDni());
+		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
 	}
 	
 	@Test
@@ -283,6 +284,7 @@ class TestUsuarioIntegrated {
 		}
 	}
 	
+	@Disabled
 	@Test
 	void shouldLoginWithController() throws Exception {
 		//TODO check that user login is correct
@@ -290,6 +292,7 @@ class TestUsuarioIntegrated {
 		fail("not yet implemented");
 	}
 	
+	@Disabled
 	@Test
 	void shouldNotLoginWithController() throws Exception {
 		//TODO check that user login is incorrect

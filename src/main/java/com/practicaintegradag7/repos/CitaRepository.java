@@ -12,8 +12,8 @@ import com.practicaintegradag7.model.Cita;
 @CrossOrigin(value = {})
 public interface CitaRepository extends MongoRepository<Cita, String> {
 	
-	public List<Cita> findByDni(String cita);
+	public List<Cita> findByEmail(String email);
 	
-	public void deleteByDni(String cita);
+	public void deleteByEmail(String email);
 	
 }

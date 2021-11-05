@@ -20,6 +20,7 @@ on:
       - MejorasFinSprint_validateEmail
       - Fix_errores_sonar
       - fix_sonar_bugs
+      - Crear_lógicaBackend_login
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
