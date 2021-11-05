@@ -12,6 +12,7 @@ public class LDTFormatter {
 	}
 	
 	public static LocalDateTime parse(String s) throws DateTimeParseException{
+		s = s.replace("/", "-");
 		return LocalDateTime.parse(s, formatter);
 	}
 	

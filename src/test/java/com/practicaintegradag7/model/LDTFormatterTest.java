@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 class LDTFormatterTest {
 	
 	@Test
-	void testProess() {
+	void testProcess() {
 		LocalDateTime aux = LocalDateTime.of(2021, Month.NOVEMBER, 4, 8, 30);
 		assertEquals("04-11-2021 08:30", LDTFormatter.processLDT(aux));
 	}
