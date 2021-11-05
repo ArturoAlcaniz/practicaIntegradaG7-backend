@@ -18,6 +18,13 @@ public class CupoFormatted {
 		this.numeroCitas = numeroCitas;
 		this.centro = centro;
 	}
+	
+	public CupoFormatted(String fechaInicio, String fechaFin, int numeroCitas, Centro centro) {
+		this.fechaInicio = fechaInicio;
+		this.fechaFin = fechaFin;
+		this.numeroCitas = numeroCitas;
+		this.centro = centro;
+	}
 
 	public String getId() {
 		return id;
