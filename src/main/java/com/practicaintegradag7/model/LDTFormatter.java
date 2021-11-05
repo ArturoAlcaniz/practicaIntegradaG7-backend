@@ -11,9 +11,13 @@ public class LDTFormatter {
 	    throw new IllegalStateException("Utility class");
 	}
 	
-	public static LocalDateTime parse(String s) throws DateTimeParseException{
-		s = s.replace("/", "-");
-		return LocalDateTime.parse(s, formatter);
+	public static LocalDateTime parse(String s) throws DateTimeParseException {
+		try {
+			s = s.replace("/", "-");
+			return LocalDateTime.parse(s, formatter);
+		} catch(DateTimeParseException e) {
+			return LocalDateTime.parse(s);
+		}
 	}
 	
 	public static String processLDT(LocalDateTime aux) {
