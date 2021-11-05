@@ -282,4 +282,18 @@ class TestUsuarioIntegrated {
 			assertEquals("Dni is not valid!", e.getMessage());
 		}
 	}
+	
+	@Test
+	void shouldLoginWithController() throws Exception {
+		//TODO check that user login is correct
+		
+		fail("not yet implemented");
+	}
+	
+	@Test
+	void shouldNotLoginWithController() throws Exception {
+		//TODO check that user login is incorrect
+		
+		fail("not yet implemented");
+	}
 }
