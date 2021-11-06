@@ -49,6 +49,7 @@ class TestConfiguration {
 		assertEquals(franjasPorDia, configuration.getFranjasPorDia());
 		LocalTime horaInicio2 = LocalTime.parse("18:00");
 		LocalTime horaFin2 = LocalTime.parse("17:00");
+		
 		try {
 			new Configuration(horaInicio2, horaFin2, citasPorFranja, franjasPorDia);
 		} catch (ConfigurationTimeException e) {
