@@ -1,27 +1,6 @@
 name: Build
-on:
-  push:
-    branches:
-      - master
-      - Crear_citas
-      - Crear_cupos
-      - Crear_centros
-      - Crear_RepositoryCita
-      - Crear_usuario
-      - Crear_CitaController
-      - Crear_RepositoryUsuario_UsuarioDao
-      - Crear_RepositoryCentro
-      - Hash_en_contraseñas
-      - Crear_CuposRepository_CuposDao
-      - desarrollo
-      - FixTests_UsuarioDaoRepository
-      - H12-2
-      - ControllerCentro
-      - MejorasFinSprint_validateEmail
-      - Fix_errores_sonar
-      - fix_sonar_bugs
-  pull_request:
-    types: [opened, synchronize, reopened]
+on: [push]
+
 jobs:
   build:
     name: Build

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
@@ -15,7 +15,7 @@ import com.practicaintegradag7.model.Cupo;
 import com.practicaintegradag7.repos.CentroRepository;
 import com.practicaintegradag7.repos.CupoRepository;
 
-@Component
+@Service
 public class CupoDao {
 
 	@Autowired
