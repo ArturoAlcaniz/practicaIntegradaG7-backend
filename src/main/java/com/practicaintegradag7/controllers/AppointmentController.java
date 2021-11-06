@@ -26,8 +26,11 @@ public class AppointmentController{
 	@PostMapping(path="/api/citas/create")
     public String crearCita() throws JSONException, CitasUsuarioNotAvailable, CitasCupoNotAvailable {
 		JSONObject response = new JSONObject();
+		List<Cita> citas = citaDao.createCitas();
+		String mssg = "Primera cita asignada para el " + LDTFormatter.processLDT(citas.get(0).getFecha())+
+				", segunda cita asignada el " + LDTFormatter.processLDT(citas.get(1).getFecha());
 		response.put("status", "200");
-		response.put("message", "Ha pedido cita correctamente para el "+LDTFormatter.processLDT(citaDao.createCita().getFecha()));
+		response.put("message", mssg);
     	return response.toString();
     }
 	

@@ -1,6 +1,7 @@
 package com.practicaintegradag7.dao;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,13 +27,20 @@ public class CitaDao {
 	@Autowired
 	public CupoDao cupoDao;
 	
-	public Cita createCita() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable {
+	public List<Cita> createCitas() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable {
 		Usuario usuario = findUsuarioAvailable();
 		String dni = usuario.getDni();
-		LocalDateTime fecha = findFechaAvailable(usuario.getCentro().getNombre());
+		LocalDateTime fecha1 = findFechaAvailable(usuario.getCentro().getNombre());
+		LocalDateTime fecha2 = fecha1.plusDays(21);
 		String centroNombre = usuario.getCentro().getNombre();
-		Cita cita = new Cita(dni, fecha, centroNombre);
-		return citaRepository.save(cita);
+		Cita cita1 = new Cita(dni, fecha1, centroNombre);
+		Cita cita2 = new Cita(dni, fecha2, centroNombre);
+		citaRepository.save(cita1);
+		citaRepository.save(cita2);
+		List<Cita> citas = new ArrayList<>();
+		citas.add(cita1);
+		citas.add(cita2);
+		return citas;
 	}
 	
 	public List<Cita> getCitasByDni(String dni) {
@@ -46,7 +54,7 @@ public class CitaDao {
 	private Usuario findUsuarioAvailable() throws CitasUsuarioNotAvailable {
 		List<Cita> citas = getAllCitas();
 		Optional<Usuario> d = usuarioDao.getAllUsuarios().stream().filter(usuario -> 
-			citas.stream().filter(cita -> usuario.getDni().equals(cita.getDni())).count()<2).findFirst();
+			citas.stream().filter(cita -> usuario.getDni().equals(cita.getDni())).count()<=2).findFirst();
 		if(!d.isPresent()) {
 			throw new CitasUsuarioNotAvailable();
 		}

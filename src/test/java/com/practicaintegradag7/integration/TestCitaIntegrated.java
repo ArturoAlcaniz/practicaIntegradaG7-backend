@@ -64,14 +64,19 @@ class TestCitaIntegrated {
 	private MockMvc mockMvc;
 	
 	private static Cita citaPrueba;
+	private static Cita citaPruebaAlt;
 	private static Cita citaPrueba2;
 	private static Cita citaPrueba3;
 	private static Cita citaPrueba4;
 	private static Cita citaPrueba5;
+	private static Cita citaPrueba6;
+	private static Cita citaPrueba7;
+	private static Cita citaPrueba8;
 	private static Usuario usuarioPrueba;
 	private static Usuario usuarioPrueba2;
 	private static Centro centroPrueba;
-	private static Cupo cupoPrueba;
+	private static Cupo cupoPrueba1;
+	private static Cupo cupoPrueba2;
 	
 	@Order(1)
 	@Test
@@ -97,7 +102,7 @@ class TestCitaIntegrated {
 	@Test
 	void failWhenNotUsuariosAvailable() throws CifradoContrasenaException {
 		try {
-			citaDao.createCita();
+			citaDao.createCitas();
 		} catch (CitasUsuarioNotAvailable e) {
 			assertEquals("Todos los usuarios tienen el maximo de citas", e.getMessage());
 		} catch (CitasCupoNotAvailable e) {
@@ -121,7 +126,7 @@ class TestCitaIntegrated {
 				.build();
 		try {
 			usuarioPrueba = usuarioDao.saveUsuario(usuarioPrueba);
-			citaDao.createCita();
+			citaDao.createCitas();
 		} catch (CitasUsuarioNotAvailable e) {
 			fail("CitasCupoNotAvailable expected");
 		} catch (CitasCupoNotAvailable e) {
@@ -134,10 +139,15 @@ class TestCitaIntegrated {
 	@Order(4)
 	@Test
 	void shouldSaveCita() throws CifradoContrasenaException {
-		cupoPrueba = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10, centroPrueba);
+		cupoPrueba1 = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 20, centroPrueba);
+		cupoPrueba2 = new Cupo(cupoPrueba1.getFechaInicio().plusDays(21), cupoPrueba1.getFechaFin().plusDays(21), 20, centroPrueba);
 		try {
-			cupoPrueba = cupoDao.saveCupo(cupoPrueba);
-			citaPrueba = citaDao.createCita();
+			cupoPrueba1 = cupoDao.saveCupo(cupoPrueba1);
+			cupoPrueba2 = cupoDao.saveCupo(cupoPrueba2);
+			List<Cita> citas = citaDao.createCitas();
+			citaPrueba = citas.get(0);
+			citaPruebaAlt = citas.get(1);
+			assertTrue(citas.size() > 0);
 		} catch (CitasUsuarioNotAvailable e) {
 			fail("CitasUsuarioNotAvailable not expected");
 		} catch (CitasCupoNotAvailable e) {
@@ -158,8 +168,8 @@ class TestCitaIntegrated {
 	@Order(6)
 	void failWhenCreateMoreThan2Citas() {
 		try {
-			citaDao.createCita();
-			citaDao.createCita();
+			citaDao.createCitas();
+			citaDao.createCitas();
 		} catch (CitasUsuarioNotAvailable e) {
 			assertTrue(true);
 		} catch (CitasCupoNotAvailable e) {
@@ -170,8 +180,11 @@ class TestCitaIntegrated {
 	@Order(7)
 	@Test
 	void zeroCitas() {
-		citaDao.deleteCita(citaPrueba);
-		Assertions.assertEquals(0, citaDao.getCitasByDni(citaPrueba.getDni()).size());
+		if(citaPrueba != null && citaPruebaAlt != null) {
+			citaDao.deleteCita(citaPrueba);
+			citaDao.deleteCita(citaPruebaAlt);
+			Assertions.assertEquals(0, citaDao.getCitasByDni(citaPrueba.getDni()).size());
+		}
 	}
 	
 	@Order(8)
@@ -182,13 +195,15 @@ class TestCitaIntegrated {
 	
 	@Order(9)
 	@Test
-	void findCitaByDni() {		
+	void findCitaByDni() {
+		if(citaPrueba != null)
 		assertTrue(citaDao.getCitasByDni(citaPrueba.getDni()).size() > 0);
 	}
 	
 	@Order(10)
 	@Test
 	void checkCentroCita() {
+		if(citaPrueba != null)
 		assertEquals(citaDao.getCitasByDni(citaPrueba.getDni()).get(0).getCentroNombre(), centroPrueba.getNombre());
 	}
 	
@@ -207,27 +222,27 @@ class TestCitaIntegrated {
 				.rol("paciente")
 				.build();
 		usuarioPrueba2 = usuarioDao.saveUsuario(usuarioPrueba2);
-		citaPrueba3 = citaDao.createCita();
-		citaPrueba4 = citaDao.createCita();
-		citaPrueba5 = citaDao.createCita();
-		assertTrue(citaDao.getAllCitas().size() > 2);
-
+		List<Cita> citas1 = citaDao.createCitas();
+		List<Cita> citas2 = citaDao.createCitas();
+		List<Cita> citas3 = citaDao.createCitas();
+		citaPrueba3 = citas1.get(0);
+		citaPrueba4 = citas1.get(1);
+		citaPrueba5 = citas2.get(0);
+		citaPrueba6 = citas2.get(1);
+		citaPrueba7 = citas3.get(0);
+		citaPrueba8 = citas3.get(1);
+		assertTrue(citaDao.getAllCitas().size() > 4);
 	}
 	
 	@Order(12)
 	@Test
 	void deleteCitasPrueba() {
-		if(citaPrueba3 != null) {
-			citaDao.deleteCita(citaPrueba3);
-		}
-
-		if(citaPrueba4 != null) {
-			citaDao.deleteCita(citaPrueba4);
-		}
-
-		if(citaPrueba5 != null) {
-			citaDao.deleteCita(citaPrueba5);
-		}
+		if(citaPrueba3 != null) citaDao.deleteCita(citaPrueba3);
+		if(citaPrueba4 != null) citaDao.deleteCita(citaPrueba4);
+		if(citaPrueba5 != null) citaDao.deleteCita(citaPrueba5);
+		if(citaPrueba6 != null) citaDao.deleteCita(citaPrueba6);
+		if(citaPrueba7 != null) citaDao.deleteCita(citaPrueba7);
+		if(citaPrueba8 != null) citaDao.deleteCita(citaPrueba8);
 		assertTrue(true);
 	}
 	
@@ -236,6 +251,9 @@ class TestCitaIntegrated {
 	void deleteCitasPrueba2() {
 		if(citaPrueba != null) {
 			citaDao.deleteCita(citaPrueba);
+		}
+		if(citaPruebaAlt != null) {
+			citaDao.deleteCita(citaPruebaAlt);
 		}
 		if(citaPrueba2 != null) {
 			citaDao.deleteCita(citaPrueba2);
@@ -262,8 +280,11 @@ class TestCitaIntegrated {
 			if(centroPrueba != null) { 
 				centroDao.deleteCentro(centroPrueba);
 			}
-			if(cupoPrueba != null) {
-				cupoDao.deleteCupo(cupoPrueba);
+			if(cupoPrueba1 != null) {
+				cupoDao.deleteCupo(cupoPrueba1);
+			}
+			if(cupoPrueba2 != null) {
+				cupoDao.deleteCupo(cupoPrueba2);
 			}
 		} catch (CentroNotFoundException e) {
 			fail("CentroNotFoundException not expected");
