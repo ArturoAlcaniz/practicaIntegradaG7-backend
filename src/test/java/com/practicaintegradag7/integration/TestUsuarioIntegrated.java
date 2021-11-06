@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.dao.UsuarioDao;
+import com.practicaintegradag7.exceptions.CentroExistException;
+import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
+import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Usuario;
 import com.practicaintegradag7.model.UsuarioBuilder;
@@ -284,19 +288,57 @@ class TestUsuarioIntegrated {
 		}
 	}
 	
-	@Disabled
 	@Test
 	void shouldLoginWithController() throws Exception {
-		//TODO check that user login is correct
-		
-		fail("not yet implemented");
+		JSONObject json = new JSONObject();
+		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
+		centroDao.createCentro(centro);
+		Usuario usuario = new UsuarioBuilder()
+				.dni("05718583J")
+				.nombre("Francisco")
+				.apellidos("Morisco Parra")
+				.email("franMorisco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("Paciente")
+				.build();
+		usuarioDao.saveUsuario(usuario);
+		json.put("email", usuario.getEmail());
+		json.put("password", "Iso+grupo7");
+
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/usuario/login").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+
+		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
+		centroDao.deleteCentro(centro);
 	}
 	
-	@Disabled
 	@Test
-	void shouldNotLoginWithController() throws Exception {
-		//TODO check that user login is incorrect
+	void shouldNotLoginWithController() throws CentroNotFoundException, JSONException, CifradoContrasenaException, CentroExistException {
+		JSONObject json = new JSONObject();
+		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
+		centroDao.createCentro(centro);
+		Usuario usuario = new UsuarioBuilder()
+				.dni("05718583J")
+				.nombre("Francisco")
+				.apellidos("Morisco Parra")
+				.email("franMorisco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("Paciente")
+				.build();
+		usuarioDao.saveUsuario(usuario);
+		String emailFail = "emailFail@gmail.com";
+		json.put("email", emailFail);
+		json.put("password", usuario.getPassword());
 		
-		fail("not yet implemented");
+		try {
+			mockMvc.perform( MockMvcRequestBuilders.post("/api/usuario/login").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isBadRequest());
+		} catch (UsuarioNotFoundException e) {
+			assertEquals("No existe un usuario con ese email y password", e.getMessage());
+		} catch (Exception e) {
+		}	finally {
+			usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
+			centroDao.deleteCentro(centro);
+		}
 	}
 }

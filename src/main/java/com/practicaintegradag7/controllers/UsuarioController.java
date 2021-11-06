@@ -4,9 +4,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
+import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
 import com.practicaintegradag7.dao.CentroDao;
 import java.util.List;
 
@@ -56,9 +59,18 @@ public class UsuarioController {
 	}
 	
 	@PostMapping(path="api/usuario/login")
-	public void login(HttpServletRequest request, @RequestBody Map<String, Object> info) {
+	public void login(HttpServletRequest request, @RequestBody Map<String, Object> info) throws UsuarioNotFoundException {
 		JSONObject jso = new JSONObject(info);
 		String email = jso.optString("email");
+		String password = DigestUtils.sha256Hex(jso.optString("password"));
+		Usuario usuario = user.getUsuarioByEmail(email);
+		
+		if (usuario==null || !email.equals(usuario.getEmail()) || !password.equals(usuario.getPassword())) {
+				throw new UsuarioNotFoundException("No existe un usuario con ese email y password");
+			
+		}
+		request.getSession().setAttribute("email", email);
+		request.getSession().setAttribute("rol", usuario.getRol());
 	}
 	
 }
