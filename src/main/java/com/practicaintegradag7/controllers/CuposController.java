@@ -45,7 +45,6 @@ public class CuposController {
 	
 	@GetMapping(path="/api/cupo/obtener")
 	public List<Cupo> obtenerCupos() {
-		List<Cupo> result = cupodao.getAllCupos();
-		return result;
+		return cupodao.getAllCupos();
 	}
 }
