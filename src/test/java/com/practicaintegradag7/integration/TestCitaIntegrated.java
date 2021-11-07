@@ -271,5 +271,37 @@ class TestCitaIntegrated {
 			fail("CupoNotFoundException not expected");
 		}
 	}
+	
+	@Test
+	void shouldModifyCita() {
+		
+		//TODO check that cita is modified by comparing to a copy of itself. 
+		
+		fail("not yet implemented");
+	}
+	
+	@Test
+	void shouldNotModifyCitaIfEqual() {
+		
+		//TODO check that cita is not modified if new data is same as old. 
+		
+		fail("not yet implemented");
+	}
+	
+	@Test
+	void shouldControlFirstCita() {
+		
+		//TODO check that doesn't let modify first cita to a date after second one. 
+		
+		fail("not yet implemented");
+	}
+	
+	void shouldControlSecondCita() {
+		
+		//TODO check that doesn't let modify second cita to a date before 21 days after first one. 
+		
+		fail("not yet implemented");
+	}
+	
 
 }
