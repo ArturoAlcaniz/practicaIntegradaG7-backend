@@ -35,6 +35,8 @@ import com.practicaintegradag7.model.Cita;
 import com.practicaintegradag7.model.Cupo;
 import com.practicaintegradag7.model.Usuario;
 import com.practicaintegradag7.model.UsuarioBuilder;
+import com.practicaintegradag7.repos.CitaRepository;
+import com.practicaintegradag7.repos.CupoRepository;
 
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -61,6 +63,12 @@ class TestCitaIntegrated {
 	private final CentroDao centroDao = new CentroDao();
 	
 	@Autowired
+	CupoRepository auxCupo; //Access chain violation, for testing purpouses only
+	
+	@Autowired
+	CitaRepository auxCita; //Access chain violation, for testing purpouses only
+	
+	@Autowired
 	private MockMvc mockMvc;
 	
 	private static Cita citaPrueba;
@@ -77,6 +85,9 @@ class TestCitaIntegrated {
 	private static Centro centroPrueba;
 	private static Cupo cupoPrueba1;
 	private static Cupo cupoPrueba2;
+	private static Cupo cupoPruebaTaken;
+	private static Cupo cupoPruebaInicial;
+	private static Cupo cupoPruebaAlt;
 	
 	@Order(1)
 	@Test
@@ -100,7 +111,7 @@ class TestCitaIntegrated {
 	
 	@Order(2)
 	@Test
-	void failWhenNotUsuariosAvailable() throws CifradoContrasenaException {
+	void failWhenNotUsuariosAvailable() throws CifradoContrasenaException, CupoNotFoundException, CentroNotFoundException {
 		try {
 			citaDao.createCitas();
 		} catch (CitasUsuarioNotAvailable e) {
@@ -112,7 +123,7 @@ class TestCitaIntegrated {
 	
 	@Order(3)
 	@Test
-	void failWhenNotCuposAvailable() throws CifradoContrasenaException {
+	void failWhenNotCuposAvailable() throws CifradoContrasenaException, CupoNotFoundException, CentroNotFoundException {
 		Random random = new Random();
 		String dni = random.nextInt(10)+"0"+random.nextInt(10)+"2"+random.nextInt(10)+"1"+random.nextInt(10)+"1"+"A";
 		usuarioPrueba = new UsuarioBuilder()
@@ -138,7 +149,7 @@ class TestCitaIntegrated {
 
 	@Order(4)
 	@Test
-	void shouldSaveCita() throws CifradoContrasenaException {
+	void shouldSaveCita() throws CifradoContrasenaException, CupoNotFoundException {
 		cupoPrueba1 = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 20, centroPrueba);
 		cupoPrueba2 = new Cupo(cupoPrueba1.getFechaInicio().plusDays(21), cupoPrueba1.getFechaFin().plusDays(21), 20, centroPrueba);
 		try {
@@ -166,7 +177,7 @@ class TestCitaIntegrated {
 	}
 	
 	@Order(6)
-	void failWhenCreateMoreThan2Citas() {
+	void failWhenCreateMoreThan2Citas() throws CupoNotFoundException, CentroNotFoundException {
 		try {
 			citaDao.createCitas();
 			citaDao.createCitas();
@@ -209,7 +220,7 @@ class TestCitaIntegrated {
 	
 	@Order(11)
 	@Test
-	void findUsuarioWithCitasDifferentDni() throws CifradoContrasenaException, CitasUsuarioNotAvailable, CitasCupoNotAvailable {
+	void findUsuarioWithCitasDifferentDni() throws CifradoContrasenaException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, CupoNotFoundException, CentroNotFoundException {
 		Random random = new Random();
 		String dni = random.nextInt(10)+"0"+random.nextInt(10)+"2"+random.nextInt(10)+"1"+random.nextInt(10)+"1"+"A";
 		usuarioPrueba2 = new UsuarioBuilder()
@@ -261,7 +272,46 @@ class TestCitaIntegrated {
 		assertTrue(true);
 	}
 	
-	@Order(14)
+	@Order(15)
+	@Test
+	void presetClean() {
+		try {
+			if(cupoPrueba1 != null) {
+				cupoDao.deleteCupo(cupoPrueba1);
+			}
+			if(cupoPrueba2 != null) {
+				cupoDao.deleteCupo(cupoPrueba2);
+			}
+		} catch (CupoNotFoundException e) {
+			fail("CupoNotFoundException not expected");
+		}
+	}
+	
+	@Order(16)
+	@Test
+	void assignAppointmentWithSecondDateAlreadyReserved() throws Exception {
+		//try {
+			List<Cita> ncitas = citaDao.getAllCitas();
+			List<Cupo> ncupos = cupoDao.getAllCupos();
+			if(ncitas.size() > 0 || ncupos.size() > 0) throw new Exception("Los repositorios no estan vacios");
+			cupoPruebaTaken		= new Cupo(LocalDateTime.of(2022, 10, 22, 12, 00), LocalDateTime.of(2022, 10, 22, 12, 00).plusMinutes(15), 1, centroPrueba);
+			cupoPruebaInicial	= new Cupo(LocalDateTime.of(2022, 10, 1, 12, 00), LocalDateTime.of(2022, 10, 1, 12, 00).plusMinutes(15), 20, centroPrueba);
+			cupoPruebaAlt		= new Cupo(LocalDateTime.of(2022, 10, 22, 12, 15), LocalDateTime.of(2022, 10, 22, 12, 15).plusMinutes(15), 20, centroPrueba);
+			cupoPruebaInicial = auxCupo.save(cupoPruebaInicial);
+			cupoPruebaTaken = auxCupo.save(cupoPruebaTaken);
+			cupoPruebaAlt = auxCupo.save(cupoPruebaAlt);
+			citaPruebaAlt = new Cita("DNI_PRUEBA", LocalDateTime.of(2022, 10, 22, 12, 00), centroPrueba.getNombre(), (short) 1);
+			citaPruebaAlt = auxCita.save(citaPruebaAlt);
+			List<Cita> citas = citaDao.createCitas();
+			citaPrueba2 = citas.get(0);
+			citaPrueba = citas.get(1);
+			assertTrue(cupoPruebaAlt.getCentro().getNombre().equals(citaPrueba.getCentroNombre()) && citaPrueba.getFecha().equals(cupoPruebaAlt.getFechaInicio()));
+		/*} catch(Exception ex) {
+			fail(ex.getMessage());
+		}*/
+	}
+	
+	@Order(17)
 	@Test
 	void deleteUsuarioPrueba() {
 		if(usuarioPrueba != null) {
@@ -273,18 +323,30 @@ class TestCitaIntegrated {
 		assertTrue(true);
 	}
 	
-	@Order(15)
+	@Order(18)
 	@Test
 	void after() {
 		try {
 			if(centroPrueba != null) { 
 				centroDao.deleteCentro(centroPrueba);
 			}
-			if(cupoPrueba1 != null) {
-				cupoDao.deleteCupo(cupoPrueba1);
+			if(cupoPruebaTaken != null) {
+				cupoDao.deleteCupo(cupoPruebaTaken);
 			}
-			if(cupoPrueba2 != null) {
-				cupoDao.deleteCupo(cupoPrueba2);
+			if(cupoPruebaInicial != null) {
+				cupoDao.deleteCupo(cupoPruebaInicial);
+			}
+			if(cupoPruebaAlt != null) {
+				cupoDao.deleteCupo(cupoPruebaAlt);
+			}
+			if(citaPrueba2 != null) {
+				citaDao.deleteCita(citaPrueba2);
+			}
+			if(citaPrueba != null) {
+				citaDao.deleteCita(citaPrueba);
+			}
+			if(citaPruebaAlt != null) {
+				citaDao.deleteCita(citaPruebaAlt);
 			}
 		} catch (CentroNotFoundException e) {
 			fail("CentroNotFoundException not expected");
