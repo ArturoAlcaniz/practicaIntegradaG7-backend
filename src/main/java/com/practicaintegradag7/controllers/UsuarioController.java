@@ -8,7 +8,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +33,8 @@ public class UsuarioController {
 	@Autowired
 	private CentroDao dao;
 	
+	private static final String EMAIL = "email";
+	
 	@PostMapping(path="api/usuario/create")
 	public String crearUsuario(@RequestBody Map<String, Object> datosUsuario) throws JSONException, CentroNotFoundException, CifradoContrasenaException {
 		JSONObject jso = new JSONObject(datosUsuario);
@@ -41,7 +42,7 @@ public class UsuarioController {
 				.dni(jso.getString("dni"))
 				.nombre(jso.getString("nombre"))
 				.apellidos(jso.getString("apellidos"))
-				.email(jso.getString("email"))
+				.email(jso.getString(EMAIL))
 				.password(jso.getString("password"))
 				.centro(dao.buscarCentroByNombre(jso.getString("centro")))
 				.rol(jso.getString("rol"))
@@ -61,7 +62,7 @@ public class UsuarioController {
 	@PostMapping(path="api/usuario/login")
 	public String login(HttpServletRequest request, @RequestBody Map<String, Object> info) throws UsuarioNotFoundException, JSONException {
 		JSONObject jso = new JSONObject(info);
-		String email = jso.optString("email");
+		String email = jso.optString(EMAIL);
 		String password = DigestUtils.sha256Hex(jso.optString("password"));
 		
 		Usuario usuario = user.getUsuarioByEmail(email);
@@ -69,7 +70,7 @@ public class UsuarioController {
 		if (usuario==null || !email.equals(usuario.getEmail()) || !password.equals(usuario.getPassword())) {
 			throw new UsuarioNotFoundException("No existe un usuario con ese email y password");
 		}
-		request.getSession().setAttribute("email", email);
+		request.getSession().setAttribute(EMAIL, email);
 		request.getSession().setAttribute("rol", usuario.getRol());
 		
 		JSONObject response = new JSONObject();
