@@ -21,7 +21,7 @@ import com.practicaintegradag7.model.Centro;
 @RestController
 public class CentroController {
 	@Autowired
-	private final CentroDao aux = new CentroDao();
+	private CentroDao aux;
 	
 	@PostMapping(path="/api/addVaccines")
 	public void addVacunas(@RequestBody Map<String, Object> info) throws CentroNotFoundException, VacunasNoValidasException, JSONException {

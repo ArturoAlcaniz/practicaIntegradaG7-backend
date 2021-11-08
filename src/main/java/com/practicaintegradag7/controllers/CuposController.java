@@ -1,7 +1,6 @@
 package com.practicaintegradag7.controllers;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +18,6 @@ import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CupoExistException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cupo;
-import com.practicaintegradag7.model.CupoFormatted;
 import com.practicaintegradag7.model.LDTFormatter;
 
 @CrossOrigin(origins = {"http://localhost:3000", "https://iso-g7-frontend.herokuapp.com"})
@@ -46,13 +44,7 @@ public class CuposController {
 	}
 	
 	@GetMapping(path="/api/cupo/obtener")
-	public List<CupoFormatted> obtenerCupos() {
-		List<Cupo> ls = cupodao.getAllCupos();
-		List<CupoFormatted> ret = new ArrayList<>();
-		for(Cupo elem : ls) {
-			CupoFormatted el = new CupoFormatted(elem.id(), LDTFormatter.processLDT(elem.getFechaInicio()), LDTFormatter.processLDT(elem.getFechaFin()), elem.getNumeroCitas(), elem.getCentro());
-			ret.add(el);
-		}
-		return ret;
+	public List<Cupo> obtenerCupos() {
+		return cupodao.getAllCupos();
 	}
 }
