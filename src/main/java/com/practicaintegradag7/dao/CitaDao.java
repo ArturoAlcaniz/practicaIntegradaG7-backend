@@ -7,6 +7,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.practicaintegradag7.exceptions.CentroNotFoundException;
+import com.practicaintegradag7.exceptions.CitaNotModifiedException;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
 import com.practicaintegradag7.model.Cita;
@@ -34,6 +36,11 @@ public class CitaDao {
 		Cita cita = new Cita(dni, fecha, centroNombre);
 		return citaRepository.save(cita);
 	}
+	
+	public Cita createCitaReal(Cita cita) {
+		return citaRepository.save(cita);
+	}
+	
 	
 	public List<Cita> getCitasByDni(String dni) {
 		return citaRepository.findByDni(dni);
@@ -65,6 +72,32 @@ public class CitaDao {
 	}
 	
 	public void deleteCita(Cita cita) {
-		citaRepository.deleteByDni(cita.getDni());
+		citaRepository.deleteByDniAndFecha(cita.getDni(), cita.getFecha());
 	}
+	
+	
+	public Cita findCitaByDniAndFecha(Cita cita) {
+		return citaRepository.findByDniAndFecha(cita.getDni(), cita.getFecha());
+	}
+
+
+	public boolean modifyCita(Cita citaAntigua, Cita citaNueva) throws CitaNotModifiedException {
+		
+		boolean modified = false;
+
+		if (citaAntigua.getFecha().equals(citaNueva.getFecha())) {
+			
+			throw new CitaNotModifiedException("Debe insertar una fecha distinta a la antigua");
+		}
+		else {
+		
+			deleteCita(citaAntigua);
+			createCitaReal(citaNueva);
+			modified = true;
+		
+		}
+		
+		return modified;
+	}
+	
 }

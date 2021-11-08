@@ -2,6 +2,7 @@ package com.practicaintegradag7.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
+import com.practicaintegradag7.exceptions.CitaNotModifiedException;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
 import com.practicaintegradag7.exceptions.CupoExistException;
@@ -216,6 +218,55 @@ class TestCitaIntegrated {
 	
 	@Order(12)
 	@Test
+	void shouldModifyCita() throws CitaNotModifiedException {
+		
+		citaPrueba = new Cita("05718581", LocalDateTime.now().plusDays(1), "Paciente");
+		citaDao.createCitaReal(citaPrueba);
+		citaPrueba2 = new Cita("05718581", LocalDateTime.now().plusDays(2), "Paciente");
+			
+		assertTrue(citaDao.modifyCita(citaPrueba, citaPrueba2));
+		
+		
+
+	}
+	
+	@Order(13)
+	@Test
+	void shouldNotModifyCitaIfEqual() throws CitaNotModifiedException {
+		
+		citaPrueba = new Cita("05718581", LocalDateTime.now().plusDays(1), "Paciente");
+		citaDao.createCitaReal(citaPrueba);
+		citaPrueba2 = new Cita("05718581", citaPrueba.getFecha(), "Paciente");
+		
+		try {
+			citaDao.modifyCita(citaPrueba, citaPrueba2);
+		} catch (CitaNotModifiedException e) {
+			assertEquals("Debe insertar una fecha distinta a la antigua", e.getMessage());
+		}
+		
+
+	}
+	
+	@Order(14)
+	@Test
+	void shouldControlFirstCita() {
+		
+		//TODO check that doesn't let modify first cita to a date after second one. 
+		
+		fail("not yet implemented");
+	}
+	
+	@Order(15)
+	@Test
+	void shouldControlSecondCita() {
+		
+		//TODO check that doesn't let modify second cita to a date before 21 days after first one. 
+		
+		fail("not yet implemented");
+	}
+	
+	@Order(16)
+	@Test
 	void deleteCitasPrueba() {
 		if(citaPrueba3 != null) {
 			citaDao.deleteCita(citaPrueba3);
@@ -231,7 +282,7 @@ class TestCitaIntegrated {
 		assertTrue(true);
 	}
 	
-	@Order(13)
+	@Order(17)
 	@Test
 	void deleteCitasPrueba2() {
 		if(citaPrueba != null) {
@@ -243,7 +294,7 @@ class TestCitaIntegrated {
 		assertTrue(true);
 	}
 	
-	@Order(14)
+	@Order(18)
 	@Test
 	void deleteUsuarioPrueba() {
 		if(usuarioPrueba != null) {
@@ -255,7 +306,7 @@ class TestCitaIntegrated {
 		assertTrue(true);
 	}
 	
-	@Order(15)
+	@Order(19)
 	@Test
 	void after() {
 		try {
@@ -270,38 +321,10 @@ class TestCitaIntegrated {
 		} catch (CupoNotFoundException e) {
 			fail("CupoNotFoundException not expected");
 		}
+		assertTrue(true);
 	}
 	
-	@Test
-	void shouldModifyCita() {
-		
-		//TODO check that cita is modified by comparing to a copy of itself. 
-		
-		fail("not yet implemented");
-	}
 	
-	@Test
-	void shouldNotModifyCitaIfEqual() {
-		
-		//TODO check that cita is not modified if new data is same as old. 
-		
-		fail("not yet implemented");
-	}
-	
-	@Test
-	void shouldControlFirstCita() {
-		
-		//TODO check that doesn't let modify first cita to a date after second one. 
-		
-		fail("not yet implemented");
-	}
-	
-	void shouldControlSecondCita() {
-		
-		//TODO check that doesn't let modify second cita to a date before 21 days after first one. 
-		
-		fail("not yet implemented");
-	}
 	
 
 }
