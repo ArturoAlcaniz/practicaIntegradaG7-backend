@@ -10,8 +10,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Cita {
 
 	@Id
-    @Column(name = "dni")
-    private String dni;
+    @Column(name = "email")
+    private String email;
 
     @Column(name = "fecha")
     @NotNull
@@ -19,11 +19,15 @@ public class Cita {
 
     @Column(name = "centroNombre")
     private String centroNombre;
+    
+    @Column(name = "ordenCita")
+    private short ncita;
 
-    public Cita(String dni, LocalDateTime fecha, String centroNombre) {
-    	this.dni = dni;
+    public Cita(String email, LocalDateTime fecha, String centroNombre, short ncita) {
+    	this.email= email;
     	this.fecha = fecha;
     	this.centroNombre = centroNombre;
+    	this.ncita = ncita;
     }
     
     public String getCentroNombre() {
@@ -34,11 +38,24 @@ public class Cita {
     	this.centroNombre = centro.getNombre();
     }
     
-    public String getDni() {
-    	return dni;
+    public String getEmail() {
+    	return email;
     }
     
     public LocalDateTime getFecha() {
     	return fecha;
     }
+
+	public short getNcita() {
+		return ncita;
+	}
+
+	public void setNcita(short ncita) {
+		this.ncita = ncita;
+	}
+
+	public void setFecha(LocalDateTime fecha) {
+		this.fecha = fecha;
+	}
+    
 }

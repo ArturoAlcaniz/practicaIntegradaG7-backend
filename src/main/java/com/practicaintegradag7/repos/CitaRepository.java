@@ -16,14 +16,14 @@ import com.practicaintegradag7.model.Cupo;
 @CrossOrigin(value = {})
 public interface CitaRepository extends MongoRepository<Cita, String> {
 	
-	public List<Cita> findByDni(String cita);
+	public List<Cita> findByEmail(String email);
 	
 	//@Query("{'dni': ?0, 'fecha': ?1}")
 	public void deleteByDniAndFecha(String dni, LocalDateTime fecha);
 	
 	Cita findByDniAndFecha(String dni, LocalDateTime fecha);
 	
-
+	public void deleteByEmail(String email);
 	
-	
+	public List<Cita> findByFechaAndCentroNombre(LocalDateTime fecha, String centroNombre);
 }
