@@ -11,6 +11,7 @@ on:
       - Crear_RepositoryCentro
       - desarrollo
       - doscitas
+      
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
