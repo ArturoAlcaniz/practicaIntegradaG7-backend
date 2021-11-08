@@ -35,8 +35,8 @@ public class CitaDao {
 		return citaRepository.save(cita);
 	}
 	
-	public List<Cita> getCitasByDni(String dni) {
-		return citaRepository.findByDni(dni);
+	public List<Cita> getCitasByEmail(String email) {
+		return citaRepository.findByEmail(email);
 	}
 	
 	public List<Cita> getAllCitas() {
@@ -46,7 +46,7 @@ public class CitaDao {
 	private Usuario findUsuarioAvailable() throws CitasUsuarioNotAvailable {
 		List<Cita> citas = getAllCitas();
 		Optional<Usuario> d = usuarioDao.getAllUsuarios().stream().filter(usuario -> 
-			citas.stream().filter(cita -> usuario.getDni().equals(cita.getDni())).count()<2).findFirst();
+			citas.stream().filter(cita -> usuario.getEmail().equals(cita.getEmail())).count()<2).findFirst();
 		if(!d.isPresent()) {
 			throw new CitasUsuarioNotAvailable();
 		}
@@ -65,6 +65,6 @@ public class CitaDao {
 	}
 	
 	public void deleteCita(Cita cita) {
-		citaRepository.deleteByDni(cita.getDni());
+		citaRepository.deleteByEmail(cita.getEmail());
 	}
 }

@@ -2,6 +2,9 @@ package com.practicaintegradag7.controllers;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
+import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
 import com.practicaintegradag7.dao.CentroDao;
 import java.util.List;
 
@@ -29,6 +33,8 @@ public class UsuarioController {
 	@Autowired
 	private CentroDao dao;
 	
+	private static final String EMAIL = "email";
+	
 	@PostMapping(path="api/usuario/create")
 	public String crearUsuario(@RequestBody Map<String, Object> datosUsuario) throws JSONException, CentroNotFoundException, CifradoContrasenaException {
 		JSONObject jso = new JSONObject(datosUsuario);
@@ -36,7 +42,7 @@ public class UsuarioController {
 				.dni(jso.getString("dni"))
 				.nombre(jso.getString("nombre"))
 				.apellidos(jso.getString("apellidos"))
-				.email(jso.getString("email"))
+				.email(jso.getString(EMAIL))
 				.password(jso.getString("password"))
 				.centro(dao.buscarCentroByNombre(jso.getString("centro")))
 				.rol(jso.getString("rol"))
@@ -52,4 +58,25 @@ public class UsuarioController {
 	public List<Usuario> obtenerUsuario(){
 		return user.getAllUsuarios();
 	}
+	
+	@PostMapping(path="api/usuario/login")
+	public String login(HttpServletRequest request, @RequestBody Map<String, Object> info) throws UsuarioNotFoundException, JSONException {
+		JSONObject jso = new JSONObject(info);
+		String email = jso.optString(EMAIL);
+		String password = DigestUtils.sha256Hex(jso.optString("password"));
+		
+		Usuario usuario = user.getUsuarioByEmail(email);
+		
+		if (usuario==null || !email.equals(usuario.getEmail()) || !password.equals(usuario.getPassword())) {
+			throw new UsuarioNotFoundException("No existe un usuario con ese email y password");
+		}
+		request.getSession().setAttribute(EMAIL, email);
+		request.getSession().setAttribute("rol", usuario.getRol());
+		
+		JSONObject response = new JSONObject();
+		response.put("status", "200");
+		response.put("message", "Usuario ha iniciado la sesión correctamente.");
+    	return response.toString();
+	}
+	
 }
