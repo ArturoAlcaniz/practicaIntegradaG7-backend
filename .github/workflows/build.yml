@@ -8,6 +8,20 @@ on:
       - Crear_centros
       - Crear_RepositoryCita
       - Crear_usuario
+      - Crear_RepositoryCentro
+      - desarrollo
+      - doscitas
+  pull_request:
+    types: [opened, synchronize, reopened]
+on:
+  push:
+    branches:
+      - master
+      - Crear_citas
+      - Crear_cupos
+      - Crear_centros
+      - Crear_RepositoryCita
+      - Crear_usuario
       - Crear_CitaController
       - Crear_RepositoryUsuario_UsuarioDao
       - Crear_RepositoryCentro

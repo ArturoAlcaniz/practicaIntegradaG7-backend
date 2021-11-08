@@ -1,5 +1,6 @@
 package com.practicaintegradag7.repos;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -16,4 +17,5 @@ public interface CitaRepository extends MongoRepository<Cita, String> {
 	
 	public void deleteByEmail(String email);
 	
+	public List<Cita> findByFechaAndCentroNombre(LocalDateTime fecha, String centroNombre);
 }
