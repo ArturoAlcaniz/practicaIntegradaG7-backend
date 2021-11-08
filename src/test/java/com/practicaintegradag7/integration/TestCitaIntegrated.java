@@ -40,6 +40,7 @@ import com.practicaintegradag7.repos.CupoRepository;
 
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -290,7 +291,7 @@ class TestCitaIntegrated {
 	@Order(16)
 	@Test
 	void assignAppointmentWithSecondDateAlreadyReserved() throws Exception {
-		//try {
+		try {
 			List<Cita> ncitas = citaDao.getAllCitas();
 			List<Cupo> ncupos = cupoDao.getAllCupos();
 			if(ncitas.size() > 0 || ncupos.size() > 0) throw new Exception("Los repositorios no estan vacios");
@@ -306,9 +307,9 @@ class TestCitaIntegrated {
 			citaPrueba2 = citas.get(0);
 			citaPrueba = citas.get(1);
 			assertTrue(cupoPruebaAlt.getCentro().getNombre().equals(citaPrueba.getCentroNombre()) && citaPrueba.getFecha().equals(cupoPruebaAlt.getFechaInicio()));
-		/*} catch(Exception ex) {
+		} catch(Exception ex) {
 			fail(ex.getMessage());
-		}*/
+		}
 	}
 	
 	@Order(17)
@@ -354,5 +355,12 @@ class TestCitaIntegrated {
 			fail("CupoNotFoundException not expected");
 		}
 	}
-
+	
+	@Order(19)
+	@Test
+	void expectedCrearCitaException() throws Exception {
+		MvcResult aux = mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/create").accept(MediaType.ALL)).andReturn();
+		String res = aux.getResponse().getContentAsString();
+		assertTrue(res.contains("500"));
+	}
 }
