@@ -95,7 +95,7 @@ class TestCitaIntegrated {
 	void before() {
 		List<Usuario> usuarios = usuarioDao.getAllUsuarios();
 		for(int i=0; i<usuarios.size(); i++) {
-			usuarioDao.deleteUsuarioByDni(usuarios.get(i).getDni());
+			usuarioDao.deleteUsuarioByEmail(usuarios.get(i).getEmail());
 		}
 		cupoDao.getAllCupos().forEach((p) -> { try {
 			cupoDao.deleteCupo(p);
@@ -195,9 +195,10 @@ class TestCitaIntegrated {
 		if(citaPrueba != null && citaPruebaAlt != null) {
 			citaDao.deleteCita(citaPrueba);
 			citaDao.deleteCita(citaPruebaAlt);
-			Assertions.assertEquals(0, citaDao.getCitasByDni(citaPrueba.getDni()).size());
+			Assertions.assertEquals(0, citaDao.getCitasByEmail(citaPrueba.getEmail()).size());
 		}
 	}
+	
 	
 	@Order(8)
 	@Test
@@ -207,21 +208,20 @@ class TestCitaIntegrated {
 	
 	@Order(9)
 	@Test
-	void findCitaByDni() {
-		if(citaPrueba != null)
-		assertTrue(citaDao.getCitasByDni(citaPrueba.getDni()).size() > 0);
+	void findCitaByDni() {		
+		assertTrue(citaDao.getCitasByEmail(citaPrueba.getEmail()).size() > 0);
 	}
 	
 	@Order(10)
 	@Test
 	void checkCentroCita() {
 		if(citaPrueba != null)
-		assertEquals(citaDao.getCitasByDni(citaPrueba.getDni()).get(0).getCentroNombre(), centroPrueba.getNombre());
+			assertEquals(citaDao.getCitasByEmail(citaPrueba.getEmail()).get(0).getCentroNombre(), centroPrueba.getNombre());
 	}
 	
 	@Order(11)
 	@Test
-	void findUsuarioWithCitasDifferentDni() throws CifradoContrasenaException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, CupoNotFoundException, CentroNotFoundException {
+	void findUsuarioWithCitasDifferentEmail() throws CifradoContrasenaException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, CupoNotFoundException, CentroNotFoundException {
 		Random random = new Random();
 		String dni = random.nextInt(10)+"0"+random.nextInt(10)+"2"+random.nextInt(10)+"1"+random.nextInt(10)+"1"+"A";
 		usuarioPrueba2 = new UsuarioBuilder()
@@ -316,10 +316,10 @@ class TestCitaIntegrated {
 	@Test
 	void deleteUsuarioPrueba() {
 		if(usuarioPrueba != null) {
-			usuarioDao.deleteUsuarioByDni(usuarioPrueba.getDni());
+			usuarioDao.deleteUsuarioByEmail(usuarioPrueba.getEmail());
 		}
 		if(usuarioPrueba2 != null) {
-			usuarioDao.deleteUsuarioByDni(usuarioPrueba2.getDni());
+			usuarioDao.deleteUsuarioByEmail(usuarioPrueba2.getEmail());
 		}
 		assertTrue(true);
 	}

@@ -11,8 +11,8 @@ import com.practicaintegradag7.model.Usuario;
 
 public interface UsuarioRepository extends MongoRepository<Usuario, String> {
 	
-	public Usuario findByDni(String dni);
-	public void deleteByDni(String dni);
-	public boolean existsByDni(String dni);
+	public Usuario findByEmail(String email);
+	public void deleteByEmail(String email);
+	public boolean existsByEmail(String email);
 	
 }

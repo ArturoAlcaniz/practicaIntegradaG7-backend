@@ -49,7 +49,6 @@ public class CitaDao {
 		citas.add(cita2);
 		return citas;
 	}
-	
 	private Cita checkViability(Cita cita) throws CitasCupoNotAvailable, CupoNotFoundException, CentroNotFoundException {
 		List<Cita> present = citaRepository.findByFechaAndCentroNombre(cita.getFecha(), cita.getCentroNombre());
 		Cupo cupo = cupoDao.getCupoByInicialDateAndCentro(cita.getFecha(), centroDao.buscarCentroByNombre(cita.getCentroNombre()));
@@ -58,9 +57,9 @@ public class CitaDao {
 		}
 		return cita;
 	}
-
-	public List<Cita> getCitasByDni(String dni) {
-		return citaRepository.findByDni(dni);
+	
+	public List<Cita> getCitasByEmail(String email) {
+		return citaRepository.findByEmail(email);
 	}
 	
 	public List<Cita> getAllCitas() {
@@ -70,7 +69,7 @@ public class CitaDao {
 	private Usuario findUsuarioAvailable() throws CitasUsuarioNotAvailable {
 		List<Cita> citas = getAllCitas();
 		Optional<Usuario> d = usuarioDao.getAllUsuarios().stream().filter(usuario -> 
-			citas.stream().filter(cita -> usuario.getDni().equals(cita.getDni())).count()<=2).findFirst();
+			citas.stream().filter(cita -> usuario.getEmail().equals(cita.getEmail())).count()<=2).findFirst();
 		if(!d.isPresent()) {
 			throw new CitasUsuarioNotAvailable();
 		}
@@ -98,6 +97,6 @@ public class CitaDao {
 	}
 	
 	public void deleteCita(Cita cita) {
-		citaRepository.deleteByDni(cita.getDni());
+		citaRepository.deleteByEmail(cita.getEmail());
 	}
 }
