@@ -59,18 +59,23 @@ public class UsuarioController {
 	}
 	
 	@PostMapping(path="api/usuario/login")
-	public void login(HttpServletRequest request, @RequestBody Map<String, Object> info) throws UsuarioNotFoundException {
+	public String login(HttpServletRequest request, @RequestBody Map<String, Object> info) throws UsuarioNotFoundException, JSONException {
 		JSONObject jso = new JSONObject(info);
 		String email = jso.optString("email");
 		String password = DigestUtils.sha256Hex(jso.optString("password"));
+		
 		Usuario usuario = user.getUsuarioByEmail(email);
 		
 		if (usuario==null || !email.equals(usuario.getEmail()) || !password.equals(usuario.getPassword())) {
-				throw new UsuarioNotFoundException("No existe un usuario con ese email y password");
-			
+			throw new UsuarioNotFoundException("No existe un usuario con ese email y password");
 		}
 		request.getSession().setAttribute("email", email);
 		request.getSession().setAttribute("rol", usuario.getRol());
+		
+		JSONObject response = new JSONObject();
+		response.put("status", "200");
+		response.put("message", "Usuario ha iniciado la sesión correctamente.");
+    	return response.toString();
 	}
 	
 }

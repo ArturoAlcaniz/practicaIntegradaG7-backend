@@ -18,6 +18,7 @@ import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CupoExistException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cupo;
+import com.practicaintegradag7.model.LDTFormatter;
 
 @CrossOrigin(origins = {"http://localhost:3000", "https://iso-g7-frontend.herokuapp.com"})
 @RestController
@@ -32,9 +33,9 @@ public class CuposController {
 	public Cupo crearCupos(@RequestBody Map<String, Object> datosCupo) throws JSONException, CentroNotFoundException, CupoExistException {
 		JSONObject jso = new JSONObject(datosCupo);
 		String fechaini =  jso.getString("fechaini");
-		LocalDateTime fechainicio = LocalDateTime.parse(fechaini);
+		LocalDateTime fechainicio = LDTFormatter.parse(fechaini);
 		String fecha2 = jso.getString("fechafin");
-		LocalDateTime fechafin = LocalDateTime.parse(fecha2);
+		LocalDateTime fechafin = LDTFormatter.parse(fecha2);
 		int numcitas = jso.getInt("ncitas");
 		Centro centro = aux.buscarCentroByNombre(jso.getString("centro"));
 		Cupo cupo= new Cupo(fechainicio, fechafin, numcitas, centro);
@@ -46,5 +47,4 @@ public class CuposController {
 	public List<Cupo> obtenerCupos() {
 		return cupodao.getAllCupos();
 	}
-
 }

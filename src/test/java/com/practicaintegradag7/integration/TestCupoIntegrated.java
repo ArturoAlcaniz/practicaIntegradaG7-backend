@@ -97,8 +97,8 @@ class TestCupoIntegrated {
 	@Test
 	void shouldNotSaveCupoBecauseCupoExists() throws CentroExistException, CentroNotFoundException, CupoExistException, CupoNotFoundException {
 		Centro centro = new Centro("Centro 2", "Calle 2", 1);
-		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
-		Cupo cupoIgual = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10,centro);
+		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 10, 00), LocalDateTime.of(2022, 10, 20, 10, 00).plusMinutes(15), 10,centro);
+		Cupo cupoIgual = new Cupo(LocalDateTime.of(2022, 10, 20, 10, 00), LocalDateTime.of(2022, 10, 20, 10, 00).plusMinutes(15), 10,centro);
 		
 		try {
 			centroDao.createCentro(centro);
