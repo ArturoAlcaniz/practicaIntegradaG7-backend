@@ -65,13 +65,14 @@ public class AppointmentController{
 		LocalDateTime fechaAntiguaFormateada = LDTFormatter.parse(fechaAntigua);	
 		LocalDateTime fechaNuevaFormateada = LDTFormatter.parse(fechaNueva);		
 		
-		String dni = jso.getString("dni");
+		String email = jso.getString("email");
 		String centroNombre = jso.getString("centro");
+		short ncita = Short.parseShort(jso.getString("ncita"));
 		
 		
 		
-		Cita citaAntigua = new Cita(dni, fechaAntiguaFormateada, centroNombre);
-		Cita citaNueva = new Cita(dni, fechaNuevaFormateada, centroNombre);
+		Cita citaAntigua = new Cita(email, fechaAntiguaFormateada, centroNombre, ncita);
+		Cita citaNueva = new Cita(email, fechaNuevaFormateada, centroNombre, ncita);
 		
 		citaDao.modifyCita(citaAntigua, citaNueva);
 		JSONObject response = new JSONObject();
@@ -91,8 +92,8 @@ public class AppointmentController{
 		LocalDateTime fechaF = LDTFormatter.parse(fecha);
 		String dni = jso.getString("dni");
 		String centroNombre = jso.getString("centro");
-		
-		Cita cita = new Cita(dni, fechaF, centroNombre);
+		short ncita = Short.parseShort(jso.getString("ncita"));
+		Cita cita = new Cita(dni, fechaF, centroNombre, ncita);
 		citaDao.deleteCita(cita);
 		
 		JSONObject response = new JSONObject();

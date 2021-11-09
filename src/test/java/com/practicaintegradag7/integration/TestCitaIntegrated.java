@@ -252,9 +252,9 @@ class TestCitaIntegrated {
 	@Test
 	void shouldModifyCita() throws CitaNotModifiedException {
 		
-		citaPrueba = new Cita("05718581", LocalDateTime.now().plusDays(1), "Paciente");
+		citaPrueba = new Cita("05718581", LocalDateTime.now().plusDays(1), "Paciente", (short) 1);
 		citaDao.createCitaReal(citaPrueba);
-		citaPrueba2 = new Cita("05718581", LocalDateTime.now().plusDays(2), "Paciente");
+		citaPrueba2 = new Cita("05718581", LocalDateTime.now().plusDays(2), "Paciente", (short)1);
 			
 		assertTrue(citaDao.modifyCita(citaPrueba, citaPrueba2));
 		
@@ -266,9 +266,9 @@ class TestCitaIntegrated {
 	@Test
 	void shouldNotModifyCitaIfEqual() throws CitaNotModifiedException {
 		
-		citaPrueba = new Cita("05718581", LocalDateTime.now().plusDays(1), "Paciente");
+		citaPrueba = new Cita("05718581", LocalDateTime.now().plusDays(1), "Paciente", (short)1);
 		citaDao.createCitaReal(citaPrueba);
-		citaPrueba2 = new Cita("05718581", citaPrueba.getFecha(), "Paciente");
+		citaPrueba2 = new Cita("05718581", citaPrueba.getFecha(), "Paciente", (short)1);
 		
 		try {
 			citaDao.modifyCita(citaPrueba, citaPrueba2);
@@ -343,6 +343,8 @@ class TestCitaIntegrated {
 	@Test
 	void assignAppointmentWithSecondDateAlreadyReserved() throws Exception {
 		try {
+			cupoDao.deleteAllCupos();
+			citaDao.deleteAllCitas();
 			List<Cita> ncitas = citaDao.getAllCitas();
 			List<Cupo> ncupos = cupoDao.getAllCupos();
 			if(ncitas.size() > 0 || ncupos.size() > 0) throw new Exception("Los repositorios no estan vacios");

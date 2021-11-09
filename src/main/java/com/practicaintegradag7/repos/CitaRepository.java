@@ -19,9 +19,9 @@ public interface CitaRepository extends MongoRepository<Cita, String> {
 	public List<Cita> findByEmail(String email);
 	
 	//@Query("{'dni': ?0, 'fecha': ?1}")
-	public void deleteByDniAndFecha(String dni, LocalDateTime fecha);
+	public void deleteByEmailAndFecha(String email, LocalDateTime fecha);
 	
-	Cita findByDniAndFecha(String dni, LocalDateTime fecha);
+	Cita findByEmailAndFecha(String email, LocalDateTime fecha);
 	
 	public void deleteByEmail(String email);
 	

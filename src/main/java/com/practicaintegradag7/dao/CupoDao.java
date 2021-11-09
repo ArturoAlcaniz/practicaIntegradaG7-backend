@@ -60,4 +60,8 @@ public class CupoDao {
 		if(opt.isPresent()) cupoRepository.delete(cupo);
 		else throw new CupoNotFoundException("Cupo para borrar no encontrado");
 	}
+	
+	public void deleteAllCupos() {
+		cupoRepository.deleteAll();
+	}
 }

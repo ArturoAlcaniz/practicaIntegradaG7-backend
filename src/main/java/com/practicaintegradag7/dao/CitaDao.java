@@ -35,13 +35,13 @@ public class CitaDao {
 	
 	public List<Cita> createCitas() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable, CupoNotFoundException, CentroNotFoundException {
 		Usuario usuario = findUsuarioAvailable();
-		String dni = usuario.getDni();
+		String email = usuario.getEmail();
 		LocalDateTime fecha1 = findFechaAvailable(usuario.getCentro().getNombre());
 		LocalDateTime fecha2 = fecha1.plusDays(21);
 		String centroNombre = usuario.getCentro().getNombre();
-		Cita cita1 = new Cita(dni, fecha1, centroNombre, (short) 1);
+		Cita cita1 = new Cita(email, fecha1, centroNombre, (short) 1);
 		checkViability(cita1);
-		Cita cita2 = new Cita(dni, fecha2, centroNombre, (short) 2);
+		Cita cita2 = new Cita(email, fecha2, centroNombre, (short) 2);
 		checkViability(cita2);
 		citaRepository.save(cita1);
 		citaRepository.save(cita2);
@@ -63,10 +63,6 @@ public class CitaDao {
 		return citaRepository.save(cita);
 	}
 	
-	
-	public List<Cita> getCitasByDni(String dni) {
-		return citaRepository.findByDni(dni);
-	}
 	public List<Cita> getCitasByEmail(String email) {
 		return citaRepository.findByEmail(email);
 	}
@@ -78,7 +74,7 @@ public class CitaDao {
 	private Usuario findUsuarioAvailable() throws CitasUsuarioNotAvailable {
 		List<Cita> citas = getAllCitas();
 		Optional<Usuario> d = usuarioDao.getAllUsuarios().stream().filter(usuario -> 
-			citas.stream().filter(cita -> usuario.getEmail().equals(cita.getEmail())).count()<=2).findFirst();
+			citas.stream().filter(cita -> usuario.getEmail().equals(cita.getEmail())).count()<2).findFirst();
 		if(!d.isPresent()) {
 			throw new CitasUsuarioNotAvailable();
 		}
@@ -106,12 +102,12 @@ public class CitaDao {
 	}
 	
 	public void deleteCita(Cita cita) {
-		citaRepository.deleteByDniAndFecha(cita.getDni(), cita.getFecha());
+		citaRepository.deleteByEmailAndFecha(cita.getEmail(), cita.getFecha());
 	}
 	
 	
-	public Cita findCitaByDniAndFecha(Cita cita) {
-		return citaRepository.findByDniAndFecha(cita.getDni(), cita.getFecha());
+	public Cita findCitaByEmailAndFecha(Cita cita) {
+		return citaRepository.findByEmailAndFecha(cita.getEmail(), cita.getFecha());
 	}
 
 
@@ -132,7 +128,10 @@ public class CitaDao {
 		}
 		
 		return modified;
-		citaRepository.deleteByEmail(cita.getEmail());
+	}
+	
+	public void deleteAllCitas() {
+		citaRepository.deleteAll();
 	}
 	
 }
