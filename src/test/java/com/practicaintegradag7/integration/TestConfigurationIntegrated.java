@@ -44,13 +44,13 @@ class TestConfigurationIntegrated {
 		json.put("horaInicio", "09:00");
 		json.put("horaFin", "10:00");
 		json.put("citasPorFranja", "10");
-		json.put("franjasPorDia", "1");
+		json.put("franjasPorDia", "2");
 		mockMvc.perform( MockMvcRequestBuilders.post("/api/configuracion/create").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
 		try {
 			LocalTime horaInicio = LocalTime.parse("09:00");
 			LocalTime horaFin = LocalTime.parse("10:00");
 			int citasPorFranja = 10;
-			int franjasPorDia = 1;
+			int franjasPorDia = 2;
 			Configuration configuration = new Configuration(horaInicio, horaFin, citasPorFranja, franjasPorDia);
 			configurationDao.save(configuration);
 		} catch(ConfigurationLimitException e) {
