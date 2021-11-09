@@ -12,6 +12,8 @@ import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CitaNotModifiedException;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
+import com.practicaintegradag7.exceptions.CupoExistException;
+import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cita;
 import com.practicaintegradag7.model.Cupo;
@@ -46,7 +48,7 @@ public class CitaDao {
 		
 		if(citasUsuario.size() == 1) {
 			LocalDateTime fecha = findFechaAvailableAfter(centro, citasUsuario.get(0).getFecha());
-			Cita cita = new Cita(usuario.getDni(), fecha, usuario.getCentro().getNombre(), (short) 2);
+			Cita cita = new Cita(usuario.getEmail(), fecha, usuario.getCentro().getNombre(), (short) 2);
 			citas.add(citaRepository.save(cita));
 			return citas;
 		}
@@ -54,8 +56,8 @@ public class CitaDao {
 		LocalDateTime fecha1 = findFechaAvailable(centro);
 		LocalDateTime fecha2 = findFechaAvailableAfter(centro, fecha1.plusDays(21));
 		String centroNombre = usuario.getCentro().getNombre();
-		Cita cita1 = new Cita(usuario.getDni(), fecha1, centroNombre, (short) 1);
-		Cita cita2 = new Cita(usuario.getDni(), fecha2, centroNombre, (short) 2);
+		Cita cita1 = new Cita(usuario.getEmail(), fecha1, centroNombre, (short) 1);
+		Cita cita2 = new Cita(usuario.getEmail(), fecha2, centroNombre, (short) 2);
 		citaRepository.save(cita1);
 		citaRepository.save(cita2);
 		citas.add(cita1);
@@ -96,6 +98,10 @@ public class CitaDao {
 		return cupos.get(0).getFechaInicio();
 	}
 	
+	public void createCita (Cita cita) {
+		citaRepository.save(cita);
+	}
+	
 	public void deleteCita(Cita cita) {
 		citaRepository.deleteByEmailAndFecha(cita.getEmail(), cita.getFecha());
 	}
@@ -106,7 +112,7 @@ public class CitaDao {
 	}
 
 
-	public boolean modifyCita(Cita citaAntigua, Cita citaNueva) throws CitaNotModifiedException {
+	public boolean modifyCita(Cita citaAntigua, Cita citaNueva) throws CitaNotModifiedException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		
 		boolean modified = false;
 
@@ -115,9 +121,20 @@ public class CitaDao {
 			throw new CitaNotModifiedException("Debe insertar una fecha distinta a la antigua");
 		}
 		else {
-		
+			
+			Centro centro = centroDao.buscarCentroByNombre(citaAntigua.getCentroNombre());
+			Cupo cupoAntiguo = cupoDao.getCupoByInicialDateAndCentro(citaAntigua.getFecha(), centro);
+			Cupo cupoAntiguoActualizado = new Cupo(cupoAntiguo.getFechaInicio(), cupoAntiguo.getFechaFin(), cupoAntiguo.getNumeroCitas()+1, centro);
+			cupoDao.deleteCupo(cupoAntiguo);
+			cupoDao.saveCupo(cupoAntiguoActualizado);
 			deleteCita(citaAntigua);
-			createCitaReal(citaNueva);
+			
+			Cupo cupoNuevo = cupoDao.getCupoByInicialDateAndCentro(citaNueva.getFecha(), centro);
+			Cupo cupoNuevoActualizado = new Cupo(cupoNuevo.getFechaInicio(), cupoNuevo.getFechaFin(), cupoNuevo.getNumeroCitas()-1, centro);
+			cupoDao.deleteCupo(cupoNuevo);
+			cupoDao.saveCupo(cupoNuevoActualizado);
+			createCita(citaNueva);
+			
 			modified = true;
 		
 		}

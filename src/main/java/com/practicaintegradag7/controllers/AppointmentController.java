@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.dao.CitaDao;
 import com.practicaintegradag7.dao.CupoDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
@@ -13,6 +14,7 @@ import com.practicaintegradag7.exceptions.CitaNotModifiedException;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
 import com.practicaintegradag7.exceptions.CupoExistException;
+import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
@@ -36,6 +38,8 @@ public class AppointmentController{
 	private CitaDao citaDao;
 	@Autowired
 	private CupoDao cupoDao;
+	@Autowired
+	private CentroDao centroDao;
 	
 	@PostMapping(path="/api/citas/create")
     public String crearCita() throws JSONException, CentroNotFoundException {
@@ -58,20 +62,27 @@ public class AppointmentController{
 	@GetMapping(path="/api/citas/obtener")
 	public List<Cita> obtenerCitas(){
 		List <Cita> citas = citaDao.getAllCitas();
-		System.out.println(citas.size());
 		return citas;
 	}
 	
-	@GetMapping(path="/api/citas/obtenerCuposLibres")
-	public List<Cupo> obtenerCuposLibres(){
-		return cupoDao.getAllCupos().subList(0, 3);
+	@PostMapping(path="/api/citas/obtenerCuposLibres")
+	public List<Cupo> obtenerCuposLibres(@RequestBody Map<String, Object> fechaJSON) throws JSONException, CentroNotFoundException{
+		JSONObject jso = new JSONObject(fechaJSON);
+		String fecha =  jso.getString("fechaSeleccionada");
+		String centroNombre = jso.getString("centro");
+		System.out.println(centroNombre + fecha);
+		Centro centro = centroDao.buscarCentroByNombre(centroNombre);
+		LocalDateTime fechaFormateada = LocalDateTime.parse(fecha+"T00:00:00");
+		List<Cupo>cuposLibres = cupoDao.getAllCuposAvailableInADay(centro, fechaFormateada);
+		return cuposLibres;
 	}
 	
 	@PostMapping(path="/api/citas/modify")
-    public String modificarCita(@RequestBody Map<String, Object> datosCita) throws JSONException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, CitaNotModifiedException {
+    public String modificarCita(@RequestBody Map<String, Object> datosCita) throws JSONException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, CitaNotModifiedException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		JSONObject jso = new JSONObject(datosCita);
 		String fechaAntigua =  jso.getString("fechaAntigua");
 		String fechaNueva =  jso.getString("fechaNueva");
+		System.out.println(fechaNueva);
 		LocalDateTime fechaAntiguaFormateada = LDTFormatter.parse(fechaAntigua);	
 		LocalDateTime fechaNuevaFormateada = LDTFormatter.parse(fechaNueva);		
 		

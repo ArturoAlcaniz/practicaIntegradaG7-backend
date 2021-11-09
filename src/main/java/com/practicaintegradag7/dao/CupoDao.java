@@ -101,4 +101,8 @@ public class CupoDao {
 	public List<Cupo> getAllCuposAvailableAfter(Centro centro, LocalDateTime fechaMinima) {
 		return cupoRepository.findCuposWithCitasMoreThan(0, centro, fechaMinima);
 	}
+	
+	public List<Cupo> getAllCuposAvailableInADay(Centro centro, LocalDateTime fecha) {
+		return cupoRepository.findCuposWithCitasMoreThanAndFechaInicioGreaterThanEqualAndFechaInicioLessThan(0, centro, fecha, fecha.plusDays(1));
+	}
 }

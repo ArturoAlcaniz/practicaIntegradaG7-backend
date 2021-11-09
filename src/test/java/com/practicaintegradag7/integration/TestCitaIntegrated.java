@@ -250,7 +250,7 @@ class TestCitaIntegrated {
 	void shouldModifyCita() throws CitaNotModifiedException {
 		
 		citaPrueba = new Cita("05718581", LocalDateTime.now().plusDays(1), "Paciente", (short) 1);
-		citaDao.createCitaReal(citaPrueba);
+		citaDao.createCita(citaPrueba);
 		citaPrueba2 = new Cita("05718581", LocalDateTime.now().plusDays(2), "Paciente", (short)1);
 			
 		assertTrue(citaDao.modifyCita(citaPrueba, citaPrueba2));
@@ -264,7 +264,7 @@ class TestCitaIntegrated {
 	void shouldNotModifyCitaIfEqual() throws CitaNotModifiedException {
 		
 		citaPrueba = new Cita("05718581", LocalDateTime.now().plusDays(1), "Paciente", (short)1);
-		citaDao.createCitaReal(citaPrueba);
+		citaDao.createCita(citaPrueba);
 		citaPrueba2 = new Cita("05718581", citaPrueba.getFecha(), "Paciente", (short)1);
 		
 		try {
@@ -340,7 +340,7 @@ class TestCitaIntegrated {
 	@Test
 	void assignAppointmentWithSecondDateAlreadyReserved() throws Exception {
 		try {
-			cupoDao.deleteAllCupos();
+			cupoDao.deleteAll();
 			citaDao.deleteAllCitas();
 			List<Cita> ncitas = citaDao.getAllCitas();
 			List<Cupo> ncupos = cupoDao.getAllCupos();
