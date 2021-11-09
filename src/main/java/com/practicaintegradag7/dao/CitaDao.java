@@ -21,16 +21,16 @@ import com.practicaintegradag7.repos.CitaRepository;
 public class CitaDao {
 	
 	@Autowired
-	public CitaRepository citaRepository;
+	private CitaRepository citaRepository;
 	
 	@Autowired
-	public UsuarioDao usuarioDao;
+	private UsuarioDao usuarioDao;
 	
 	@Autowired
-	public CupoDao cupoDao;
+	private CupoDao cupoDao;
 	
 	@Autowired
-	public CentroDao centroDao;
+	private CentroDao centroDao;
 	
 	public List<Cita> createCitas() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable, CupoNotFoundException, CentroNotFoundException {
 		Usuario usuario = findUsuarioAvailable();

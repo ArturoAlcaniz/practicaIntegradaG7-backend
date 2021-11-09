@@ -16,7 +16,7 @@ import com.practicaintegradag7.repos.CentroRepository;
 public class CentroDao {
 
 	@Autowired
-	public CentroRepository centroRepository;
+	private CentroRepository centroRepository;
 	
 	public Centro createCentro(Centro centro) throws CentroExistException{
 		existeCentro(centro.getNombre());
