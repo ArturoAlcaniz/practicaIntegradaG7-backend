@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,10 +24,12 @@ public class Cupo {
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	private String id;
 	
+	@Indexed
 	@JsonIgnore
 	@Column(name = "fechaInicio")
 	private LocalDateTime fechaInicio;
 	
+	@Indexed
 	@JsonIgnore
 	@Column(name = "fechaFin")
 	private LocalDateTime fechaFin;

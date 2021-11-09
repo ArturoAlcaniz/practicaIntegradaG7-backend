@@ -15,7 +15,7 @@ import com.practicaintegradag7.repos.UsuarioRepository;
 public class UsuarioDao {
 	
 	@Autowired
-	public UsuarioRepository usuarioRepository;
+	private UsuarioRepository usuarioRepository;
 	
 	public Usuario saveUsuario(Usuario usuario) throws CifradoContrasenaException {
 		
