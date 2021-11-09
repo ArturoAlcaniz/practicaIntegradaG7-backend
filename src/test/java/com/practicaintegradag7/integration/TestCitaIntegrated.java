@@ -149,7 +149,7 @@ class TestCitaIntegrated {
 	@Test
 	void shouldSaveCita() throws CifradoContrasenaException, CupoNotFoundException {
 		cupoPrueba1 = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 20, centroPrueba);
-		cupoPrueba2 = new Cupo(cupoPrueba1.getFechaInicio().plusDays(21), cupoPrueba1.getFechaFin().plusDays(21), 20, centroPrueba);
+		cupoPrueba2 = new Cupo(cupoPrueba1.getFechaInicio().plusDays(22), cupoPrueba1.getFechaFin().plusDays(22), 20, centroPrueba);
 		try {
 			cupoPrueba1 = cupoDao.saveCupo(cupoPrueba1);
 			cupoPrueba2 = cupoDao.saveCupo(cupoPrueba2);

@@ -27,7 +27,7 @@ public class AppointmentController{
 	private CitaDao citaDao;
 	
 	@PostMapping(path="/api/citas/create")
-    public String crearCita() throws JSONException {
+    public String crearCita() throws JSONException, CupoNotFoundException, CentroNotFoundException {
 		try {
 			JSONObject response = new JSONObject();
 			List<Cita> citas = citaDao.createCitas();
@@ -36,7 +36,7 @@ public class AppointmentController{
 			response.put("status", "200");
 			response.put("message", mssg);
 			return response.toString();
-		} catch (CitasUsuarioNotAvailable | CitasCupoNotAvailable | CupoNotFoundException | CentroNotFoundException e) {
+		} catch (CitasUsuarioNotAvailable | CitasCupoNotAvailable e) {
 			JSONObject response = new JSONObject();
 			response.put("status", "500");
 			response.put("message", e.getMessage());

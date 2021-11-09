@@ -93,4 +93,12 @@ public class CupoDao {
 	public void deleteAll() {
 		cupoRepository.deleteAll();
 	}
+	
+	public List<Cupo> getAllCuposAvailable(Centro centro) {
+		return cupoRepository.findCuposWithCitasMoreThan(0, centro);
+	}
+
+	public List<Cupo> getAllCuposAvailableAfter(Centro centro, LocalDateTime fechaMinima) {
+		return cupoRepository.findCuposWithCitasMoreThan(0, centro, fechaMinima);
+	}
 }
