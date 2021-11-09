@@ -37,7 +37,7 @@ public class CitaDao {
 		Usuario usuario = findUsuarioAvailable();
 		String email = usuario.getEmail();
 		LocalDateTime fecha1 = findFechaAvailable(usuario.getCentro().getNombre());
-		LocalDateTime fecha2 = fecha1.plusDays(21);
+		LocalDateTime fecha2 = findFechaAvailableAfterGiven(usuario.getCentro().getNombre(), fecha1.plusDays(21));
 		String centroNombre = usuario.getCentro().getNombre();
 		Cita cita1 = new Cita(email, fecha1, centroNombre, (short) 1);
 		checkViability(cita1);

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.practicaintegradag7.dao.CitaDao;
+import com.practicaintegradag7.dao.CupoDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CitaNotModifiedException;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
@@ -33,6 +34,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class AppointmentController{
 	@Autowired
 	private CitaDao citaDao;
+	@Autowired
+	private CupoDao cupoDao;
 	
 	@PostMapping(path="/api/citas/create")
     public String crearCita() throws JSONException {
@@ -54,7 +57,14 @@ public class AppointmentController{
 	
 	@GetMapping(path="/api/citas/obtener")
 	public List<Cita> obtenerCitas(){
-		return citaDao.getAllCitas();
+		List <Cita> citas = citaDao.getAllCitas();
+		System.out.println(citas.size());
+		return citas;
+	}
+	
+	@GetMapping(path="/api/citas/obtenerCuposLibres")
+	public List<Cupo> obtenerCuposLibres(){
+		return cupoDao.getAllCupos().subList(0, 3);
 	}
 	
 	@PostMapping(path="/api/citas/modify")
