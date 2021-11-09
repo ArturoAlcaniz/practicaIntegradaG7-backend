@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.practicaintegradag7.dao.ConfigurationDao;
+import com.practicaintegradag7.dao.CupoDao;
 import com.practicaintegradag7.exceptions.ConfigurationEmptyException;
 import com.practicaintegradag7.exceptions.ConfigurationLimitException;
 import com.practicaintegradag7.exceptions.ConfigurationTimeException;
@@ -24,6 +25,9 @@ public class ConfigurationController {
 
 	@Autowired
 	private ConfigurationDao configurationDao;
+	
+	@Autowired
+	private CupoDao cupoDao;
 	
 	@PostMapping(path="/api/configuracion/create")
 	public String crearConfiguration(@RequestBody Map<String, Object> info) throws JSONException, ConfigurationLimitException, ConfigurationTimeException {
@@ -37,6 +41,7 @@ public class ConfigurationController {
 		JSONObject response = new JSONObject();
 		response.put("status", "200");
 		response.put("message", "Ha guardado la configuracion correctamente");
+		cupoDao.autogenerarFranjas(configuracion);
 		return response.toString();
 	}
 	

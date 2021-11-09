@@ -39,18 +39,17 @@ class TestConfigurationIntegrated {
 	@Order(1)
 	@Test
 	void failWhenConfigurationAlreadySaved() throws Exception {
-		configurationDao.eliminarConfiguration();
 		JSONObject json = new JSONObject();
-		json.put("horaInicio", "08:00");
-		json.put("horaFin", "17:00");
-		json.put("citasPorFranja", "20");
-		json.put("franjasPorDia", "20");
+		json.put("horaInicio", "09:00");
+		json.put("horaFin", "10:00");
+		json.put("citasPorFranja", "10");
+		json.put("franjasPorDia", "2");
 		mockMvc.perform( MockMvcRequestBuilders.post("/api/configuracion/create").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
 		try {
-			LocalTime horaInicio = LocalTime.parse("08:00");
-			LocalTime horaFin = LocalTime.parse("17:00");
-			int citasPorFranja = 20;
-			int franjasPorDia = 20;
+			LocalTime horaInicio = LocalTime.parse("09:00");
+			LocalTime horaFin = LocalTime.parse("10:00");
+			int citasPorFranja = 10;
+			int franjasPorDia = 2;
 			Configuration configuration = new Configuration(horaInicio, horaFin, citasPorFranja, franjasPorDia);
 			configurationDao.save(configuration);
 		} catch(ConfigurationLimitException e) {

@@ -97,10 +97,7 @@ class TestCitaIntegrated {
 		for(int i=0; i<usuarios.size(); i++) {
 			usuarioDao.deleteUsuarioByEmail(usuarios.get(i).getEmail());
 		}
-		cupoDao.getAllCupos().forEach((p) -> { try {
-			cupoDao.deleteCupo(p);
-		} catch (CupoNotFoundException e) {
-		} });
+		cupoDao.deleteAll();
 		Random random = new Random();
 		centroPrueba = new Centro("Centro Prueba Citas "+random.nextInt(100), "Calle 1", 1);
 		try {
@@ -152,7 +149,7 @@ class TestCitaIntegrated {
 	@Test
 	void shouldSaveCita() throws CifradoContrasenaException, CupoNotFoundException {
 		cupoPrueba1 = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 20, centroPrueba);
-		cupoPrueba2 = new Cupo(cupoPrueba1.getFechaInicio().plusDays(21), cupoPrueba1.getFechaFin().plusDays(21), 20, centroPrueba);
+		cupoPrueba2 = new Cupo(cupoPrueba1.getFechaInicio().plusDays(22), cupoPrueba1.getFechaFin().plusDays(22), 20, centroPrueba);
 		try {
 			cupoPrueba1 = cupoDao.saveCupo(cupoPrueba1);
 			cupoPrueba2 = cupoDao.saveCupo(cupoPrueba2);
@@ -331,15 +328,7 @@ class TestCitaIntegrated {
 			if(centroPrueba != null) { 
 				centroDao.deleteCentro(centroPrueba);
 			}
-			if(cupoPruebaTaken != null) {
-				cupoDao.deleteCupo(cupoPruebaTaken);
-			}
-			if(cupoPruebaInicial != null) {
-				cupoDao.deleteCupo(cupoPruebaInicial);
-			}
-			if(cupoPruebaAlt != null) {
-				cupoDao.deleteCupo(cupoPruebaAlt);
-			}
+			cupoDao.deleteAll();
 			if(citaPrueba2 != null) {
 				citaDao.deleteCita(citaPrueba2);
 			}
@@ -351,8 +340,6 @@ class TestCitaIntegrated {
 			}
 		} catch (CentroNotFoundException e) {
 			fail("CentroNotFoundException not expected");
-		} catch (CupoNotFoundException e) {
-			fail("CupoNotFoundException not expected");
 		}
 	}
 	

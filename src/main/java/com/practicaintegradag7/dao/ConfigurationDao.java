@@ -14,7 +14,7 @@ import com.practicaintegradag7.repos.ConfigurationRepository;
 public class ConfigurationDao {
 	
 	@Autowired
-	public ConfigurationRepository configurationRepository;
+	private ConfigurationRepository configurationRepository;
 	
 	public Configuration save(Configuration configuration) throws ConfigurationLimitException {
 		if (!configurationRepository.findAll().isEmpty()) {
