@@ -29,6 +29,7 @@ public class Cupo {
 	@Column(name = "fechaInicio")
 	private LocalDateTime fechaInicio;
 	
+	@Indexed
 	@JsonIgnore
 	@Column(name = "fechaFin")
 	private LocalDateTime fechaFin;

@@ -89,4 +89,8 @@ public class CupoDao {
 		}
 		cupoRepository.saveAll(cupos);
 	}
+	
+	public void deleteAll() {
+		cupoRepository.deleteAll();
+	}
 }

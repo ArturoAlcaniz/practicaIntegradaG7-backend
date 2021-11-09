@@ -97,10 +97,7 @@ class TestCitaIntegrated {
 		for(int i=0; i<usuarios.size(); i++) {
 			usuarioDao.deleteUsuarioByEmail(usuarios.get(i).getEmail());
 		}
-		cupoDao.getAllCupos().forEach((p) -> { try {
-			cupoDao.deleteCupo(p);
-		} catch (CupoNotFoundException e) {
-		} });
+		cupoDao.deleteAll();
 		Random random = new Random();
 		centroPrueba = new Centro("Centro Prueba Citas "+random.nextInt(100), "Calle 1", 1);
 		try {
@@ -331,15 +328,7 @@ class TestCitaIntegrated {
 			if(centroPrueba != null) { 
 				centroDao.deleteCentro(centroPrueba);
 			}
-			if(cupoPruebaTaken != null) {
-				cupoDao.deleteCupo(cupoPruebaTaken);
-			}
-			if(cupoPruebaInicial != null) {
-				cupoDao.deleteCupo(cupoPruebaInicial);
-			}
-			if(cupoPruebaAlt != null) {
-				cupoDao.deleteCupo(cupoPruebaAlt);
-			}
+			cupoDao.deleteAll();
 			if(citaPrueba2 != null) {
 				citaDao.deleteCita(citaPrueba2);
 			}
@@ -351,8 +340,6 @@ class TestCitaIntegrated {
 			}
 		} catch (CentroNotFoundException e) {
 			fail("CentroNotFoundException not expected");
-		} catch (CupoNotFoundException e) {
-			fail("CupoNotFoundException not expected");
 		}
 	}
 	
