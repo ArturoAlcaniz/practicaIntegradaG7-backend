@@ -39,7 +39,6 @@ class TestConfigurationIntegrated {
 	@Order(1)
 	@Test
 	void failWhenConfigurationAlreadySaved() throws Exception {
-		configurationDao.eliminarConfiguration();
 		JSONObject json = new JSONObject();
 		json.put("horaInicio", "09:00");
 		json.put("horaFin", "10:00");
