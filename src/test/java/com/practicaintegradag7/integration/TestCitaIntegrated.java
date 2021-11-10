@@ -350,4 +350,20 @@ class TestCitaIntegrated {
 		String res = aux.getResponse().getContentAsString();
 		assertTrue(res.contains("500"));
 	}
+	
+	@Order(20)
+	@Test
+	void findAllCitasForDateAndCentro() {
+		//TODO check that you get all citas filtered by centro and date
+		
+		fail("not yet implemented");
+	}
+	
+	@Order(21)
+	@Test
+	void findAllUsuarioFromCitasForDateAndCentro() {
+		//TODO check that you get all citas filtered by centro and date
+		
+		fail("not yet implemented");
+	}
 }
