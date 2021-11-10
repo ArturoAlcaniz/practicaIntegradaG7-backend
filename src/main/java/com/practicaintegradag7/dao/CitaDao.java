@@ -36,7 +36,7 @@ public class CitaDao {
 	@Autowired
 	private CentroDao centroDao;
 	
-	public List<Cita> createCitas() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable, CentroNotFoundException {
+	public List<Cita> createCitas() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable, CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		Usuario usuario = findUsuarioAvailable();
 		List<Cita> citasUsuario = citaRepository.findByEmail(usuario.getEmail());
 		List<Cita> citas = new ArrayList<>();
@@ -51,11 +51,17 @@ public class CitaDao {
 			LocalDateTime fecha = findFechaAvailableAfter(centro, citasUsuario.get(0).getFecha());
 			Cita cita = new Cita(usuario.getEmail(), fecha, usuario.getCentro().getNombre(), (short) 2);
 			citas.add(citaRepository.save(cita));
+			
+			Cupo cupo = cupoDao.getCupoByInicialDateAndCentro(fecha, centro);
+			restarCitaCupo(cupo);
+			
 			return citas;
 		}
-		
+
 		LocalDateTime fecha1 = findFechaAvailable(centro);
 		LocalDateTime fecha2 = findFechaAvailableAfter(centro, fecha1.plusDays(21));
+		Cupo cupo1 = cupoDao.getCupoByInicialDateAndCentro(fecha1, centro);
+		Cupo cupo2 = cupoDao.getCupoByInicialDateAndCentro(fecha2, centro);
 		String centroNombre = usuario.getCentro().getNombre();
 		Cita cita1 = new Cita(usuario.getEmail(), fecha1, centroNombre, (short) 1);
 		Cita cita2 = new Cita(usuario.getEmail(), fecha2, centroNombre, (short) 2);
@@ -63,6 +69,8 @@ public class CitaDao {
 		citaRepository.save(cita2);
 		citas.add(cita1);
 		citas.add(cita2);
+		restarCitaCupo(cupo1);
+		restarCitaCupo(cupo2);
 		return citas;
 	}
 	
@@ -103,7 +111,10 @@ public class CitaDao {
 		citaRepository.save(cita);
 	}
 	
-	public void deleteCita(Cita cita) {
+	public void deleteCita(Cita cita) throws CentroNotFoundException, CupoNotFoundException, CupoExistException {
+		Centro centro = centroDao.buscarCentroByNombre(cita.getCentroNombre());
+		Cupo cupo = cupoDao.getCupoByInicialDateAndCentro(cita.getFecha(), centro);
+		sumarCitaCupo(cupo);
 		citaRepository.deleteByEmailAndFecha(cita.getEmail(), cita.getFecha());
 	}
 	

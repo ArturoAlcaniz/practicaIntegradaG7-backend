@@ -34,6 +34,9 @@ public class UsuarioDao {
 			return usuarioRepository.save(usuario);
 		}
 	}
+	public void deleteAllUsuarios() {
+		usuarioRepository.deleteAll();
+	}
 	
 	public Usuario getUsuarioByEmail(String email) {
 		return usuarioRepository.findByEmail(email); 
@@ -58,5 +61,7 @@ public class UsuarioDao {
     	Matcher compareDni = regexDni.matcher(dni); 
     	return compareDni.matches();
     }
+    
+    
 
 }
