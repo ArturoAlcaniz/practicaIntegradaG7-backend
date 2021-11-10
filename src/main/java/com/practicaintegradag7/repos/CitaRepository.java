@@ -26,4 +26,6 @@ public interface CitaRepository extends MongoRepository<Cita, String> {
 	public void deleteByEmail(String email);
 	
 	public List<Cita> findByFechaAndCentroNombre(LocalDateTime fecha, String centroNombre);
+
+	public Optional<Cita> findByEmailAndNcita(String email, Short ncita);
 }

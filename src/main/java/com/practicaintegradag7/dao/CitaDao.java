@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
+import com.practicaintegradag7.exceptions.CitaNotFoundException;
 import com.practicaintegradag7.exceptions.CitaNotModifiedException;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
@@ -110,29 +111,28 @@ public class CitaDao {
 	public Cita findCitaByEmailAndFecha(Cita cita) {
 		return citaRepository.findByEmailAndFecha(cita.getEmail(), cita.getFecha());
 	}
-
+	
+	public Cita findByEmailAndNcita(String email, Short ncita) throws CitaNotFoundException {
+		Optional<Cita> opt = citaRepository.findByEmailAndNcita(email, ncita);
+		if(opt.isPresent()) return opt.get();
+		else throw new CitaNotFoundException("La cita con email "+email+" y ncita "+ncita+" no existe");
+		
+	}
 
 	public boolean modifyCita(Cita citaAntigua, Cita citaNueva) throws CitaNotModifiedException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		
 		boolean modified = false;
-
-		if (citaAntigua.getFecha().equals(citaNueva.getFecha())) {
-			
-			throw new CitaNotModifiedException("Debe insertar una fecha distinta a la antigua");
-		}
-		else {
-			
+		
+		if (validarModificacion(citaAntigua, citaNueva)) {
+		
 			Centro centro = centroDao.buscarCentroByNombre(citaAntigua.getCentroNombre());
 			Cupo cupoAntiguo = cupoDao.getCupoByInicialDateAndCentro(citaAntigua.getFecha(), centro);
-			Cupo cupoAntiguoActualizado = new Cupo(cupoAntiguo.getFechaInicio(), cupoAntiguo.getFechaFin(), cupoAntiguo.getNumeroCitas()+1, centro);
-			cupoDao.deleteCupo(cupoAntiguo);
-			cupoDao.saveCupo(cupoAntiguoActualizado);
-			deleteCita(citaAntigua);
-			
 			Cupo cupoNuevo = cupoDao.getCupoByInicialDateAndCentro(citaNueva.getFecha(), centro);
-			Cupo cupoNuevoActualizado = new Cupo(cupoNuevo.getFechaInicio(), cupoNuevo.getFechaFin(), cupoNuevo.getNumeroCitas()-1, centro);
-			cupoDao.deleteCupo(cupoNuevo);
-			cupoDao.saveCupo(cupoNuevoActualizado);
+			
+			sumarCitaCupo(cupoAntiguo);
+			restarCitaCupo(cupoNuevo);
+			
+			deleteCita(citaAntigua);
 			createCita(citaNueva);
 			
 			modified = true;
@@ -144,6 +144,63 @@ public class CitaDao {
 	
 	public void deleteAllCitas() {
 		citaRepository.deleteAll();
+	}
+	
+	public void sumarCitaCupo(Cupo cupoAntiguo) throws CupoNotFoundException, CentroNotFoundException, CupoExistException {
+		
+		Cupo cupoActualizado = new Cupo(cupoAntiguo.getFechaInicio(), cupoAntiguo.getFechaFin(), cupoAntiguo.getNumeroCitas()+1, cupoAntiguo.getCentro());
+		cupoDao.deleteCupo(cupoAntiguo);
+		cupoDao.saveCupo(cupoActualizado);
+	}
+	
+	public void restarCitaCupo(Cupo cupoAntiguo) throws CupoNotFoundException, CentroNotFoundException, CupoExistException {
+		
+		Cupo cupoActualizado = new Cupo(cupoAntiguo.getFechaInicio(), cupoAntiguo.getFechaFin(), cupoAntiguo.getNumeroCitas()-1, cupoAntiguo.getCentro());
+		cupoDao.deleteCupo(cupoAntiguo);
+		cupoDao.saveCupo(cupoActualizado);
+	}
+	
+	public boolean validarModificacion(Cita citaAntigua, Cita citaNueva) throws CitaNotModifiedException {
+		
+		boolean validado = false;
+		
+		if (citaAntigua.getFecha().equals(citaNueva.getFecha()))
+			throw new CitaNotModifiedException("Debe insertar una fecha distinta a la antigua");
+		else if(Short.toUnsignedInt(citaAntigua.getNcita())==1){
+			
+			Optional<Cita> opt = citaRepository.findByEmailAndNcita(citaAntigua.getEmail(), Short.parseShort("2"));
+			
+			if (opt.isPresent()) {
+				Cita citaSegunda = opt.get();
+				if (!citaNueva.getFecha().isBefore(citaSegunda.getFecha()))
+					throw new CitaNotModifiedException("La fecha de la primera cita no puede ser posterior a la segunda ("+citaSegunda.getFecha()+")");	
+			}		
+			
+			if (citaNueva.getFecha().isAfter(LocalDateTime.of(2022, 1, 10, 23, 59)))
+				throw new CitaNotModifiedException("La fecha de la primera cita no puede ser posterior al 10-1-2022");
+			
+			validado = true;
+		}
+		else if(Short.toUnsignedInt(citaAntigua.getNcita())==2){
+
+			Optional<Cita> opt = citaRepository.findByEmailAndNcita(citaAntigua.getEmail(), Short.parseShort("1"));
+			
+			if (opt.isPresent()) {
+				Cita citaPrimera = opt.get();
+				if (!citaNueva.getFecha().isAfter(citaPrimera.getFecha().plusDays(21)))
+					throw new CitaNotModifiedException("La fecha de la segunda cita no puede ser anterior a "
+							+ "21 dias despues de la primera ("+citaPrimera.getFecha()+")");	
+			}
+			
+			if (citaNueva.getFecha().isAfter(LocalDateTime.of(2022, 1, 31, 23, 59)))
+				throw new CitaNotModifiedException("La fecha de la segunda cita no puede ser posterior al 31-1-2022");
+			
+			validado = true;
+		
+		}
+			
+		
+		return validado;
 	}
 	
 }

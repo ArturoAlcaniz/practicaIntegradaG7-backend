@@ -247,7 +247,7 @@ class TestCitaIntegrated {
 	
 	@Order(12)
 	@Test
-	void shouldModifyCita() throws CitaNotModifiedException {
+	void shouldModifyCita() throws CitaNotModifiedException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		
 		citaPrueba = new Cita("05718581", LocalDateTime.now().plusDays(1), "Paciente", (short) 1);
 		citaDao.createCita(citaPrueba);
@@ -261,7 +261,7 @@ class TestCitaIntegrated {
 	
 	@Order(13)
 	@Test
-	void shouldNotModifyCitaIfEqual() throws CitaNotModifiedException {
+	void shouldNotModifyCitaIfEqual() throws CitaNotModifiedException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		
 		citaPrueba = new Cita("05718581", LocalDateTime.now().plusDays(1), "Paciente", (short)1);
 		citaDao.createCita(citaPrueba);
