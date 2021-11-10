@@ -60,5 +60,11 @@ public class CentroDao {
 		if(opt.isPresent()) centroRepository.delete(c);
 		else throw new CentroNotFoundException("Centro no encontrado");
 	}
+
+
+	public void deleteAllCentros() {
+		centroRepository.deleteAll();
+		
+	}
 	
 }

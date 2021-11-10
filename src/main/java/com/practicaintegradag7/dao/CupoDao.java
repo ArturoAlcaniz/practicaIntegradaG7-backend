@@ -90,15 +90,19 @@ public class CupoDao {
 		cupoRepository.saveAll(cupos);
 	}
 	
-	public void deleteAll() {
+	public void deleteAllCupos() {
 		cupoRepository.deleteAll();
 	}
 	
 	public List<Cupo> getAllCuposAvailable(Centro centro) {
-		return cupoRepository.findCuposWithCitasMoreThan(0, centro);
+		return cupoRepository.findCuposWithNcitasMoreThan(0, centro);
 	}
 
 	public List<Cupo> getAllCuposAvailableAfter(Centro centro, LocalDateTime fechaMinima) {
 		return cupoRepository.findCuposWithCitasMoreThan(0, centro, fechaMinima);
+	}
+	
+	public List<Cupo> getAllCuposAvailableInADay(Centro centro, LocalDateTime fecha) {
+		return cupoRepository.findCuposWithCitasMoreThanAndFechaInicioGreaterThanEqualAndFechaInicioLessThan(0, centro, fecha, fecha.plusDays(1));
 	}
 }
