@@ -118,7 +118,7 @@ class TestUsuarioIntegrated {
 	void shouldSaveUsuarioWithController() throws Exception {
 		JSONObject json = new JSONObject();
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
-		centroDao.createCentro(centro);
+		
 		Usuario usuario = new UsuarioBuilder()
 				.dni("05718583J")
 				.nombre("Francisco")
@@ -139,7 +139,7 @@ class TestUsuarioIntegrated {
 		usuario.encryptDNI();
 		assertNotNull(usuarioDao.getUsuarioByEmail(usuario.getEmail()));
 		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
-		centroDao.deleteCentro(centro);
+
 	}
 	
 	@Test
@@ -291,7 +291,6 @@ class TestUsuarioIntegrated {
 	void shouldLoginWithController() throws Exception {
 		JSONObject json = new JSONObject();
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
-		centroDao.createCentro(centro);
 		Usuario usuario = new UsuarioBuilder()
 				.dni("05718583J")
 				.nombre("Francisco")
@@ -308,14 +307,12 @@ class TestUsuarioIntegrated {
 		mockMvc.perform( MockMvcRequestBuilders.post("/api/usuario/login").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
 
 		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
-		centroDao.deleteCentro(centro);
 	}
 	
 	@Test
 	void shouldNotLoginWithController() throws CentroNotFoundException, JSONException, CifradoContrasenaException, CentroExistException {
 		JSONObject json = new JSONObject();
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
-		centroDao.createCentro(centro);
 		Usuario usuario = new UsuarioBuilder()
 				.dni("05718583J")
 				.nombre("Francisco")
@@ -337,16 +334,34 @@ class TestUsuarioIntegrated {
 		} catch (Exception e) {
 		}	finally {
 			usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
-			centroDao.deleteCentro(centro);
 		}
 	}
 	
 	@Test 
-	void shouldEliminateUsuario() {
+	void shouldEliminateUsuario() throws CentroExistException, CifradoContrasenaException, CentroNotFoundException {
 		
-		//TO-DO check that A query finding user by email throws exception after deleting it.
+		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
+		Usuario usuario = new UsuarioBuilder()
+				.dni("05718583J")
+				.nombre("Francisco")
+				.apellidos("Morisco Parra")
+				.email("franMorisco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("Paciente")
+				.build();
+		usuarioDao.saveUsuario(usuario);
 		
-		fail("not yet implemented");
+		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
+		
+		try {
+		
+		assertEquals(null, usuarioDao.getUsuarioByEmail(usuario.getEmail()));
+		
+		} catch (Exception e) {
+		}	finally {
+			usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
+		}
 		
 	}
 }

@@ -28,10 +28,10 @@ import com.practicaintegradag7.model.UsuarioBuilder;
 public class UsuarioController {
 	
 	@Autowired
-	private UsuarioDao user;
+	private UsuarioDao usuarioDao;
 
 	@Autowired
-	private CentroDao dao;
+	private CentroDao centroDao;
 	
 	private static final String EMAIL = "email";
 	
@@ -46,10 +46,10 @@ public class UsuarioController {
 				.apellidos(jso.getString("apellidos"))
 				.email(jso.getString(EMAIL))
 				.password(jso.getString("password"))
-				.centro(dao.buscarCentroByNombre(jso.getString("centro")))
+				.centro(centroDao.buscarCentroByNombre(jso.getString("centro")))
 				.rol(jso.getString("rol"))
 				.build();
-		user.saveUsuario(useri);
+		usuarioDao.saveUsuario(useri);
 		JSONObject response = new JSONObject();
 		response.put("status", "200");
 		response.put("message", "Usuario con DNI\" + dni + \" creado correctamente.");
@@ -58,7 +58,7 @@ public class UsuarioController {
 	
 	@GetMapping(path="api/usuarios/obtener")
 	public List<Usuario> obtenerUsuario(){
-		return user.getAllUsuarios();
+		return usuarioDao.getAllUsuarios();
 	}
 	
 	@PostMapping(path="api/usuario/login")
@@ -67,7 +67,7 @@ public class UsuarioController {
 		String email = jso.optString(EMAIL);
 		String password = DigestUtils.sha256Hex(jso.optString("password"));
 		
-		Usuario usuario = user.getUsuarioByEmail(email);
+		Usuario usuario = usuarioDao.getUsuarioByEmail(email);
 		
 		if (usuario==null || !email.equals(usuario.getEmail()) || !password.equals(usuario.getPassword())) {
 			throw new UsuarioNotFoundException("No existe un usuario con ese email y password");
@@ -79,6 +79,19 @@ public class UsuarioController {
 		response.put(EMAIL, usuario.getEmail());
 		response.put("password", usuario.getPassword());
 		response.put("centro", usuario.getCentro().getNombre());
+    	return response.toString();
+	}
+	
+	@PostMapping(path="api/usuario/eliminar")
+	public String eliminarUsuario(@RequestBody Map<String, Object> emailJSON) throws JSONException{
+		JSONObject jso = new JSONObject(emailJSON);
+		String emailUsuario =  jso.getString("email");
+		
+		usuarioDao.deleteUsuarioByEmail(emailUsuario);
+		
+		JSONObject response = new JSONObject();
+		response.put("status", "200");
+		response.put("message", "Ha eliminado correctamente el usuario con email "+emailUsuario);
     	return response.toString();
 	}
 	
