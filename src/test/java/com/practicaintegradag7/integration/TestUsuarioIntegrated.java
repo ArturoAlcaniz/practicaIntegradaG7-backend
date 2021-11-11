@@ -340,4 +340,13 @@ class TestUsuarioIntegrated {
 			centroDao.deleteCentro(centro);
 		}
 	}
+	
+	@Test 
+	void shouldEliminateUsuario() {
+		
+		//TO-DO check that A query finding user by email throws exception after deleting it.
+		
+		fail("not yet implemented");
+		
+	}
 }
