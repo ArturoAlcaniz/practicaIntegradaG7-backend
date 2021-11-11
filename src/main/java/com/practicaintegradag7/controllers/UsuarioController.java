@@ -72,12 +72,13 @@ public class UsuarioController {
 		if (usuario==null || !email.equals(usuario.getEmail()) || !password.equals(usuario.getPassword())) {
 			throw new UsuarioNotFoundException("No existe un usuario con ese email y password");
 		}
-		request.getSession().setAttribute(EMAIL, email);
-		request.getSession().setAttribute("rol", usuario.getRol());
 		
 		JSONObject response = new JSONObject();
 		response.put("status", "200");
 		response.put("message", "Usuario ha iniciado la sesión correctamente.");
+		response.put(EMAIL, usuario.getEmail());
+		response.put("password", usuario.getPassword());
+		response.put("centro", usuario.getCentro().getNombre());
     	return response.toString();
 	}
 	
