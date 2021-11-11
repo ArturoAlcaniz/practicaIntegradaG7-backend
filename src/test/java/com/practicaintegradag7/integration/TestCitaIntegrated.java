@@ -2,7 +2,6 @@ package com.practicaintegradag7.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.LocalDateTime;
@@ -132,7 +131,7 @@ class TestCitaIntegrated {
 				.email("robertoBrasero@a3media.es")
 				.password("Iso+grupo7")
 				.centro(centroPrueba)
-				.rol("paciente")
+				.rol("Paciente")
 				.build();
 		try {
 			usuarioPrueba = usuarioDao.saveUsuario(usuarioPrueba);
@@ -176,7 +175,7 @@ class TestCitaIntegrated {
 	}
 	
 	@Order(6)
-	void failWhenCreateMoreThan2Citas() throws CupoNotFoundException, CentroNotFoundException, CupoExistException {
+	void failWhenCreateMoreThan2Citas() throws CupoNotFoundException, CentroNotFoundException, CupoExistException, CifradoContrasenaException {
 		try {
 			citaDao.createCitas();
 			citaDao.createCitas();

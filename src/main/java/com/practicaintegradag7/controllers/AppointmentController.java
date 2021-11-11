@@ -10,6 +10,7 @@ import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.dao.CitaDao;
 import com.practicaintegradag7.dao.CupoDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
+import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitaNotModifiedException;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
@@ -40,7 +41,7 @@ public class AppointmentController{
 	private CentroDao centroDao;
 	
 	@PostMapping(path="/api/citas/create")
-    public String crearCita() throws JSONException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
+    public String crearCita() throws JSONException, CentroNotFoundException, CupoNotFoundException, CupoExistException, CifradoContrasenaException {
 		try {
 			JSONObject response = new JSONObject();
 			List<Cita> citas = citaDao.createCitas();

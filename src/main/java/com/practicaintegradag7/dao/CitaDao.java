@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
+import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitaNotFoundException;
 import com.practicaintegradag7.exceptions.CitaNotModifiedException;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
@@ -36,7 +37,7 @@ public class CitaDao {
 	@Autowired
 	private CentroDao centroDao;
 	
-	public List<Cita> createCitas() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable, CentroNotFoundException, CupoNotFoundException, CupoExistException {
+	public List<Cita> createCitas() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable, CentroNotFoundException, CupoNotFoundException, CupoExistException, CifradoContrasenaException {
 		Usuario usuario = findUsuarioAvailable();
 		List<Cita> citasUsuario = citaRepository.findByEmail(usuario.getEmail());
 		List<Cita> citas = new ArrayList<>();
@@ -89,7 +90,7 @@ public class CitaDao {
 		return citaRepository.findAll();
 	}
 	
-	private Usuario findUsuarioAvailable() throws CitasUsuarioNotAvailable {
+	private Usuario findUsuarioAvailable() throws CitasUsuarioNotAvailable, CifradoContrasenaException {
 		List<Cita> citas = getAllCitas();
 		Optional<Usuario> d = usuarioDao.getAllUsuarios().stream().filter(usuario -> 
 			citas.stream().filter(cita -> usuario.getEmail().equals(cita.getEmail())).count()<2).findFirst();

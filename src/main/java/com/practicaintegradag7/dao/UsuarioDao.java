@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
+import com.practicaintegradag7.exceptions.UserModificationException;
 import com.practicaintegradag7.model.Usuario;
 import com.practicaintegradag7.repos.UsuarioRepository;
 
@@ -42,8 +43,10 @@ public class UsuarioDao {
 		return usuarioRepository.findByEmail(email); 
 	}
 	
-	public List<Usuario> getAllUsuarios() {
-		return usuarioRepository.findAll();
+	public List<Usuario> getAllUsuarios() throws CifradoContrasenaException {
+		List<Usuario> aux = usuarioRepository.findAll();
+		for(Usuario u : aux) u.decryptDNI();
+		return aux;
 	}
 	
 	public void deleteUsuarioByEmail(String email) {
@@ -62,6 +65,25 @@ public class UsuarioDao {
     	return compareDni.matches();
     }
     
-    
-
+	public void modifyUsuario(Usuario newUser) throws UserModificationException, CifradoContrasenaException {
+		Usuario old = usuarioRepository.findByEmail(newUser.getEmail());
+		
+		if(newUser.getNombre().equals("")) throw new UserModificationException("Nombre no puede ser nulo");
+		if(newUser.getApellidos().equals("")) throw new UserModificationException("Apellidos no puede ser nulo");
+		if(newUser.getDni().equals("")) throw new UserModificationException("DNI no puede ser nulo");
+		
+		if(newUser.getPassword().equals("")) newUser.setPassword(old.getPassword());
+		else newUser.hashPassword();
+		
+		//Atributos no modificables en la interfaz, aparte del email
+		newUser.setRol(old.getRol());
+		newUser.setPrimeraDosis(old.isPrimeraDosis());
+		newUser.setSegundaDosis(old.isSegundaDosis());
+		
+		if(!newUser.getCentro().equals(old.getCentro()) && newUser.isPrimeraDosis()) throw new UserModificationException("Un usuario ya vacunado no puede cambiar de centro");
+		newUser.encryptDNI();
+		usuarioRepository.deleteByEmail(old.getEmail());
+		usuarioRepository.save(newUser);
+	}
+	
 }
