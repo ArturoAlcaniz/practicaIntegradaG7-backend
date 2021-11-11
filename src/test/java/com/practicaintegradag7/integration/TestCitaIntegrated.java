@@ -191,8 +191,8 @@ class TestCitaIntegrated {
 	@Test
 	void zeroCitas() throws CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		if(citaPrueba != null && citaPruebaAlt != null) {
-			citaDao.deleteCita(citaPrueba);
-			citaDao.deleteCita(citaPruebaAlt);
+			citaDao.deleteCitaModificar(citaPrueba);
+			citaDao.deleteCitaModificar(citaPruebaAlt);
 			Assertions.assertEquals(0, citaDao.getCitasByEmail(citaPrueba.getEmail()).size());
 		}
 	}
@@ -319,37 +319,56 @@ class TestCitaIntegrated {
 		} catch (CitaNotModifiedException e) {
 			assertEquals("La fecha de la segunda cita no puede ser posterior a la primera", e.getMessage());
 		}
+		}
 		
-
-	}
+		@Order(16)
+		@Test
+		void shouldDeleteFirstCita() {
+			//TO-DO Check that first cita is deleted
+			
+			
+		fail("not yet implemented");
+		
+		}
+		
+		@Order(17)
+		@Test
+		void shouldDeleteSecondCita() {
+			//TO-DO Check that second cita pass to primera cita and first cita is deleted 
+			
+			
+		fail("not yet implemented");
+		
+		}
+		
 	
-	@Order(16)
+	@Order(18)
 	@Test
 	void deleteCitasPrueba() throws CentroNotFoundException, CupoNotFoundException, CupoExistException {
-		if(citaPrueba3 != null) citaDao.deleteCita(citaPrueba3);
-		if(citaPrueba4 != null) citaDao.deleteCita(citaPrueba4);
-		if(citaPrueba5 != null) citaDao.deleteCita(citaPrueba5);
-		if(citaPrueba6 != null) citaDao.deleteCita(citaPrueba6);
-		if(citaPrueba7 != null) citaDao.deleteCita(citaPrueba7);
-		if(citaPrueba8 != null) citaDao.deleteCita(citaPrueba8);
+		if(citaPrueba3 != null) citaDao.deleteCitaModificar(citaPrueba3);
+		if(citaPrueba4 != null) citaDao.deleteCitaModificar(citaPrueba4);
+		if(citaPrueba5 != null) citaDao.deleteCitaModificar(citaPrueba5);
+		if(citaPrueba6 != null) citaDao.deleteCitaModificar(citaPrueba6);
+		if(citaPrueba7 != null) citaDao.deleteCitaModificar(citaPrueba7);
+		if(citaPrueba8 != null) citaDao.deleteCitaModificar(citaPrueba8);
 		assertTrue(true);
 	}
 	
-	@Order(17)
+	@Order(19)
 	@Test
 	void deleteCitasPrueba2() throws CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		citaDao.deleteAllCitas();
 		assertTrue(true);
 	}
 	
-	@Order(18)
+	@Order(20)
 	@Test
 	void presetClean() {
 		cupoDao.deleteAllCupos();
 		assertTrue(true);
 	}
 	
-	@Order(19)
+	@Order(21)
 	@Test
 	void assignAppointmentWithSecondDateAlreadyReserved() throws Exception {
 		try {
@@ -375,7 +394,7 @@ class TestCitaIntegrated {
 		}
 	}
 	
-	@Order(20)
+	@Order(22)
 	@Test
 	void deleteUsuarioPrueba() {
 		if(usuarioPrueba != null) {
@@ -387,16 +406,15 @@ class TestCitaIntegrated {
 		assertTrue(true);
 	}
 	
-	@Order(21)
+	@Order(23)
 	@Test
 	void after() throws CupoNotFoundException, CupoExistException {
 		
 		citaDao.deleteAllCitas();
-//		centroDao.deleteAllCentros();
 		assertTrue(true);
 	}
 	
-	@Order(22)
+	@Order(24)
 	@Test
 	void expectedCrearCitaException() throws Exception {
 		MvcResult aux = mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/create").accept(MediaType.ALL)).andReturn();
