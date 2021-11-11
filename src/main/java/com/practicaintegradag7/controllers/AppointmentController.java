@@ -106,10 +106,10 @@ public class AppointmentController{
 		JSONObject jso = new JSONObject(datosCita);
 		String fecha =  jso.getString("fecha");
 		LocalDateTime fechaF = LDTFormatter.parse(fecha);
-		String dni = jso.getString("dni");
+		String email = jso.getString("email");
 		String centroNombre = jso.getString("centro");
 		short ncita = Short.parseShort(jso.getString("ncita"));
-		Cita cita = new Cita(dni, fechaF, centroNombre, ncita);
+		Cita cita = new Cita(email, fechaF, centroNombre, ncita);
 		citaDao.deleteCita(cita);
 		
 		JSONObject response = new JSONObject();

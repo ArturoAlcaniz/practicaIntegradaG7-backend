@@ -27,6 +27,7 @@ import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
+import com.practicaintegradag7.exceptions.CitaNotFoundException;
 import com.practicaintegradag7.exceptions.CitaNotModifiedException;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
@@ -323,22 +324,30 @@ class TestCitaIntegrated {
 		
 		@Order(16)
 		@Test
-		void shouldDeleteFirstCita() {
-			//TO-DO Check that first cita is deleted
-			
-			
-		fail("not yet implemented");
+		void shouldDeleteFirstCita() throws CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		
+			List <Cita> citas = citaDao.getCitasByEmail(usuarioPrueba2.getEmail());
+			Cita cita1 = citas.get(0);
+			citaDao.deleteCita(cita1);
+			
+			citas = citaDao.getCitasByEmail(usuarioPrueba2.getEmail());
+			cita1 = citas.get(0);
+			
+			assertEquals(cita1.getNcita(), Short.valueOf("1"));
+			citaDao.deleteCita(citas.get(0));
 		}
 		
 		@Order(17)
 		@Test
-		void shouldDeleteSecondCita() {
-			//TO-DO Check that second cita pass to primera cita and first cita is deleted 
-			
-			
-		fail("not yet implemented");
+		void shouldDeleteSecondCita() throws CentroNotFoundException, CupoNotFoundException, CupoExistException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, NumberFormatException, CitaNotFoundException {
 		
+			List <Cita> citas = citaDao.createCitas();
+			Cita cita2 = citaDao.findByEmailAndNcita(usuarioPrueba2.getEmail(), Short.valueOf("2"));
+			citaDao.deleteCita(cita2);
+			citas = citaDao.getCitasByEmail(usuarioPrueba2.getEmail());
+			assertEquals(citas.size(), 1);
+			
+				
 		}
 		
 	
