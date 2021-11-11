@@ -358,12 +358,4 @@ class TestCitaIntegrated {
 		
 		fail("not yet implemented");
 	}
-	
-	@Order(21)
-	@Test
-	void findAllUsuarioFromCitasForDateAndCentro() {
-		//TODO check that you get all citas filtered by centro and date
-		
-		fail("not yet implemented");
-	}
 }

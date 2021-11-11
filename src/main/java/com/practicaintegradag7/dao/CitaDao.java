@@ -99,4 +99,8 @@ public class CitaDao {
 	public void deleteCita(Cita cita) {
 		citaRepository.deleteByEmail(cita.getEmail());
 	}
+	
+	public List<Cita> findByFechaAndCentroNombre (LocalDateTime fecha, String centro) {
+		return citaRepository.findByFechaAndCentroNombre(fecha, centro);
+	}
 }

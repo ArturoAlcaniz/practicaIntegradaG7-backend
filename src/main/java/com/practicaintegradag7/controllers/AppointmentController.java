@@ -3,6 +3,7 @@ package com.practicaintegradag7.controllers;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.practicaintegradag7.dao.CitaDao;
@@ -12,7 +13,9 @@ import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
 import com.practicaintegradag7.model.Cita;
 import com.practicaintegradag7.model.LDTFormatter;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,5 +50,15 @@ public class AppointmentController{
 	public List<Cita> obtenerCitas(){
 		return citaDao.getAllCitas();
 	}
+	
+	@GetMapping(path="/api/citas/obtenerPorFechaAndCentro")
+	public List<Cita> obtenerCitasPorFechaAndCentro(@RequestBody Map<String, Object> info) throws JSONException{
+		JSONObject jso = new JSONObject(info);
+		String centro = jso.getString("centro");
+		LocalDateTime fecha = LDTFormatter.parse(jso.getString("fecha"));
+		
+		return citaDao.findByFechaAndCentroNombre(fecha, centro);
+	}
+	
 }
 

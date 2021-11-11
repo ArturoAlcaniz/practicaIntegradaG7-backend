@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -339,5 +340,12 @@ class TestUsuarioIntegrated {
 			usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
 			centroDao.deleteCentro(centro);
 		}
+	}
+	
+	@Test
+	void findAllUsuarioFromCitasForDateAndCentro() {
+		//TODO check that you get all citas filtered by centro and date
+		
+		fail("not yet implemented");
 	}
 }
