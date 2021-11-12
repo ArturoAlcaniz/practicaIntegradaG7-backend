@@ -12,13 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.practicaintegradag7.dao.CentroDao;
-import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotEmptyException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
-import com.practicaintegradag7.exceptions.CitaNotFoundException;
-import com.practicaintegradag7.exceptions.CupoExistException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
-import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
 import com.practicaintegradag7.exceptions.VacunasNoValidasException;
 import com.practicaintegradag7.model.Centro;
 
@@ -38,7 +34,7 @@ public class CentroController {
 	}
 	
 	@PostMapping(path="/api/centros/create")
-	public Centro crearCentro(@RequestBody Map<String, Object> datosCentro) throws JSONException, CentroExistException{
+	public Centro crearCentro(@RequestBody Map<String, Object> datosCentro) throws JSONException{
 		JSONObject jso = new JSONObject(datosCentro);
 		String nombre = jso.getString("nombre");
 		String direccion = jso.getString("direccion");
@@ -53,7 +49,7 @@ public class CentroController {
 	}
 	
 	@PostMapping(path="api/centros/eliminar")
-	public String eliminarCentro(@RequestBody Map<String, Object> emailJSON) throws JSONException, CitaNotFoundException, UsuarioNotFoundException, CentroNotFoundException, CupoNotFoundException, CupoExistException, CentroNotEmptyException{
+	public String eliminarCentro(@RequestBody Map<String, Object> emailJSON) throws JSONException, CentroNotFoundException, CupoNotFoundException, CentroNotEmptyException{
 		JSONObject jso = new JSONObject(emailJSON);
 		String nombreCentro =  jso.getString("nombreCentro");
 		

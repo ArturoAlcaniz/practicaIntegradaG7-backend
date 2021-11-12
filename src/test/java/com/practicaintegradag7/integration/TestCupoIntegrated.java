@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -100,11 +101,7 @@ class TestCupoIntegrated {
 		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 10, 00), LocalDateTime.of(2022, 10, 20, 10, 00).plusMinutes(15), 10,centro);
 		Cupo cupoIgual = new Cupo(LocalDateTime.of(2022, 10, 20, 10, 00), LocalDateTime.of(2022, 10, 20, 10, 00).plusMinutes(15), 10,centro);
 		
-		try {
-			centroDao.createCentro(centro);
-		}catch (CentroExistException e) {
-			e.getMessage();
-		}
+		centroDao.createCentro(centro);
 		try {
 			cupoDao.saveCupo(cupo);
 		}catch (CupoExistException e) {
@@ -125,14 +122,10 @@ class TestCupoIntegrated {
 	void shouldNotSaveCupoBecauseCentroAlreadyExists() throws CentroExistException, CentroNotFoundException  {
 		Centro centro = new Centro("Centro 2", "Calle 2", 1);
 		
-		try {
-			centroDao.createCentro(centro);
-		}catch (CentroExistException e) {
-			e.getMessage();
-		}try {
+		centroDao.createCentro(centro);try {
 			centroDao.createCentro(centro);
 			fail("ExistException expected");
-		}catch (CentroExistException e) {
+		}catch (DuplicateKeyException e) {
 			e.getMessage();
 		}finally {
 			centroDao.deleteCentro(centro);

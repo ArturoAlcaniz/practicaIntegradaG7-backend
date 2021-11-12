@@ -2,7 +2,6 @@ package com.practicaintegradag7.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.LocalDateTime;
@@ -24,7 +23,6 @@ import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.dao.CitaDao;
 import com.practicaintegradag7.dao.CupoDao;
 import com.practicaintegradag7.dao.UsuarioDao;
-import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitaNotFoundException;
@@ -96,17 +94,13 @@ class TestCitaIntegrated {
 	@Order(1)
 	@Test
 	void before() {
-
 		usuarioDao.deleteAllUsuarios();
 		cupoDao.deleteAllCupos();
 		citaDao.deleteAllCitas();
 		Random random = new Random();
 		centroPrueba = new Centro("Centro Prueba Citas "+random.nextInt(100), "Calle 1", 1);
-		try {
-			centroDao.createCentro(centroPrueba);
-		} catch (CentroExistException e1) {
-			fail("CentroExistException not expected");
-		}
+		centroDao.createCentro(centroPrueba);
+		assertTrue(true);
 	}
 	
 	@Order(2)
@@ -133,7 +127,7 @@ class TestCitaIntegrated {
 				.email("robertoBrasero@a3media.es")
 				.password("Iso+grupo7")
 				.centro(centroPrueba)
-				.rol("paciente")
+				.rol("Paciente")
 				.build();
 		try {
 			usuarioPrueba = usuarioDao.saveUsuario(usuarioPrueba);
@@ -177,7 +171,7 @@ class TestCitaIntegrated {
 	}
 	
 	@Order(6)
-	void failWhenCreateMoreThan2Citas() throws CupoNotFoundException, CentroNotFoundException, CupoExistException, CitaNotFoundException {
+	void failWhenCreateMoreThan2Citas() throws CupoNotFoundException, CentroNotFoundException, CupoExistException, CifradoContrasenaException, CitaNotFoundException {
 		try {
 			citaDao.createCitas();
 			citaDao.createCitas();
@@ -339,15 +333,13 @@ class TestCitaIntegrated {
 		
 		@Order(17)
 		@Test
-		void shouldDeleteSecondCita() throws CentroNotFoundException, CupoNotFoundException, CupoExistException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, NumberFormatException, CitaNotFoundException {
+		void shouldDeleteSecondCita() throws CentroNotFoundException, CupoNotFoundException, CupoExistException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, NumberFormatException, CitaNotFoundException, CifradoContrasenaException {
 		
 			List <Cita> citas = citaDao.createCitas();
 			Cita cita2 = citaDao.findByEmailAndNcita(usuarioPrueba2.getEmail(), Short.valueOf("2"));
 			citaDao.deleteCita(cita2);
 			citas = citaDao.getCitasByEmail(usuarioPrueba2.getEmail());
-			assertEquals(citas.size(), 1);
-			
-				
+			assertEquals(1, citas.size());
 		}
 		
 	

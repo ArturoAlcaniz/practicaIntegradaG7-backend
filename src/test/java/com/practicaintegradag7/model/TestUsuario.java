@@ -357,25 +357,6 @@ class TestUsuario {
 			fail(e.getMessage());
 		}
 		usuario.decryptDNI();
-		assertEquals("05718738J", usuario.getDni());
-	}
-	
-	@Test
-	void failWhenNameIsLengthMoreThan16() {
-		Usuario usuario = new UsuarioBuilder()
-				.dni("01234567A")
-				.nombre("Roberto fernando Roberto fernando Roberto fernando")
-				.apellidos("Brasero Hidalgo")
-				.email("robertoBrasero@a3media.es")
-				.password("Iso+grupo7")
-				.centro(centro)
-				.rol("paciente")
-				.build();
-		try {
-			usuario.encryptDNI();
-			fail("Exception expected");
-		} catch (CifradoContrasenaException e) {
-			assertTrue(true);
-		}
+		assertEquals("05718738J", usuario.getDniDenc());
 	}
 }

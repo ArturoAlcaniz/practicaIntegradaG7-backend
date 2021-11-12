@@ -37,29 +37,63 @@ public class UsuarioController {
 	private CentroDao centroDao;
 	
 	private static final String EMAIL = "email";
+	private static final String PWD = "password";
+	private static final String STATUS = "status";
+	private static final String MSSG = "message";
+	private static final String CENTRO = "centro";
 	
 	@PostMapping(path="api/usuario/create")
 	public String crearUsuario(@RequestBody Map<String, Object> datosUsuario) throws JSONException, CentroNotFoundException, CifradoContrasenaException {
 		
 		JSONObject jso = new JSONObject(datosUsuario);
+		String rol = jso.getString("rol");
+		rol = rol.substring(0,1).toUpperCase() + rol.substring(1);
 		Usuario useri= new UsuarioBuilder()
 				.dni(jso.getString("dni"))
 				.nombre(jso.getString("nombre"))
 				.apellidos(jso.getString("apellidos"))
 				.email(jso.getString(EMAIL))
-				.password(jso.getString("password"))
-				.centro(centroDao.buscarCentroByNombre(jso.getString("centro")))
-				.rol(jso.getString("rol"))
+				.password(jso.getString(PWD))
+				.centro(centroDao.buscarCentroByNombre(jso.getString(CENTRO)))
+				.rol(rol)
 				.build();
 		usuarioDao.saveUsuario(useri);
 		JSONObject response = new JSONObject();
-		response.put("status", "200");
-		response.put("message", "Usuario con DNI\" + dni + \" creado correctamente.");
+		response.put(STATUS, "200");
+		response.put(MSSG, "Usuario con DNI\" + dni + \" creado correctamente.");
     	return response.toString();
 	}
 	
+	@PostMapping(path="api/usuario/modify")
+	public String modificarUsuario(@RequestBody Map<String, Object> datosUsuario) throws JSONException, CentroNotFoundException, CifradoContrasenaException {
+		
+		JSONObject jso = new JSONObject(datosUsuario);
+		String rol = jso.getString("rol");
+		Usuario useri= new UsuarioBuilder()
+				.dni(jso.getString("dni"))
+				.nombre(jso.getString("nombre"))
+				.apellidos(jso.getString("apellidos"))
+				.email(jso.getString(EMAIL))
+				.password(jso.getString(PWD))
+				.centro(centroDao.buscarCentroByNombre(jso.getString(CENTRO)))
+				.rol(rol)
+				.build();
+		try {
+			usuarioDao.modifyUsuario(useri);
+			JSONObject response = new JSONObject();
+			response.put(STATUS, "200");
+			response.put(MSSG, "Usuario modificado correctamente.");
+			return response.toString();
+		}catch(Exception ex) {
+			JSONObject response = new JSONObject();
+			response.put(STATUS, "500");
+			response.put(MSSG, ex.getMessage());
+			return response.toString();
+		}
+	}
+	
 	@GetMapping(path="api/usuarios/obtener")
-	public List<Usuario> obtenerUsuario(){
+	public List<Usuario> obtenerUsuario() throws CifradoContrasenaException{
 		return usuarioDao.getAllUsuarios();
 	}
 	
@@ -67,7 +101,7 @@ public class UsuarioController {
 	public String login(HttpServletRequest request, @RequestBody Map<String, Object> info) throws UsuarioNotFoundException, JSONException {
 		JSONObject jso = new JSONObject(info);
 		String email = jso.optString(EMAIL);
-		String password = DigestUtils.sha256Hex(jso.optString("password"));
+		String password = DigestUtils.sha256Hex(jso.optString(PWD));
 		
 		Usuario usuario = usuarioDao.getUsuarioByEmail(email);
 		
@@ -76,24 +110,24 @@ public class UsuarioController {
 		}
 		
 		JSONObject response = new JSONObject();
-		response.put("status", "200");
-		response.put("message", "Usuario ha iniciado la sesión correctamente.");
+		response.put(STATUS, "200");
+		response.put(MSSG, "Usuario ha iniciado la sesión correctamente.");
 		response.put(EMAIL, usuario.getEmail());
-		response.put("password", usuario.getPassword());
-		response.put("centro", usuario.getCentro().getNombre());
+		response.put(PWD, usuario.getPassword());
+		response.put(CENTRO, usuario.getCentro().getNombre());
     	return response.toString();
 	}
 	
 	@PostMapping(path="api/usuario/eliminar")
-	public String eliminarUsuario(@RequestBody Map<String, Object> emailJSON) throws JSONException, CitaNotFoundException, UsuarioNotFoundException, CentroNotFoundException, CupoNotFoundException, CupoExistException{
+	public String eliminarUsuario(@RequestBody Map<String, Object> emailJSON) throws JSONException, CitaNotFoundException, CentroNotFoundException, CupoNotFoundException, CupoExistException{
 		JSONObject jso = new JSONObject(emailJSON);
-		String emailUsuario =  jso.getString("email");
+		String emailUsuario =  jso.getString(EMAIL);
 		
 		usuarioDao.deleteUsuarioAndCitasByEmail(emailUsuario);
 		
 		JSONObject response = new JSONObject();
-		response.put("status", "200");
-		response.put("message", "Ha eliminado correctamente el usuario con email "+emailUsuario);
+		response.put(STATUS, "200");
+		response.put(MSSG, "Ha eliminado correctamente el usuario con email "+emailUsuario);
     	return response.toString();
 	}
 	
