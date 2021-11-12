@@ -16,7 +16,7 @@ import com.practicaintegradag7.model.Cupo;
 @CrossOrigin(value = {})
 public interface CitaRepository extends MongoRepository<Cita, String> {
 	
-	public List<Cita> findByEmail(String email);
+	public Optional<List<Cita>> findByEmail(String email);
 	
 	//@Query("{'dni': ?0, 'fecha': ?1}")
 	public void deleteByEmailAndFecha(String email, LocalDateTime fecha);

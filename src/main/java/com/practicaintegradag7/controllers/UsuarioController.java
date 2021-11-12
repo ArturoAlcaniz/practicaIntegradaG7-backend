@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
+import com.practicaintegradag7.exceptions.CitaNotFoundException;
+import com.practicaintegradag7.exceptions.CupoExistException;
+import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
 import com.practicaintegradag7.dao.CentroDao;
 import java.util.List;
@@ -39,7 +42,6 @@ public class UsuarioController {
 	public String crearUsuario(@RequestBody Map<String, Object> datosUsuario) throws JSONException, CentroNotFoundException, CifradoContrasenaException {
 		
 		JSONObject jso = new JSONObject(datosUsuario);
-		System.out.println("LOOL"+jso.getString("centro"));
 		Usuario useri= new UsuarioBuilder()
 				.dni(jso.getString("dni"))
 				.nombre(jso.getString("nombre"))
@@ -83,11 +85,11 @@ public class UsuarioController {
 	}
 	
 	@PostMapping(path="api/usuario/eliminar")
-	public String eliminarUsuario(@RequestBody Map<String, Object> emailJSON) throws JSONException{
+	public String eliminarUsuario(@RequestBody Map<String, Object> emailJSON) throws JSONException, CitaNotFoundException, UsuarioNotFoundException, CentroNotFoundException, CupoNotFoundException, CupoExistException{
 		JSONObject jso = new JSONObject(emailJSON);
 		String emailUsuario =  jso.getString("email");
 		
-		usuarioDao.deleteUsuarioByEmail(emailUsuario);
+		usuarioDao.deleteUsuarioAndCitasByEmail(emailUsuario);
 		
 		JSONObject response = new JSONObject();
 		response.put("status", "200");

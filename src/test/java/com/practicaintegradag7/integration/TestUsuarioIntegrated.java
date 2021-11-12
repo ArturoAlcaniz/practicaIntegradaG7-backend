@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -21,12 +23,19 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.practicaintegradag7.dao.CentroDao;
+import com.practicaintegradag7.dao.CitaDao;
 import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
+import com.practicaintegradag7.exceptions.CitaNotFoundException;
+import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
+import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
+import com.practicaintegradag7.exceptions.CupoExistException;
+import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
 import com.practicaintegradag7.model.Centro;
+import com.practicaintegradag7.model.Cita;
 import com.practicaintegradag7.model.Usuario;
 import com.practicaintegradag7.model.UsuarioBuilder;
 
@@ -42,10 +51,13 @@ class TestUsuarioIntegrated {
 	private CentroDao centroDao;
 	
 	@Autowired
+	private CitaDao citaDao;
+	
+	@Autowired
 	private MockMvc mockMvc;
 	
 	@Test
-	void shouldSaveUsuario() throws CifradoContrasenaException {
+	void shouldSaveUsuario() throws CifradoContrasenaException, UsuarioNotFoundException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new UsuarioBuilder()
 				.dni("05718583J")
@@ -68,7 +80,7 @@ class TestUsuarioIntegrated {
 	}
 	
 	@Test
-	void shouldSaveUsuarioWithPrimeraDosis() throws CifradoContrasenaException {
+	void shouldSaveUsuarioWithPrimeraDosis() throws CifradoContrasenaException, UsuarioNotFoundException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new UsuarioBuilder()
 				.dni("05718583J")
@@ -91,7 +103,7 @@ class TestUsuarioIntegrated {
 	}
 	
 	@Test
-	void shouldSaveUsuarioWithSegundaDosis() throws CifradoContrasenaException {
+	void shouldSaveUsuarioWithSegundaDosis() throws CifradoContrasenaException, UsuarioNotFoundException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new UsuarioBuilder()
 				.dni("05718583J")
@@ -183,7 +195,7 @@ class TestUsuarioIntegrated {
 	}
 	
 	@Test
-	void failWhenUsuarioDniNotEquals() {
+	void failWhenUsuarioDniNotEquals() throws UsuarioNotFoundException {
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new UsuarioBuilder()
 				.dni("05718583J")
@@ -362,6 +374,28 @@ class TestUsuarioIntegrated {
 		}	finally {
 			usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
 		}
+		
+	}
+	
+	@Test 
+	void shouldEliminateUsuarioAndCitas() throws CentroExistException, CifradoContrasenaException, CentroNotFoundException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, CupoNotFoundException, CupoExistException, CitaNotFoundException, UsuarioNotFoundException {
+		
+		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
+		Usuario usuario = new UsuarioBuilder()
+				.dni("05718583J")
+				.nombre("Francisco")
+				.apellidos("Morisco Parra")
+				.email("franMorisco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("Paciente")
+				.build();
+		usuarioDao.saveUsuario(usuario);
+		
+		usuarioDao.deleteUsuarioAndCitasByEmail(usuario.getEmail());
+
+		assertEquals(true, citaDao.getCitasByEmail(usuario.getEmail()).isEmpty());
+		
 		
 	}
 }

@@ -111,7 +111,7 @@ class TestCitaIntegrated {
 	
 	@Order(2)
 	@Test
-	void failWhenNotUsuariosAvailable() throws CifradoContrasenaException, CupoNotFoundException, CentroNotFoundException, CupoExistException {
+	void failWhenNotUsuariosAvailable() throws CifradoContrasenaException, CupoNotFoundException, CentroNotFoundException, CupoExistException, CitaNotFoundException {
 		try {
 			citaDao.createCitas();
 		} catch (CitasUsuarioNotAvailable e) {
@@ -123,7 +123,7 @@ class TestCitaIntegrated {
 	
 	@Order(3)
 	@Test
-	void failWhenNotCuposAvailable() throws CifradoContrasenaException, CupoNotFoundException, CentroNotFoundException, CupoExistException {
+	void failWhenNotCuposAvailable() throws CifradoContrasenaException, CupoNotFoundException, CentroNotFoundException, CupoExistException, CitaNotFoundException {
 		Random random = new Random();
 		String dni = random.nextInt(10)+"0"+random.nextInt(10)+"2"+random.nextInt(10)+"1"+random.nextInt(10)+"1"+"A";
 		usuarioPrueba = new UsuarioBuilder()
@@ -149,7 +149,7 @@ class TestCitaIntegrated {
 
 	@Order(4)
 	@Test
-	void shouldSaveCita() throws CifradoContrasenaException, CupoNotFoundException {
+	void shouldSaveCita() throws CifradoContrasenaException, CupoNotFoundException, CitaNotFoundException {
 		cupoPrueba1 = new Cupo(LocalDateTime.of(2021, 10, 20, 12, 00), LocalDateTime.of(2021, 10, 20, 12, 00).plusMinutes(15), 20, centroPrueba);
 		cupoPrueba2 = new Cupo(cupoPrueba1.getFechaInicio().plusDays(22), cupoPrueba1.getFechaFin().plusDays(22), 20, centroPrueba);
 		try {
@@ -177,7 +177,7 @@ class TestCitaIntegrated {
 	}
 	
 	@Order(6)
-	void failWhenCreateMoreThan2Citas() throws CupoNotFoundException, CentroNotFoundException, CupoExistException {
+	void failWhenCreateMoreThan2Citas() throws CupoNotFoundException, CentroNotFoundException, CupoExistException, CitaNotFoundException {
 		try {
 			citaDao.createCitas();
 			citaDao.createCitas();
@@ -190,7 +190,7 @@ class TestCitaIntegrated {
 	
 	@Order(7)
 	@Test
-	void zeroCitas() throws CentroNotFoundException, CupoNotFoundException, CupoExistException {
+	void zeroCitas() throws CentroNotFoundException, CupoNotFoundException, CupoExistException, CitaNotFoundException {
 		if(citaPrueba != null && citaPruebaAlt != null) {
 			citaDao.deleteCitaModificar(citaPrueba);
 			citaDao.deleteCitaModificar(citaPruebaAlt);
@@ -207,20 +207,20 @@ class TestCitaIntegrated {
 	
 	@Order(9)
 	@Test
-	void findCitaByDni() {		
+	void findCitaByDni() throws CitaNotFoundException {		
 		assertTrue(citaDao.getCitasByEmail(citaPrueba.getEmail()).size() > 0);
 	}
 	
 	@Order(10)
 	@Test
-	void checkCentroCita() {
+	void checkCentroCita() throws CitaNotFoundException {
 		if(citaPrueba != null)
 			assertEquals(citaDao.getCitasByEmail(citaPrueba.getEmail()).get(0).getCentroNombre(), centroPrueba.getNombre());
 	}
 	
 	@Order(11)
 	@Test
-	void findUsuarioWithCitasDifferentEmail() throws CifradoContrasenaException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, CupoNotFoundException, CentroNotFoundException, CupoExistException {
+	void findUsuarioWithCitasDifferentEmail() throws CifradoContrasenaException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, CupoNotFoundException, CentroNotFoundException, CupoExistException, CitaNotFoundException {
 		usuarioDao.deleteAllUsuarios();
 		citaDao.deleteAllCitas();
 		usuarioPrueba = new UsuarioBuilder()
@@ -324,7 +324,7 @@ class TestCitaIntegrated {
 		
 		@Order(16)
 		@Test
-		void shouldDeleteFirstCita() throws CentroNotFoundException, CupoNotFoundException, CupoExistException {
+		void shouldDeleteFirstCita() throws CentroNotFoundException, CupoNotFoundException, CupoExistException, CitaNotFoundException {
 		
 			List <Cita> citas = citaDao.getCitasByEmail(usuarioPrueba2.getEmail());
 			Cita cita1 = citas.get(0);
