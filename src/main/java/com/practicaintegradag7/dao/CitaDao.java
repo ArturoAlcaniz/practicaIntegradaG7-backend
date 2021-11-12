@@ -36,9 +36,9 @@ public class CitaDao {
 	@Autowired
 	private CentroDao centroDao;
 	
-	public List<Cita> createCitas() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable, CentroNotFoundException, CupoNotFoundException, CupoExistException {
+	public List<Cita> createCitas() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable, CentroNotFoundException, CupoNotFoundException, CupoExistException, CitaNotFoundException {
 		Usuario usuario = findUsuarioAvailable();
-		List<Cita> citasUsuario = citaRepository.findByEmail(usuario.getEmail());
+		List<Cita> citasUsuario = getCitasByEmail(usuario.getEmail());
 		List<Cita> citas = new ArrayList<>();
 
 		Centro centro = centroDao.buscarCentroByNombre(usuario.getCentro().getNombre());
@@ -81,8 +81,11 @@ public class CitaDao {
 		}
 		return cupos.get(0).getFechaInicio();
 	}
-	public List<Cita> getCitasByEmail(String email) {
-		return citaRepository.findByEmail(email);
+	public List<Cita> getCitasByEmail(String email) throws CitaNotFoundException {
+		Optional<List<Cita>> citas = citaRepository.findByEmail(email);
+		if (citas.isPresent()) 
+			return citas.get();
+		else throw new CitaNotFoundException("Este usuario no tiene citas");
 	}
 	
 	public List<Cita> getAllCitas() {
