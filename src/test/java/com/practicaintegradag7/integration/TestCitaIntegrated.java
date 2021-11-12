@@ -430,4 +430,12 @@ class TestCitaIntegrated {
 		String res = aux.getResponse().getContentAsString();
 		assertTrue(res.contains("500"));
 	}
+	
+	@Order(25)
+	@Test
+	void failWhenNotGetCitasByCentroAndAllDay() {
+		//TODO check that citaDao gets all citas filtered by centro and day
+		
+		fail("not implemented yet");
+	}
 }

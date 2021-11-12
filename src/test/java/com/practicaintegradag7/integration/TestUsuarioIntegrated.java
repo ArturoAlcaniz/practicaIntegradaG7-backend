@@ -398,4 +398,11 @@ class TestUsuarioIntegrated {
 		
 		
 	}
+	
+	@Test
+	void failWhenNotGetUsuariosByListEmail() {
+		//TODO check that you get all users filtered by email list
+		
+		fail("not yet implemented");
+	}
 }
