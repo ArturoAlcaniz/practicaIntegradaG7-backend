@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
-import com.practicaintegradag7.exceptions.UserModificationException;
 import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
 import com.practicaintegradag7.dao.CentroDao;
 import java.util.List;
@@ -62,7 +61,7 @@ public class UsuarioController {
 	}
 	
 	@PostMapping(path="api/usuario/modify")
-	public String modificarUsuario(@RequestBody Map<String, Object> datosUsuario) throws JSONException, CentroNotFoundException, UserModificationException, CifradoContrasenaException {
+	public String modificarUsuario(@RequestBody Map<String, Object> datosUsuario) throws JSONException, CentroNotFoundException, CifradoContrasenaException {
 		
 		JSONObject jso = new JSONObject(datosUsuario);
 		String rol = jso.getString("rol");
@@ -70,17 +69,23 @@ public class UsuarioController {
 				.dni(jso.getString("dni"))
 				.nombre(jso.getString("nombre"))
 				.apellidos(jso.getString("apellidos"))
-				.email(jso.getString("emailog"))
+				.email(jso.getString(EMAIL))
 				.password(jso.getString(PWD))
 				.centro(dao.buscarCentroByNombre(jso.getString("centro")))
 				.rol(rol)
 				.build();
-		user.modifyUsuario(useri);
-		JSONObject response = new JSONObject();
-		System.out.println(useri.getNombre());
-		response.put(STATUS, "200");
-		response.put(MSSG, "Usuario modificado correctamente.");
-    	return response.toString();
+		try {
+			user.modifyUsuario(useri);
+			JSONObject response = new JSONObject();
+			response.put(STATUS, "200");
+			response.put(MSSG, "Usuario modificado correctamente.");
+			return response.toString();
+		}catch(Exception ex) {
+			JSONObject response = new JSONObject();
+			response.put(STATUS, "500");
+			response.put(MSSG, ex.getMessage());
+			return response.toString();
+		}
 	}
 	
 	@GetMapping(path="api/usuarios/obtener")
@@ -92,7 +97,7 @@ public class UsuarioController {
 	public String login(HttpServletRequest request, @RequestBody Map<String, Object> info) throws UsuarioNotFoundException, JSONException {
 		JSONObject jso = new JSONObject(info);
 		String email = jso.optString(EMAIL);
-		String password = DigestUtils.sha256Hex(jso.optString("password"));
+		String password = DigestUtils.sha256Hex(jso.optString(PWD));
 		
 		Usuario usuario = user.getUsuarioByEmail(email);
 		

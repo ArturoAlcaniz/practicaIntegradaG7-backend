@@ -73,7 +73,10 @@ public class UsuarioDao {
 		if(newUser.getDni().equals("")) throw new UserModificationException("DNI no puede ser nulo");
 		
 		if(newUser.getPassword().equals("")) newUser.setPassword(old.getPassword());
-		else newUser.hashPassword();
+		else {
+			if(validatePasswordPolicy(newUser.getPassword())) newUser.hashPassword();
+			else throw new IllegalArgumentException("Password is not valid!");
+		}
 		
 		//Atributos no modificables en la interfaz, aparte del email
 		newUser.setRol(old.getRol());

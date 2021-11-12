@@ -5,12 +5,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.practicaintegradag7.model.Cita;
-import com.practicaintegradag7.model.Cupo;
 
 @Repository
 @CrossOrigin(value = {})

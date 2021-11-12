@@ -40,6 +40,10 @@ public class AppointmentController{
 	@Autowired
 	private CentroDao centroDao;
 	
+	private static final String STATUS = "status";
+	private static final String MSSG = "message";
+	private static final String CENTRO = "centro";
+	
 	@PostMapping(path="/api/citas/create")
     public String crearCita() throws JSONException, CentroNotFoundException, CupoNotFoundException, CupoExistException, CifradoContrasenaException {
 		try {
@@ -47,35 +51,34 @@ public class AppointmentController{
 			List<Cita> citas = citaDao.createCitas();
 			String mssg = "Primera cita asignada para el " + LDTFormatter.processLDT(citas.get(0).getFecha())+
 					", segunda cita asignada el " + LDTFormatter.processLDT(citas.get(1).getFecha());
-			response.put("status", "200");
-			response.put("message", mssg);
+			response.put(STATUS, "200");
+			response.put(MSSG, mssg);
 			return response.toString();
 		} catch (CitasUsuarioNotAvailable | CitasCupoNotAvailable e) {
 			JSONObject response = new JSONObject();
-			response.put("status", "500");
-			response.put("message", e.getMessage());
+			response.put(STATUS, "500");
+			response.put(MSSG, e.getMessage());
 			return response.toString();
 		}
     }
 	
 	@GetMapping(path="/api/citas/obtener")
 	public List<Cita> obtenerCitas(){
-		List <Cita> citas = citaDao.getAllCitas();
-		return citas;
+		return citaDao.getAllCitas();
 	}
 	
 	@PostMapping(path="/api/citas/obtenerCuposLibres")
 	public List<Cupo> obtenerCuposLibres(@RequestBody Map<String, Object> fechaJSON) throws JSONException, CentroNotFoundException{
 		JSONObject jso = new JSONObject(fechaJSON);
 		String fecha =  jso.getString("fechaSeleccionada");
-		String centroNombre = jso.getString("centro");
+		String centroNombre = jso.getString(CENTRO);
 		Centro centro = centroDao.buscarCentroByNombre(centroNombre);
 		LocalDateTime fechaFormateada = LocalDateTime.parse(fecha+"T00:00:00");
 		return cupoDao.getAllCuposAvailableInADay(centro, fechaFormateada);
 	}
 	
 	@PostMapping(path="/api/citas/modify")
-    public String modificarCita(@RequestBody Map<String, Object> datosCita) throws JSONException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, CitaNotModifiedException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
+    public String modificarCita(@RequestBody Map<String, Object> datosCita) throws JSONException, CitaNotModifiedException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		JSONObject jso = new JSONObject(datosCita);
 		String fechaAntigua =  jso.getString("fechaAntigua");
 		String fechaNueva =  jso.getString("fechaNueva");
@@ -83,7 +86,7 @@ public class AppointmentController{
 		LocalDateTime fechaNuevaFormateada = LDTFormatter.parse(fechaNueva);		
 		
 		String email = jso.getString("email");
-		String centroNombre = jso.getString("centro");
+		String centroNombre = jso.getString(CENTRO);
 		short ncita = Short.parseShort(jso.getString("ncita"));
 		
 		
@@ -93,8 +96,8 @@ public class AppointmentController{
 		
 		citaDao.modifyCita(citaAntigua, citaNueva);
 		JSONObject response = new JSONObject();
-		response.put("status", "200");
-		response.put("message", "Ha modificado su cita correctamente para el "+ citaNueva.getFecha());
+		response.put(STATUS, "200");
+		response.put(MSSG, "Ha modificado su cita correctamente para el "+ citaNueva.getFecha());
 		
 		
 		
@@ -103,19 +106,19 @@ public class AppointmentController{
     }
 	
 	@PostMapping(path="/api/citas/delete")
-    public String eliminarCita(@RequestBody Map<String, Object> datosCita) throws JSONException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, CentroNotFoundException, CupoNotFoundException, CupoExistException {
+    public String eliminarCita(@RequestBody Map<String, Object> datosCita) throws JSONException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		JSONObject jso = new JSONObject(datosCita);
 		String fecha =  jso.getString("fecha");
 		LocalDateTime fechaF = LDTFormatter.parse(fecha);
 		String dni = jso.getString("dni");
-		String centroNombre = jso.getString("centro");
+		String centroNombre = jso.getString(CENTRO);
 		short ncita = Short.parseShort(jso.getString("ncita"));
 		Cita cita = new Cita(dni, fechaF, centroNombre, ncita);
 		citaDao.deleteCita(cita);
 		
 		JSONObject response = new JSONObject();
-		response.put("status", "200");
-		response.put("message", "Ha eliminado su cita");
+		response.put(STATUS, "200");
+		response.put(MSSG, "Ha eliminado su cita");
     	return response.toString();
     }
 }

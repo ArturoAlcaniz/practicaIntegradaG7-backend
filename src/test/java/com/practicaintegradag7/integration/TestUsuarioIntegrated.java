@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.practicaintegradag7.dao.CentroDao;
@@ -339,5 +340,70 @@ class TestUsuarioIntegrated {
 			usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
 			centroDao.deleteCentro(centro);
 		}
+	}
+	
+	@Test
+	void shouldModifyUser() throws Exception {
+		JSONObject json = new JSONObject();
+		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
+		centroDao.createCentro(centro);
+		Usuario usuario = new UsuarioBuilder()
+				.dni("05718583J")
+				.nombre("Francisco")
+				.apellidos("Morisco Parra")
+				.email("franMorisco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("Paciente")
+				.build();
+		usuarioDao.saveUsuario(usuario);
+		json.put("email", usuario.getEmail());
+		json.put("dni", usuario.getDni());
+		json.put("nombre", "Pepito");
+		json.put("apellidos", usuario.getApellidos());
+		json.put("centro", usuario.getCentro().getNombre());
+		json.put("rol", usuario.getRol());
+		json.put("password", "Iso+grupo7");
+
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/usuario/modify").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+
+		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
+		centroDao.deleteCentro(centro);
+	}
+	
+	//Should not modify user, because they will be vaccinated and centro will change
+	@Test
+	void shouldNotModifyUser() throws Exception {
+		JSONObject json = new JSONObject();
+		Centro centro1 = new Centro("Hospital 1", "Calle Paloma", 10);
+		Centro centro2 = new Centro("Hospital 2", "Calle Paloma", 10);
+		centroDao.createCentro(centro1);
+		centroDao.createCentro(centro2);
+		Usuario usuario = new UsuarioBuilder()
+				.dni("05718583J")
+				.nombre("Francisco")
+				.apellidos("Morisco Parra")
+				.email("franMorisco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro1)
+				.rol("Paciente")
+				.build();
+		usuario.setPrimeraDosis(true);
+		usuarioDao.saveUsuario(usuario);
+		json.put("email", usuario.getEmail());
+		json.put("dni", usuario.getDni());
+		json.put("nombre", "Pepito");
+		json.put("apellidos", usuario.getApellidos());
+		json.put("centro", centro2.getNombre());
+		json.put("rol", usuario.getRol());
+		json.put("password", "Iso+grupo7");
+
+		MvcResult aux = mockMvc.perform( MockMvcRequestBuilders.post("/api/usuario/modify").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andReturn();
+		String res = aux.getResponse().getContentAsString();
+
+		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
+		centroDao.deleteCentro(centro1);
+		centroDao.deleteCentro(centro2);
+		assertTrue(res.contains("500"));
 	}
 }
