@@ -1,5 +1,6 @@
 package com.practicaintegradag7.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -55,9 +56,23 @@ public class UsuarioDao {
 		}else throw new UsuarioNotFoundException("El usuario con email "+email+" no existe");
 		
 	}
+
 	
 	public List<Usuario> getAllUsuarios() {
 		return usuarioRepository.findAll();
+	}
+	
+	public List <Usuario> getAllUsuariosByCentro(String nombreCentro){
+		List <Usuario> usuarios = usuarioRepository.findAll();
+		List <Usuario> usuariosCentro = new ArrayList<>();
+		
+		for (Usuario usuario : usuarios) {
+			if (usuario.getCentro().getNombre().equals(nombreCentro))
+				usuariosCentro.add(usuario);
+		}
+		
+		return usuariosCentro;
+		
 	}
 	
 	public void deleteUsuarioByEmail(String email) {

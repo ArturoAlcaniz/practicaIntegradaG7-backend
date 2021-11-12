@@ -29,4 +29,7 @@ public interface CupoRepository extends MongoRepository<Cupo, Serializable> {
 	
 	@Query("{'numeroCitas':{'$gt':?0}, 'centro': ?1, 'fechaInicio':{'$gte':?2}, 'fechaFin':{'$lte':?3}}")
 	List<Cupo> findCuposWithCitasMoreThanAndFechaInicioGreaterThanEqualAndFechaInicioLessThan(int numeroCitas, Centro centro, LocalDateTime fechaMinima, LocalDateTime fechaMaxima);
+	
+	@Query("{'centro': ?0}")
+	List<Cupo> findCuposWithCentro(Centro centro);
 }
