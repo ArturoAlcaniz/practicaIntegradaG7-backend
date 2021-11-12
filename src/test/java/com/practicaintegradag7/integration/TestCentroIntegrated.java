@@ -129,6 +129,21 @@ class TestCentroIntegrated {
 		assertEquals(vacunas+2, aux.buscarCentroByNombre(prueba.getNombre()).getVacunas());
 	}
 	
+	@Test
+	void shouldEliminateEmptyCentro(){
+		//TO-DO check that centro is eliminated
+	}
+	
+	@Test
+	void shouldNotEliminateNotEmptyCentro(){
+		//TO-DO check that doesnt allow eliminate centro if contains users.
+	}
+	
+	@Test
+	void shouldEliminateCuposCentro() {
+		//TO-DO check that all cupos of eliminated centro are also eliminated
+	}
+	
 	@AfterEach
 	public void after() {
 		try {
