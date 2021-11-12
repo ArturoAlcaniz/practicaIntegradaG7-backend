@@ -104,6 +104,7 @@ public class AppointmentController{
     	return response.toString();
     }
 	
+	
 	@PostMapping(path="/api/citas/delete")
     public String eliminarCita(@RequestBody Map<String, Object> datosCita) throws JSONException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		JSONObject jso = new JSONObject(datosCita);
