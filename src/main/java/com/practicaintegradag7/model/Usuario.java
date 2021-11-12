@@ -129,6 +129,7 @@ public class Usuario {
 			builder.append(this.email.substring(0, this.email.indexOf("@")));
 			if(builder.toString().length() < 16)
 				while(builder.toString().length() < 16) builder.append('a');
+			builder.setLength(16);
 			String flag = "a";
 			String keyS = builder.toString();
 	        Key aesKey = new SecretKeySpec(keyS.getBytes(), "AES");
@@ -188,6 +189,7 @@ public class Usuario {
 			builder.append(this.email.substring(0, this.email.indexOf("@")));
 			if(builder.toString().length() < 16)
 				while(builder.toString().length() < 16) builder.append('a');
+			builder.setLength(16);
 			String keyS = builder.toString();
 			Key aesKey = new SecretKeySpec(keyS.getBytes(), "AES");
 			AlgorithmParameterSpec gcmIv = new GCMParameterSpec(128, bytes, 0, 1);
