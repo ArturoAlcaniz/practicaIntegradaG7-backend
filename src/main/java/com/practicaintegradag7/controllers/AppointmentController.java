@@ -99,9 +99,6 @@ public class AppointmentController{
 		response.put(STATUS, "200");
 		response.put(MSSG, "Ha modificado su cita correctamente para el "+ citaNueva.getFecha());
 		
-		
-		
-		
     	return response.toString();
     }
 	
