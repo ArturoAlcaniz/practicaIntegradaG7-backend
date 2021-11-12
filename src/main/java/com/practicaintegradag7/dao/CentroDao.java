@@ -5,8 +5,6 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotEmptyException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
@@ -27,7 +25,7 @@ public class CentroDao {
 	@Autowired
 	private UsuarioDao usuarioDao;
 	
-	public Centro createCentro(Centro centro) throws CentroExistException{
+	public Centro createCentro(Centro centro) {
 		existeCentro(centro.getNombre());
 		return centroRepository.insert(centro);
 	}

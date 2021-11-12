@@ -23,7 +23,6 @@ import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.dao.CitaDao;
 import com.practicaintegradag7.dao.CupoDao;
 import com.practicaintegradag7.dao.UsuarioDao;
-import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitaNotFoundException;
@@ -95,17 +94,13 @@ class TestCitaIntegrated {
 	@Order(1)
 	@Test
 	void before() {
-
 		usuarioDao.deleteAllUsuarios();
 		cupoDao.deleteAllCupos();
 		citaDao.deleteAllCitas();
 		Random random = new Random();
 		centroPrueba = new Centro("Centro Prueba Citas "+random.nextInt(100), "Calle 1", 1);
-		try {
-			centroDao.createCentro(centroPrueba);
-		} catch (CentroExistException e1) {
-			fail("CentroExistException not expected");
-		}
+		centroDao.createCentro(centroPrueba);
+		assertTrue(true);
 	}
 	
 	@Order(2)
@@ -344,7 +339,7 @@ class TestCitaIntegrated {
 			Cita cita2 = citaDao.findByEmailAndNcita(usuarioPrueba2.getEmail(), Short.valueOf("2"));
 			citaDao.deleteCita(cita2);
 			citas = citaDao.getCitasByEmail(usuarioPrueba2.getEmail());
-			assertEquals(citas.size(), 1);
+			assertEquals(1, citas.size());
 		}
 		
 	

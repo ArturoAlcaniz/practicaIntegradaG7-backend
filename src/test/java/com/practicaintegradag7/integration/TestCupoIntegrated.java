@@ -101,11 +101,7 @@ class TestCupoIntegrated {
 		Cupo cupo = new Cupo(LocalDateTime.of(2022, 10, 20, 10, 00), LocalDateTime.of(2022, 10, 20, 10, 00).plusMinutes(15), 10,centro);
 		Cupo cupoIgual = new Cupo(LocalDateTime.of(2022, 10, 20, 10, 00), LocalDateTime.of(2022, 10, 20, 10, 00).plusMinutes(15), 10,centro);
 		
-		try {
-			centroDao.createCentro(centro);
-		}catch (CentroExistException e) {
-			e.getMessage();
-		}
+		centroDao.createCentro(centro);
 		try {
 			cupoDao.saveCupo(cupo);
 		}catch (CupoExistException e) {
@@ -126,14 +122,10 @@ class TestCupoIntegrated {
 	void shouldNotSaveCupoBecauseCentroAlreadyExists() throws CentroExistException, CentroNotFoundException  {
 		Centro centro = new Centro("Centro 2", "Calle 2", 1);
 		
-		try {
-			centroDao.createCentro(centro);
-		}catch (CentroExistException e) {
-			e.getMessage();
-		}try {
+		centroDao.createCentro(centro);try {
 			centroDao.createCentro(centro);
 			fail("ExistException expected");
-		}catch (CentroExistException | DuplicateKeyException e) {
+		}catch (DuplicateKeyException e) {
 			e.getMessage();
 		}finally {
 			centroDao.deleteCentro(centro);

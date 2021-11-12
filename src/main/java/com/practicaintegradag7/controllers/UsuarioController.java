@@ -40,6 +40,7 @@ public class UsuarioController {
 	private static final String PWD = "password";
 	private static final String STATUS = "status";
 	private static final String MSSG = "message";
+	private static final String CENTRO = "centro";
 	
 	@PostMapping(path="api/usuario/create")
 	public String crearUsuario(@RequestBody Map<String, Object> datosUsuario) throws JSONException, CentroNotFoundException, CifradoContrasenaException {
@@ -53,7 +54,7 @@ public class UsuarioController {
 				.apellidos(jso.getString("apellidos"))
 				.email(jso.getString(EMAIL))
 				.password(jso.getString(PWD))
-				.centro(centroDao.buscarCentroByNombre(jso.getString("centro")))
+				.centro(centroDao.buscarCentroByNombre(jso.getString(CENTRO)))
 				.rol(rol)
 				.build();
 		usuarioDao.saveUsuario(useri);
@@ -74,7 +75,7 @@ public class UsuarioController {
 				.apellidos(jso.getString("apellidos"))
 				.email(jso.getString(EMAIL))
 				.password(jso.getString(PWD))
-				.centro(centroDao.buscarCentroByNombre(jso.getString("centro")))
+				.centro(centroDao.buscarCentroByNombre(jso.getString(CENTRO)))
 				.rol(rol)
 				.build();
 		try {
@@ -113,12 +114,12 @@ public class UsuarioController {
 		response.put(MSSG, "Usuario ha iniciado la sesión correctamente.");
 		response.put(EMAIL, usuario.getEmail());
 		response.put(PWD, usuario.getPassword());
-		response.put("centro", usuario.getCentro().getNombre());
+		response.put(CENTRO, usuario.getCentro().getNombre());
     	return response.toString();
 	}
 	
 	@PostMapping(path="api/usuario/eliminar")
-	public String eliminarUsuario(@RequestBody Map<String, Object> emailJSON) throws JSONException, CitaNotFoundException, UsuarioNotFoundException, CentroNotFoundException, CupoNotFoundException, CupoExistException{
+	public String eliminarUsuario(@RequestBody Map<String, Object> emailJSON) throws JSONException, CitaNotFoundException, CentroNotFoundException, CupoNotFoundException, CupoExistException{
 		JSONObject jso = new JSONObject(emailJSON);
 		String emailUsuario =  jso.getString(EMAIL);
 		
