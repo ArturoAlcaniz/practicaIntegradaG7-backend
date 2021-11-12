@@ -430,4 +430,11 @@ class TestCitaIntegrated {
 		String res = aux.getResponse().getContentAsString();
 		assertTrue(res.contains("500"));
 	}
+	
+	@Order(25)
+	@Test
+	void deleteCentroMalo() throws CentroNotFoundException {
+		centroDao.deleteCentro(centroPrueba);
+		assertTrue(true);
+	}
 }
