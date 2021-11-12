@@ -19,17 +19,17 @@ public interface CupoRepository extends MongoRepository<Cupo, Serializable> {
 	Optional<Cupo> findById(String cupo);
 	
 	@Query("{'fechaInicio': ?0, 'centro': ?1}")
-	Optional<Cupo> findByFechaInicioAndCentro(LocalDateTime fechaInicio, Centro centro);
+	Optional<Cupo> findByFechaInicioAndCentro(LocalDateTime fechaInicio, String centro);
 	
 	@Query("{'numeroCitas':{'$gt':?0}, 'centro': ?1}")
-	List<Cupo> findCuposWithNcitasMoreThan(int numeroCitas, Centro centro);
+	List<Cupo> findCuposWithNcitasMoreThan(int numeroCitas, String centro);
 
 	@Query("{'numeroCitas':{'$gt':?0}, 'centro': ?1, 'fechaInicio':{'$gt':?2}}")
-	List<Cupo> findCuposWithCitasMoreThan(int numeroCitas, Centro centro, LocalDateTime fechaMinima);
+	List<Cupo> findCuposWithCitasMoreThan(int numeroCitas, String centro, LocalDateTime fechaMinima);
 	
 	@Query("{'numeroCitas':{'$gt':?0}, 'centro': ?1, 'fechaInicio':{'$gte':?2}, 'fechaFin':{'$lte':?3}}")
-	List<Cupo> findCuposWithCitasMoreThanAndFechaInicioGreaterThanEqualAndFechaInicioLessThan(int numeroCitas, Centro centro, LocalDateTime fechaMinima, LocalDateTime fechaMaxima);
+	List<Cupo> findCuposWithCitasMoreThanAndFechaInicioGreaterThanEqualAndFechaInicioLessThan(int numeroCitas, String centro, LocalDateTime fechaMinima, LocalDateTime fechaMaxima);
 	
 	@Query("{'centro': ?0}")
-	List<Cupo> findCuposWithCentro(Centro centro);
+	List<Cupo> findCuposWithCentro(String centro);
 }

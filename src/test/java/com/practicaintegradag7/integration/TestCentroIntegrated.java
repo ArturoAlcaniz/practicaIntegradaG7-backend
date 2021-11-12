@@ -1,5 +1,6 @@
 package com.practicaintegradag7.integration;
 
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -167,7 +169,7 @@ class TestCentroIntegrated {
 				.apellidos("Morisco Parra")
 				.email("franMorisco@gmail.com")
 				.password("Iso+grupo7")
-				.centro(prueba)
+				.centro(prueba.getNombre())
 				.rol("Paciente")
 				.build();
 		usuarioDao.saveUsuario(usuario);
@@ -183,9 +185,19 @@ class TestCentroIntegrated {
 	}
 	
 	@Test
+	void shouldChangeDataCentroThenReturn200() throws Exception {
+		JSONObject json = new JSONObject();
+		json.put("nombre", prueba.getNombre());
+		json.put("direccion", "La paz");
+		json.put("vacunas", 89);
+		mockMvc.perform( MockMvcRequestBuilders.post("api/centro/modify").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		assertEquals("PRUEBA", prueba.getNombre());
+	}
+	
+	@Test
 	void shouldEliminateCuposCentro() throws CupoNotFoundException, CentroNotFoundException, CupoExistException, CentroExistException {
 		
-		Cupo cupo = new Cupo(LocalDateTime.of(2022, 1, 10, 0, 0), LocalDateTime.of(2022, 1, 10, 1, 0), 5, prueba);
+		Cupo cupo = new Cupo(LocalDateTime.of(2022, 1, 10, 0, 0), LocalDateTime.of(2022, 1, 10, 1, 0), 5, prueba.getNombre());
 		cupoDao.saveCupo(cupo);
 		
 		try {

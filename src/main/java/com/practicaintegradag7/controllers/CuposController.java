@@ -38,7 +38,7 @@ public class CuposController {
 		LocalDateTime fechafin = LDTFormatter.parse(fecha2);
 		int numcitas = jso.getInt("ncitas");
 		Centro centro = aux.buscarCentroByNombre(jso.getString("centro"));
-		Cupo cupo= new Cupo(fechainicio, fechafin, numcitas, centro);
+		Cupo cupo= new Cupo(fechainicio, fechafin, numcitas, centro.getNombre());
 		cupodao.saveCupo(cupo);
 		return cupo;
 	}

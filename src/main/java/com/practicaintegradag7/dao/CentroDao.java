@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotEmptyException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
@@ -86,6 +88,15 @@ public class CentroDao {
 		}else throw new CentroNotEmptyException("El centro "+nombreCentro+" no puede ser eliminado porque contiene "+
 			usuarios.size()+" usuario(s).");
 		
+	}
+	
+	public Centro modificarCentro(String nombre, String direccion, int vacunas)
+			throws CentroNotFoundException, CentroExistException {
+
+		Centro centroOld = buscarCentroByNombre(nombre);
+		deleteCentro(centroOld);
+		Centro centroNew = new Centro(nombre, direccion, vacunas);
+		return createCentro(centroNew);
 	}
 	
 }
