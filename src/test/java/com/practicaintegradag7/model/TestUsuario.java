@@ -35,7 +35,7 @@ class TestUsuario {
 			.apellidos("Brasero Hidalgo")
 			.email(email)
 			.password("Iso+grupo7")
-			.centro(centro)
+			.centro(centro.getNombre())
 			.rol("paciente");
 		
 		try {
@@ -55,7 +55,7 @@ class TestUsuario {
 					.apellidos("Brasero Hidalgo")
 					.email("valido@hotmail.com")
 					.password("Iso+grupo7")
-					.centro(centro)
+					.centro(centro.getNombre())
 					.rol("paciente")
 					.build();
 			assertEquals("valido@hotmail.com", usuario.getEmail());
@@ -73,7 +73,7 @@ class TestUsuario {
 				.apellidos("Brasero Hidalgo")
 				.email("robertoBrasero@a3media.es")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("obrero");
 		try {
 			usuarioBuilder.build();
@@ -92,7 +92,7 @@ class TestUsuario {
 					.apellidos("Brasero Hidalgo")
 					.email("robertoBrasero@a3media.es")
 					.password("Iso+grupo7")
-					.centro(centro)
+					.centro(centro.getNombre())
 					.rol("paciente")
 					.build();
 			assertEquals("paciente", usuario.getRol());
@@ -109,7 +109,7 @@ class TestUsuario {
 				.apellidos("Brasero Hidalgo")
 				.email("robertoBrasero@a3media.es")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("administrador")
 				.build();
 		
@@ -119,7 +119,7 @@ class TestUsuario {
 				.apellidos("Brasero Hidalgo")
 				.email("robertoBrasero@a3media.es")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("sanitario")
 				.build();
 		
@@ -129,7 +129,7 @@ class TestUsuario {
 				.apellidos("Brasero Hidalgo")
 				.email("robertoBrasero@a3media.es")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("paciente")
 				.build();
 		
@@ -146,7 +146,7 @@ class TestUsuario {
 				.apellidos("Brasero Hidalgo")
 				.email("hola@gmail.com")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("paciente")
 				.build();
 		assertEquals("01234567A",usuario.getDni());
@@ -160,7 +160,7 @@ class TestUsuario {
 				.apellidos("Brasero Hidalgo")
 				.email("hola@gmail.com")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("paciente")
 				.build();
 		assertNotEquals("01234267A",usuario.getDni());
@@ -176,7 +176,7 @@ class TestUsuario {
 				.apellidos("Brasero Hidalgo")
 				.email(email)
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("paciente")
 				.build();
 		Assertions.assertEquals(email, usuario.getEmail());
@@ -190,7 +190,7 @@ class TestUsuario {
 				.apellidos("B")
 				.email("a@a.es")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("paciente")
 				.build();
 		assertEquals("Iso+grupo7",usuario.getPassword());
@@ -204,7 +204,7 @@ class TestUsuario {
 				.apellidos("Brasero Hidalgo")
 				.email("robertoBrasero@a3media.es")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("paciente")
 				.build();
 		assertEquals("paciente",usuario.getRol());
@@ -218,7 +218,7 @@ class TestUsuario {
 				.apellidos("Brasero Hidalgo")
 				.email("robertoBrasero@a3media.es")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("sanitario")
 				.build();
 		assertEquals("sanitario",usuario.getRol());
@@ -232,7 +232,7 @@ class TestUsuario {
 				.apellidos("Brasero Hidalgo")
 				.email("robertoBrasero@a3media.es")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("Administrador")
 				.build();
 		assertEquals("administrador",usuario.getRol());
@@ -246,7 +246,7 @@ class TestUsuario {
 				.apellidos("Brasero Hidalgo")
 				.email("robertoBrasero@a3media.es")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("paciente")
 				.build();
 		assertEquals("Roberto",usuario.getNombre());
@@ -260,7 +260,7 @@ class TestUsuario {
 				.apellidos("Brasero Hidalgo")
 				.email("robertoBrasero@a3media.es")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("paciente")
 				.build();
 		assertEquals("Brasero Hidalgo",usuario.getApellidos());
@@ -274,7 +274,7 @@ class TestUsuario {
 				.apellidos("Brasero Hidalgo")
 				.email("robertoBrasero@a3media.es")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("paciente")
 				.build();
 		usuario.setPrimeraDosis(false);
@@ -289,7 +289,7 @@ class TestUsuario {
 				.apellidos("Brasero Hidalgo")
 				.email("robertoBrasero@a3media.es")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("paciente")
 				.build();
 		usuario.setSegundaDosis(false);
@@ -304,7 +304,7 @@ class TestUsuario {
 				.apellidos("Brasero Hidalgo")
 				.email("robertoBrasero@a3media.es")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("paciente")
 				.build();
 		usuario.setPrimeraDosis(true);
@@ -319,7 +319,7 @@ class TestUsuario {
 				.apellidos("Brasero Hidalgo")
 				.email("robertoBrasero@a3media.es")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("paciente")
 				.build();
 		usuario.setSegundaDosis(true);
@@ -334,10 +334,10 @@ class TestUsuario {
 				.apellidos("Brasero Hidalgo")
 				.email("robertoBrasero@a3media.es")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("paciente")
 				.build();
-		assertEquals(centro,usuario.getCentro());
+		assertEquals(centro.getNombre(),usuario.getCentro());
 	}
 
 	@Test

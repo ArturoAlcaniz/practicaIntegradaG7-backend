@@ -70,7 +70,7 @@ public class UsuarioDao {
 		List <Usuario> usuariosCentro = new ArrayList<>();
 		
 		for (Usuario usuario : usuarios) {
-			if (usuario.getCentro().getNombre().equals(nombreCentro))
+			if (usuario.getCentro().equals(nombreCentro))
 				usuariosCentro.add(usuario);
 		}
 		

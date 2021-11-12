@@ -33,7 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @CrossOrigin(origins = {"http://localhost:3000", "https://iso-g7-frontend.herokuapp.com"})
 @RestController
 public class AppointmentController{
-	
+	 
 	@Autowired
 	private CitaDao citaDao;
 	@Autowired

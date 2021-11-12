@@ -107,24 +107,6 @@ class TestCentroIntegrated {
 	}
 	
 	@Test
-	void searchCentroByIdNotExist() {
-		try {
-			aux.buscarCentro("no existe");
-		} catch (CentroNotFoundException e) {
-			assertTrue(e.getMessage().contains("no existe"));
-		}
-	}
-	
-	@Test
-	void searchCentroByNameNotExist() {
-		try {
-			aux.buscarCentroByNombre("no existe");
-		} catch (CentroNotFoundException e) {
-			assertTrue(true);
-		}
-	}
-	
-	@Test
 	void failVacunasNotValid() {
 		try {
 			aux.addVacunas(prueba.getNombre(), -1);
@@ -167,7 +149,7 @@ class TestCentroIntegrated {
 				.apellidos("Morisco Parra")
 				.email("franMorisco@gmail.com")
 				.password("Iso+grupo7")
-				.centro(prueba)
+				.centro(prueba.getNombre())
 				.rol("Paciente")
 				.build();
 		usuarioDao.saveUsuario(usuario);
@@ -183,9 +165,19 @@ class TestCentroIntegrated {
 	}
 	
 	@Test
+	void shouldChangeDataCentroThenReturn200() throws Exception {
+		JSONObject json = new JSONObject();
+		json.put("nombre", prueba.getNombre());
+		json.put("direccion", "La paz");
+		json.put("vacunas", 89);
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/centro/modify").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		assertEquals("PRUEBA", prueba.getNombre());
+	}
+	
+	@Test
 	void shouldEliminateCuposCentro() throws CupoNotFoundException, CentroNotFoundException, CupoExistException, CentroExistException {
 		
-		Cupo cupo = new Cupo(LocalDateTime.of(2022, 1, 10, 0, 0), LocalDateTime.of(2022, 1, 10, 1, 0), 5, prueba);
+		Cupo cupo = new Cupo(LocalDateTime.of(2022, 1, 10, 0, 0), LocalDateTime.of(2022, 1, 10, 1, 0), 5, prueba.getNombre());
 		cupoDao.saveCupo(cupo);
 		
 		try {

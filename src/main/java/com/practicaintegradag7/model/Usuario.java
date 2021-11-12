@@ -56,7 +56,7 @@ public class Usuario {
 	private String password;
 	
 	@Column(name = "centro")
-	private Centro centro;
+	private String centro;
 	
 	@Column(name = "rol")
 	private String rol;
@@ -255,7 +255,7 @@ public class Usuario {
 		return password;
 	}
 
-	public Centro getCentro() {
+	public String getCentro() {
 		return centro;
 	}
 

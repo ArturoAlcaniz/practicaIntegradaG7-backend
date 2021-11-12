@@ -60,7 +60,7 @@ class TestUsuarioIntegrated {
 	@Order(1)
 	@Test
 	void before() throws CentroExistException {
-		if(!centroDao.existeCentro(centro.getNombre())) centroDao.createCentro(centro);
+		centroDao.createCentro(centro);
 		assertTrue(true);
 	}
 	
@@ -73,7 +73,7 @@ class TestUsuarioIntegrated {
 				.apellidos("Morisco Parra")
 				.email("franMorisco@gmail.com")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("Paciente")
 				.build();
 		
@@ -96,7 +96,7 @@ class TestUsuarioIntegrated {
 				.apellidos("Morisco Parra") 
 				.email("franMorisco@gmail.com")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("Paciente")
 				.build();
 		usuario.setPrimeraDosis(true);
@@ -119,7 +119,7 @@ class TestUsuarioIntegrated {
 				.apellidos("Morisco Parra")
 				.email("franMorisco@gmail.com")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("Paciente")
 				.build();
 		usuario.setSegundaDosis(true);
@@ -146,7 +146,7 @@ class TestUsuarioIntegrated {
 				.apellidos("Morisco Parra")
 				.email("franMorisco@gmail.com")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("Paciente")
 				.build();
 		json.put("dni", usuario.getDni());
@@ -154,7 +154,7 @@ class TestUsuarioIntegrated {
 		json.put("apellidos", usuario.getApellidos());
 		json.put("email", usuario.getEmail());
 		json.put("password", usuario.getPassword());
-		json.put("centro", usuario.getCentro().getNombre());
+		json.put("centro", usuario.getCentro());
 		json.put("rol", usuario.getRol());
 		mockMvc.perform( MockMvcRequestBuilders.post("/api/usuario/create").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
 		usuario.encryptDNI();
@@ -172,7 +172,7 @@ class TestUsuarioIntegrated {
 				.apellidos("Morisco Parra") 
 				.email("franMorisco@gmail.com")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("Paciente")
 				.build();
 		
@@ -182,7 +182,7 @@ class TestUsuarioIntegrated {
 				.apellidos("Parra Morisco")
 				.email("franMorisco@gmail.com")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("Paciente")
 				.build();
 		
@@ -212,7 +212,7 @@ class TestUsuarioIntegrated {
 				.apellidos("Morisco Parra")
 				.email("franMorisco@gmail.com")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("Paciente")
 				.build();
 		try {
@@ -234,7 +234,7 @@ class TestUsuarioIntegrated {
 				.apellidos("Morisco Parra")
 				.email("franMorisco@gmail.com")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("Paciente")
 				.build();
 		try {
@@ -255,7 +255,7 @@ class TestUsuarioIntegrated {
 				.apellidos("Morisco Parra")
 				.email("franMorisco@gmail.com")
 				.password("7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("Paciente")
 				.build();
 		try {
@@ -275,7 +275,7 @@ class TestUsuarioIntegrated {
 				.apellidos("Morisco Parra")
 				.email("franMorisco@gmail.com")
 				.password("a")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("Paciente")
 				.build();
 		try {
@@ -297,7 +297,7 @@ class TestUsuarioIntegrated {
 				.apellidos("Morisco Parra")
 				.email("franMorisco@gmail.com")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("Paciente")
 				.build();
 		try {
@@ -318,7 +318,7 @@ class TestUsuarioIntegrated {
 				.apellidos("Morisco Parra")
 				.email("franMorisco@gmail.com")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("Paciente")
 				.build();
 		usuarioDao.saveUsuario(usuario);
@@ -340,7 +340,7 @@ class TestUsuarioIntegrated {
 				.apellidos("Morisco Parra")
 				.email("franMorisco@gmail.com")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("Paciente")
 				.build();
 		usuarioDao.saveUsuario(usuario);
@@ -368,7 +368,7 @@ class TestUsuarioIntegrated {
 				.apellidos("Morisco Parra")
 				.email("franMorisco@gmail.com")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("Paciente")
 				.build();
 		usuarioDao.saveUsuario(usuario);
@@ -376,7 +376,7 @@ class TestUsuarioIntegrated {
 		json.put("dni", usuario.getDni());
 		json.put("nombre", "Pepito");
 		json.put("apellidos", usuario.getApellidos());
-		json.put("centro", usuario.getCentro().getNombre());
+		json.put("centro", usuario.getCentro());
 		json.put("rol", usuario.getRol());
 		json.put("password", "Iso+grupo7");
 
@@ -398,7 +398,7 @@ class TestUsuarioIntegrated {
 				.apellidos("Morisco Parra")
 				.email("franMorisco@gmail.com")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("Paciente")
 				.build();
 		usuario.setPrimeraDosis(true);
@@ -428,7 +428,7 @@ class TestUsuarioIntegrated {
 				.apellidos("Morisco Parra")
 				.email("franMorisco@gmail.com")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("Paciente")
 				.build();
 		usuarioDao.saveUsuario(usuario);
@@ -455,7 +455,7 @@ class TestUsuarioIntegrated {
 				.apellidos("Morisco Parra")
 				.email("franMorisco@gmail.com")
 				.password("Iso+grupo7")
-				.centro(centro)
+				.centro(centro.getNombre())
 				.rol("Paciente")
 				.build();
 		usuarioDao.saveUsuario(usuario);
@@ -468,10 +468,10 @@ class TestUsuarioIntegrated {
 	@Order(19)
 	@Test
 	void after() throws CentroNotFoundException, CentroExistException {
-		if(centroDao.existeCentro(centro.getNombre())) {
+		
 			centro = centroDao.buscarCentroByNombre(centro.getNombre());
 			centroDao.deleteCentro(centro);
-		}
+		
 		assertTrue(true);
 	}
 }
