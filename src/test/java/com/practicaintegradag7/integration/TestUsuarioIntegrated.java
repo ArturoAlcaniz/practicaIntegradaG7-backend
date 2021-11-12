@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,16 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.practicaintegradag7.dao.CentroDao;
+import com.practicaintegradag7.dao.CitaDao;
 import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
+import com.practicaintegradag7.exceptions.CitaNotFoundException;
+import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
+import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
+import com.practicaintegradag7.exceptions.CupoExistException;
+import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Usuario;
@@ -43,11 +50,23 @@ class TestUsuarioIntegrated {
 	private CentroDao centroDao;
 	
 	@Autowired
+	private CitaDao citaDao;
+	
+	@Autowired
 	private MockMvc mockMvc;
 	
+	private Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
+	
+	@Order(1)
 	@Test
-	void shouldSaveUsuario() throws CifradoContrasenaException {
-		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
+	void before() throws CentroExistException {
+		if(!centroDao.existeCentro(centro.getNombre())) centroDao.createCentro(centro);
+		assertTrue(true);
+	}
+	
+	@Order(2)
+	@Test
+	void shouldSaveUsuario() throws CifradoContrasenaException, UsuarioNotFoundException {
 		Usuario usuario = new UsuarioBuilder()
 				.dni("05718583J")
 				.nombre("Francisco")
@@ -68,9 +87,9 @@ class TestUsuarioIntegrated {
 		assertTrue(!usuario.isPrimeraDosis() && !usuario.isSegundaDosis());
 	}
 	
+	@Order(3)
 	@Test
-	void shouldSaveUsuarioWithPrimeraDosis() throws CifradoContrasenaException {
-		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
+	void shouldSaveUsuarioWithPrimeraDosis() throws CifradoContrasenaException, UsuarioNotFoundException {
 		Usuario usuario = new UsuarioBuilder()
 				.dni("05718583J")
 				.nombre("Francisco")
@@ -91,9 +110,9 @@ class TestUsuarioIntegrated {
 		assertTrue(usuario.isPrimeraDosis());
 	}
 	
+	@Order(4)
 	@Test
-	void shouldSaveUsuarioWithSegundaDosis() throws CifradoContrasenaException {
-		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
+	void shouldSaveUsuarioWithSegundaDosis() throws CifradoContrasenaException, UsuarioNotFoundException {
 		Usuario usuario = new UsuarioBuilder()
 				.dni("05718583J")
 				.nombre("Francisco")
@@ -115,11 +134,12 @@ class TestUsuarioIntegrated {
 		assertTrue(usuario.isSegundaDosis());
 	}
 	
+	@Order(5)
 	@Test
 	void shouldSaveUsuarioWithController() throws Exception {
 		JSONObject json = new JSONObject();
-		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
-		centroDao.createCentro(centro);
+		
+		centro = centroDao.createCentro(centro);
 		Usuario usuario = new UsuarioBuilder()
 				.dni("05718583J")
 				.nombre("Francisco")
@@ -143,10 +163,9 @@ class TestUsuarioIntegrated {
 		centroDao.deleteCentro(centro);
 	}
 	
+	@Order(6)
 	@Test
 	void shouldNotSaveUsuario() throws CifradoContrasenaException {
-		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
-		
 		Usuario usuario = new UsuarioBuilder()
 				.dni("05718583J")
 				.nombre("Julio")
@@ -178,14 +197,15 @@ class TestUsuarioIntegrated {
 		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
 	}
 	
+	@Order(7)
 	@Test
 	void shouldObtainUsuariosWithController() throws Exception {
 		mockMvc.perform( MockMvcRequestBuilders.get("/api/usuarios/obtener").accept(MediaType.ALL)).andExpect(status().isOk());
 	}
 	
+	@Order(8)
 	@Test
-	void failWhenUsuarioDniNotEquals() {
-		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
+	void failWhenUsuarioDniNotEquals() throws UsuarioNotFoundException {
 		Usuario usuario = new UsuarioBuilder()
 				.dni("05718583J")
 				.nombre("Francisco")
@@ -205,9 +225,9 @@ class TestUsuarioIntegrated {
 		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
 	}
 	
+	@Order(9)
 	@Test
 	void failWhenSizeIsZero() throws CifradoContrasenaException {
-		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new UsuarioBuilder()
 				.dni("05718583J")
 				.nombre("Francisco")
@@ -226,9 +246,9 @@ class TestUsuarioIntegrated {
 		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
 	}
 	
+	@Order(10)
 	@Test
 	void failWhenPasswordNotValid() throws CifradoContrasenaException {
-		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
 		Usuario usuario = new UsuarioBuilder()
 				.dni("01118583J")
 				.nombre("Francisco")
@@ -246,9 +266,9 @@ class TestUsuarioIntegrated {
 		}
 	}
 	
+	@Order(11)
 	@Test
 	void failWhenPasswordNotValid2() {
-		Centro centro = new Centro("Hospital", "Calle Paloma", 10);
 		Usuario usuario = new UsuarioBuilder()
 				.dni("01118583J")
 				.nombre("Francisco")
@@ -268,9 +288,9 @@ class TestUsuarioIntegrated {
 		}
 	}
 	
+	@Order(12)
 	@Test
 	void failWhenUsuarioDniNotValid() throws CifradoContrasenaException {
-		Centro centro = new Centro("Hospital", "Calle Paloma", 10);
 		Usuario usuario = new UsuarioBuilder()
 				.dni("1")
 				.nombre("Francisco")
@@ -288,11 +308,10 @@ class TestUsuarioIntegrated {
 		}
 	}
 	
+	@Order(13)
 	@Test
 	void shouldLoginWithController() throws Exception {
 		JSONObject json = new JSONObject();
-		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
-		centroDao.createCentro(centro);
 		Usuario usuario = new UsuarioBuilder()
 				.dni("05718583J")
 				.nombre("Francisco")
@@ -309,14 +328,12 @@ class TestUsuarioIntegrated {
 		mockMvc.perform( MockMvcRequestBuilders.post("/api/usuario/login").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
 
 		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
-		centroDao.deleteCentro(centro);
 	}
 	
+	@Order(14)
 	@Test
 	void shouldNotLoginWithController() throws CentroNotFoundException, JSONException, CifradoContrasenaException, CentroExistException {
 		JSONObject json = new JSONObject();
-		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
-		centroDao.createCentro(centro);
 		Usuario usuario = new UsuarioBuilder()
 				.dni("05718583J")
 				.nombre("Francisco")
@@ -338,15 +355,13 @@ class TestUsuarioIntegrated {
 		} catch (Exception e) {
 		}	finally {
 			usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
-			centroDao.deleteCentro(centro);
 		}
 	}
 	
+	@Order(15)
 	@Test
 	void shouldModifyUser() throws Exception {
 		JSONObject json = new JSONObject();
-		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
-		centroDao.createCentro(centro);
 		Usuario usuario = new UsuarioBuilder()
 				.dni("05718583J")
 				.nombre("Francisco")
@@ -368,16 +383,14 @@ class TestUsuarioIntegrated {
 		mockMvc.perform( MockMvcRequestBuilders.post("/api/usuario/modify").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
 
 		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
-		centroDao.deleteCentro(centro);
 	}
 	
 	//Should not modify user, because they will be vaccinated and centro will change
+	@Order(16)
 	@Test
 	void shouldNotModifyUser() throws Exception {
 		JSONObject json = new JSONObject();
-		Centro centro1 = new Centro("Hospital 1", "Calle Paloma", 10);
 		Centro centro2 = new Centro("Hospital 2", "Calle Paloma", 10);
-		centroDao.createCentro(centro1);
 		centroDao.createCentro(centro2);
 		Usuario usuario = new UsuarioBuilder()
 				.dni("05718583J")
@@ -385,7 +398,7 @@ class TestUsuarioIntegrated {
 				.apellidos("Morisco Parra")
 				.email("franMorisco@gmail.com")
 				.password("Iso+grupo7")
-				.centro(centro1)
+				.centro(centro)
 				.rol("Paciente")
 				.build();
 		usuario.setPrimeraDosis(true);
@@ -402,8 +415,63 @@ class TestUsuarioIntegrated {
 		String res = aux.getResponse().getContentAsString();
 
 		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
-		centroDao.deleteCentro(centro1);
 		centroDao.deleteCentro(centro2);
 		assertTrue(res.contains("500"));
+	}
+	
+	@Order(17)
+	@Test 
+	void shouldEliminateUsuario() throws CentroExistException, CifradoContrasenaException, CentroNotFoundException {
+		Usuario usuario = new UsuarioBuilder()
+				.dni("05718583J")
+				.nombre("Francisco")
+				.apellidos("Morisco Parra")
+				.email("franMorisco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("Paciente")
+				.build();
+		usuarioDao.saveUsuario(usuario);
+		
+		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
+		
+		try {
+		
+		assertEquals(null, usuarioDao.getUsuarioByEmail(usuario.getEmail()));
+		
+		} catch (Exception e) {
+		}	finally {
+			usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
+		}
+		
+	}
+	
+	@Order(18)
+	@Test 
+	void shouldEliminateUsuarioAndCitas() throws CentroExistException, CifradoContrasenaException, CentroNotFoundException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, CupoNotFoundException, CupoExistException, CitaNotFoundException, UsuarioNotFoundException {
+		Usuario usuario = new UsuarioBuilder()
+				.dni("05718583J")
+				.nombre("Francisco")
+				.apellidos("Morisco Parra")
+				.email("franMorisco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro)
+				.rol("Paciente")
+				.build();
+		usuarioDao.saveUsuario(usuario);
+		
+		usuarioDao.deleteUsuarioAndCitasByEmail(usuario.getEmail());
+
+		assertEquals(true, citaDao.getCitasByEmail(usuario.getEmail()).isEmpty());
+	}
+	
+	@Order(19)
+	@Test
+	void after() throws CentroNotFoundException, CentroExistException {
+		if(centroDao.existeCentro(centro.getNombre())) {
+			centro = centroDao.buscarCentroByNombre(centro.getNombre());
+			centroDao.deleteCentro(centro);
+		}
+		assertTrue(true);
 	}
 }

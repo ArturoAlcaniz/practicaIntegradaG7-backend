@@ -11,6 +11,7 @@ import com.practicaintegradag7.dao.CitaDao;
 import com.practicaintegradag7.dao.CupoDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
+import com.practicaintegradag7.exceptions.CitaNotFoundException;
 import com.practicaintegradag7.exceptions.CitaNotModifiedException;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
@@ -45,7 +46,8 @@ public class AppointmentController{
 	private static final String CENTRO = "centro";
 	
 	@PostMapping(path="/api/citas/create")
-    public String crearCita() throws JSONException, CentroNotFoundException, CupoNotFoundException, CupoExistException, CifradoContrasenaException {
+
+    public String crearCita() throws JSONException, CentroNotFoundException, CupoNotFoundException, CupoExistException, CifradoContrasenaException, CitaNotFoundException {
 		try {
 			JSONObject response = new JSONObject();
 			List<Cita> citas = citaDao.createCitas();
@@ -107,10 +109,11 @@ public class AppointmentController{
 		JSONObject jso = new JSONObject(datosCita);
 		String fecha =  jso.getString("fecha");
 		LocalDateTime fechaF = LDTFormatter.parse(fecha);
-		String dni = jso.getString("dni");
 		String centroNombre = jso.getString(CENTRO);
+		String email = jso.getString("email");
+		
 		short ncita = Short.parseShort(jso.getString("ncita"));
-		Cita cita = new Cita(dni, fechaF, centroNombre, ncita);
+		Cita cita = new Cita(email, fechaF, centroNombre, ncita);
 		citaDao.deleteCita(cita);
 		
 		JSONObject response = new JSONObject();

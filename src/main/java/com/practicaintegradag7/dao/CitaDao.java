@@ -37,9 +37,9 @@ public class CitaDao {
 	@Autowired
 	private CentroDao centroDao;
 	
-	public List<Cita> createCitas() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable, CentroNotFoundException, CupoNotFoundException, CupoExistException, CifradoContrasenaException {
+	public List<Cita> createCitas() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable, CentroNotFoundException, CupoNotFoundException, CupoExistException, CifradoContrasenaException, CitaNotFoundException {
 		Usuario usuario = findUsuarioAvailable();
-		List<Cita> citasUsuario = citaRepository.findByEmail(usuario.getEmail());
+		List<Cita> citasUsuario = getCitasByEmail(usuario.getEmail());
 		List<Cita> citas = new ArrayList<>();
 
 		Centro centro = centroDao.buscarCentroByNombre(usuario.getCentro().getNombre());
@@ -82,8 +82,11 @@ public class CitaDao {
 		}
 		return cupos.get(0).getFechaInicio();
 	}
-	public List<Cita> getCitasByEmail(String email) {
-		return citaRepository.findByEmail(email);
+	public List<Cita> getCitasByEmail(String email) throws CitaNotFoundException {
+		Optional<List<Cita>> citas = citaRepository.findByEmail(email);
+		if (citas.isPresent()) 
+			return citas.get();
+		else throw new CitaNotFoundException("Este usuario no tiene citas");
 	}
 	
 	public List<Cita> getAllCitas() {
@@ -112,7 +115,33 @@ public class CitaDao {
 		citaRepository.save(cita);
 	}
 	
-	public void deleteCita(Cita cita) throws CentroNotFoundException, CupoNotFoundException, CupoExistException {
+	public void deleteCita (Cita cita) throws CentroNotFoundException, CupoNotFoundException, CupoExistException {
+		Centro centro = centroDao.buscarCentroByNombre(cita.getCentroNombre());
+		Cupo cupo = cupoDao.getCupoByInicialDateAndCentro(cita.getFecha(), centro);
+		
+		if (Short.toUnsignedInt(cita.getNcita())==1) {
+			Optional<Cita> opt = citaRepository.findByEmailAndNcita(cita.getEmail(),Short.valueOf("2"));
+			if (opt.isPresent()) {
+				Cita citaSegunda = opt.get();
+				Cita citaSegundaPasaPrimera = new Cita(citaSegunda.getEmail(), citaSegunda.getFecha(), citaSegunda.getCentroNombre(), Short.valueOf("1"));
+				deleteCita(citaSegunda);
+				saveCita(citaSegundaPasaPrimera);
+			}
+		}
+		
+		sumarCitaCupo(cupo);
+		citaRepository.deleteByEmailAndFecha(cita.getEmail(), cita.getFecha());
+	}
+	
+	public void saveCita(Cita cita) throws CentroNotFoundException, CupoNotFoundException, CupoExistException {
+		
+		Centro centro = centroDao.buscarCentroByNombre(cita.getCentroNombre());
+		Cupo cupo = cupoDao.getCupoByInicialDateAndCentro(cita.getFecha(), centro);
+		citaRepository.save(cita);
+		restarCitaCupo(cupo);
+	}
+
+	public void deleteCitaModificar(Cita cita) throws CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		Centro centro = centroDao.buscarCentroByNombre(cita.getCentroNombre());
 		Cupo cupo = cupoDao.getCupoByInicialDateAndCentro(cita.getFecha(), centro);
 		sumarCitaCupo(cupo);
@@ -144,7 +173,7 @@ public class CitaDao {
 			sumarCitaCupo(cupoAntiguo);
 			restarCitaCupo(cupoNuevo);
 			
-			deleteCita(citaAntigua);
+			deleteCitaModificar(citaAntigua);
 			createCita(citaNueva);
 			
 			modified = true;

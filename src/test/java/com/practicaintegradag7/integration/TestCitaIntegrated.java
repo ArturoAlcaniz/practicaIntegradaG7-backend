@@ -26,6 +26,7 @@ import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
+import com.practicaintegradag7.exceptions.CitaNotFoundException;
 import com.practicaintegradag7.exceptions.CitaNotModifiedException;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
@@ -109,7 +110,7 @@ class TestCitaIntegrated {
 	
 	@Order(2)
 	@Test
-	void failWhenNotUsuariosAvailable() throws CifradoContrasenaException, CupoNotFoundException, CentroNotFoundException, CupoExistException {
+	void failWhenNotUsuariosAvailable() throws CifradoContrasenaException, CupoNotFoundException, CentroNotFoundException, CupoExistException, CitaNotFoundException {
 		try {
 			citaDao.createCitas();
 		} catch (CitasUsuarioNotAvailable e) {
@@ -121,7 +122,7 @@ class TestCitaIntegrated {
 	
 	@Order(3)
 	@Test
-	void failWhenNotCuposAvailable() throws CifradoContrasenaException, CupoNotFoundException, CentroNotFoundException, CupoExistException {
+	void failWhenNotCuposAvailable() throws CifradoContrasenaException, CupoNotFoundException, CentroNotFoundException, CupoExistException, CitaNotFoundException {
 		Random random = new Random();
 		String dni = random.nextInt(10)+"0"+random.nextInt(10)+"2"+random.nextInt(10)+"1"+random.nextInt(10)+"1"+"A";
 		usuarioPrueba = new UsuarioBuilder()
@@ -147,7 +148,7 @@ class TestCitaIntegrated {
 
 	@Order(4)
 	@Test
-	void shouldSaveCita() throws CifradoContrasenaException, CupoNotFoundException {
+	void shouldSaveCita() throws CifradoContrasenaException, CupoNotFoundException, CitaNotFoundException {
 		cupoPrueba1 = new Cupo(LocalDateTime.of(2021, 10, 20, 12, 00), LocalDateTime.of(2021, 10, 20, 12, 00).plusMinutes(15), 20, centroPrueba);
 		cupoPrueba2 = new Cupo(cupoPrueba1.getFechaInicio().plusDays(22), cupoPrueba1.getFechaFin().plusDays(22), 20, centroPrueba);
 		try {
@@ -175,7 +176,7 @@ class TestCitaIntegrated {
 	}
 	
 	@Order(6)
-	void failWhenCreateMoreThan2Citas() throws CupoNotFoundException, CentroNotFoundException, CupoExistException, CifradoContrasenaException {
+	void failWhenCreateMoreThan2Citas() throws CupoNotFoundException, CentroNotFoundException, CupoExistException, CifradoContrasenaException, CitaNotFoundException {
 		try {
 			citaDao.createCitas();
 			citaDao.createCitas();
@@ -188,10 +189,10 @@ class TestCitaIntegrated {
 	
 	@Order(7)
 	@Test
-	void zeroCitas() throws CentroNotFoundException, CupoNotFoundException, CupoExistException {
+	void zeroCitas() throws CentroNotFoundException, CupoNotFoundException, CupoExistException, CitaNotFoundException {
 		if(citaPrueba != null && citaPruebaAlt != null) {
-			citaDao.deleteCita(citaPrueba);
-			citaDao.deleteCita(citaPruebaAlt);
+			citaDao.deleteCitaModificar(citaPrueba);
+			citaDao.deleteCitaModificar(citaPruebaAlt);
 			Assertions.assertEquals(0, citaDao.getCitasByEmail(citaPrueba.getEmail()).size());
 		}
 	}
@@ -205,20 +206,20 @@ class TestCitaIntegrated {
 	
 	@Order(9)
 	@Test
-	void findCitaByDni() {		
+	void findCitaByDni() throws CitaNotFoundException {		
 		assertTrue(citaDao.getCitasByEmail(citaPrueba.getEmail()).size() > 0);
 	}
 	
 	@Order(10)
 	@Test
-	void checkCentroCita() {
+	void checkCentroCita() throws CitaNotFoundException {
 		if(citaPrueba != null)
 			assertEquals(citaDao.getCitasByEmail(citaPrueba.getEmail()).get(0).getCentroNombre(), centroPrueba.getNombre());
 	}
 	
 	@Order(11)
 	@Test
-	void findUsuarioWithCitasDifferentEmail() throws CifradoContrasenaException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, CupoNotFoundException, CentroNotFoundException, CupoExistException {
+	void findUsuarioWithCitasDifferentEmail() throws CifradoContrasenaException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, CupoNotFoundException, CentroNotFoundException, CupoExistException, CitaNotFoundException {
 		usuarioDao.deleteAllUsuarios();
 		citaDao.deleteAllCitas();
 		usuarioPrueba = new UsuarioBuilder()
@@ -318,37 +319,62 @@ class TestCitaIntegrated {
 		} catch (CitaNotModifiedException e) {
 			assertEquals("La fecha de la segunda cita no puede ser posterior a la primera", e.getMessage());
 		}
+		}
 		
-
-	}
+		@Order(16)
+		@Test
+		void shouldDeleteFirstCita() throws CentroNotFoundException, CupoNotFoundException, CupoExistException, CitaNotFoundException {
+		
+			List <Cita> citas = citaDao.getCitasByEmail(usuarioPrueba2.getEmail());
+			Cita cita1 = citas.get(0);
+			citaDao.deleteCita(cita1);
+			
+			citas = citaDao.getCitasByEmail(usuarioPrueba2.getEmail());
+			cita1 = citas.get(0);
+			
+			assertEquals(cita1.getNcita(), Short.valueOf("1"));
+			citaDao.deleteCita(citas.get(0));
+		}
+		
+		@Order(17)
+		@Test
+		void shouldDeleteSecondCita() throws CentroNotFoundException, CupoNotFoundException, CupoExistException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, NumberFormatException, CitaNotFoundException, CifradoContrasenaException {
+		
+			List <Cita> citas = citaDao.createCitas();
+			Cita cita2 = citaDao.findByEmailAndNcita(usuarioPrueba2.getEmail(), Short.valueOf("2"));
+			citaDao.deleteCita(cita2);
+			citas = citaDao.getCitasByEmail(usuarioPrueba2.getEmail());
+			assertEquals(citas.size(), 1);
+		}
+		
 	
-	@Order(16)
+	@Order(18)
 	@Test
 	void deleteCitasPrueba() throws CentroNotFoundException, CupoNotFoundException, CupoExistException {
-		if(citaPrueba3 != null) citaDao.deleteCita(citaPrueba3);
-		if(citaPrueba4 != null) citaDao.deleteCita(citaPrueba4);
-		if(citaPrueba5 != null) citaDao.deleteCita(citaPrueba5);
-		if(citaPrueba6 != null) citaDao.deleteCita(citaPrueba6);
-		if(citaPrueba7 != null) citaDao.deleteCita(citaPrueba7);
-		if(citaPrueba8 != null) citaDao.deleteCita(citaPrueba8);
+		if(citaPrueba3 != null) citaDao.deleteCitaModificar(citaPrueba3);
+		if(citaPrueba4 != null) citaDao.deleteCitaModificar(citaPrueba4);
+		if(citaPrueba5 != null) citaDao.deleteCitaModificar(citaPrueba5);
+		if(citaPrueba6 != null) citaDao.deleteCitaModificar(citaPrueba6);
+		if(citaPrueba7 != null) citaDao.deleteCitaModificar(citaPrueba7);
+		if(citaPrueba8 != null) citaDao.deleteCitaModificar(citaPrueba8);
 		assertTrue(true);
 	}
 	
-	@Order(17)
+	@Order(19)
 	@Test
 	void deleteCitasPrueba2() throws CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		citaDao.deleteAllCitas();
 		assertTrue(true);
 	}
 	
-	@Order(18)
+	@Order(20)
 	@Test
 	void presetClean() {
 		cupoDao.deleteAllCupos();
 		assertTrue(true);
 	}
 	
-	@Order(19)
+	@Order(21)
 	@Test
 	void assignAppointmentWithSecondDateAlreadyReserved() throws Exception {
 		try {
@@ -374,7 +400,7 @@ class TestCitaIntegrated {
 		}
 	}
 	
-	@Order(20)
+	@Order(22)
 	@Test
 	void deleteUsuarioPrueba() {
 		if(usuarioPrueba != null) {
@@ -386,20 +412,26 @@ class TestCitaIntegrated {
 		assertTrue(true);
 	}
 	
-	@Order(21)
+	@Order(23)
 	@Test
 	void after() throws CupoNotFoundException, CupoExistException {
 		
 		citaDao.deleteAllCitas();
-//		centroDao.deleteAllCentros();
 		assertTrue(true);
 	}
 	
-	@Order(22)
+	@Order(24)
 	@Test
 	void expectedCrearCitaException() throws Exception {
 		MvcResult aux = mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/create").accept(MediaType.ALL)).andReturn();
 		String res = aux.getResponse().getContentAsString();
 		assertTrue(res.contains("500"));
+	}
+	
+	@Order(25)
+	@Test
+	void deleteCentroMalo() throws CentroNotFoundException {
+		centroDao.deleteCentro(centroPrueba);
+		assertTrue(true);
 	}
 }

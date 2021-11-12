@@ -53,6 +53,10 @@ public class CupoDao {
 		return cupoRepository.findAll();
 	}
 	
+	public List<Cupo> getAllCuposByCentro(Centro centro) {
+		return cupoRepository.findCuposWithCentro(centro);
+	}
+	
 	public Cupo updateCupo (Cupo cupo) throws CupoNotFoundException {
 		Optional<Cupo> opt = cupoRepository.findById(cupo.id());
 		if(opt.isPresent()) return cupoRepository.save(cupo);
@@ -104,5 +108,15 @@ public class CupoDao {
 	
 	public List<Cupo> getAllCuposAvailableInADay(Centro centro, LocalDateTime fecha) {
 		return cupoRepository.findCuposWithCitasMoreThanAndFechaInicioGreaterThanEqualAndFechaInicioLessThan(0, centro, fecha, fecha.plusDays(1));
+	}
+
+	public void deleteAllCuposByCentro(String nombreCentro) throws CupoNotFoundException, CentroNotFoundException {
+				
+		List <Cupo> cupos = cupoRepository.findCuposWithCentro(centroDao.buscarCentroByNombre(nombreCentro));
+		
+		for (Cupo cupo : cupos) {
+			deleteCupo(cupo);
+		}
+		
 	}
 }
