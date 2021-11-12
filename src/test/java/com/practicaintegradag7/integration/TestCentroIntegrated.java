@@ -1,6 +1,5 @@
 package com.practicaintegradag7.integration;
 
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -11,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -109,24 +107,6 @@ class TestCentroIntegrated {
 	}
 	
 	@Test
-	void searchCentroByIdNotExist() {
-		try {
-			aux.buscarCentro("no existe");
-		} catch (CentroNotFoundException e) {
-			assertTrue(e.getMessage().contains("no existe"));
-		}
-	}
-	
-	@Test
-	void searchCentroByNameNotExist() {
-		try {
-			aux.buscarCentroByNombre("no existe");
-		} catch (CentroNotFoundException e) {
-			assertTrue(true);
-		}
-	}
-	
-	@Test
 	void failVacunasNotValid() {
 		try {
 			aux.addVacunas(prueba.getNombre(), -1);
@@ -190,7 +170,7 @@ class TestCentroIntegrated {
 		json.put("nombre", prueba.getNombre());
 		json.put("direccion", "La paz");
 		json.put("vacunas", 89);
-		mockMvc.perform( MockMvcRequestBuilders.post("api/centro/modify").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/centro/modify").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
 		assertEquals("PRUEBA", prueba.getNombre());
 	}
 	

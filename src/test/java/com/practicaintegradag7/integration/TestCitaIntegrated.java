@@ -23,6 +23,7 @@ import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.dao.CitaDao;
 import com.practicaintegradag7.dao.CupoDao;
 import com.practicaintegradag7.dao.UsuarioDao;
+import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitaNotFoundException;
@@ -93,7 +94,7 @@ class TestCitaIntegrated {
 	
 	@Order(1)
 	@Test
-	void before() {
+	void before() throws CentroExistException {
 		usuarioDao.deleteAllUsuarios();
 		cupoDao.deleteAllCupos();
 		citaDao.deleteAllCitas();

@@ -23,7 +23,6 @@ class TestCupo {
 		} catch (IllegalArgumentException e) {
 			assertEquals("Fecha de inicio no puede ser posterior a la fecha de fin", e.getMessage());
 		}
-		
 	}
 	
 	@Test

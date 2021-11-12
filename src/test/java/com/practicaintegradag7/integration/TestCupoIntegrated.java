@@ -122,13 +122,15 @@ class TestCupoIntegrated {
 	void shouldNotSaveCupoBecauseCentroAlreadyExists() throws CentroExistException, CentroNotFoundException  {
 		Centro centro = new Centro("Centro 2", "Calle 2", 1);
 		
-		centroDao.createCentro(centro);try {
+		centroDao.createCentro(centro);
+		try {
 			centroDao.createCentro(centro);
 			fail("ExistException expected");
-		}catch (DuplicateKeyException e) {
+		}catch (CentroExistException e) {
 			e.getMessage();
 		}finally {
 			centroDao.deleteCentro(centro);
+			assertTrue(true);
 		}
 	}
 	

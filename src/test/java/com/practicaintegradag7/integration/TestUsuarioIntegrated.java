@@ -60,7 +60,7 @@ class TestUsuarioIntegrated {
 	@Order(1)
 	@Test
 	void before() throws CentroExistException {
-		if(!centroDao.existeCentro(centro.getNombre())) centroDao.createCentro(centro);
+		centroDao.createCentro(centro);
 		assertTrue(true);
 	}
 	
@@ -468,10 +468,10 @@ class TestUsuarioIntegrated {
 	@Order(19)
 	@Test
 	void after() throws CentroNotFoundException, CentroExistException {
-		if(centroDao.existeCentro(centro.getNombre())) {
+		
 			centro = centroDao.buscarCentroByNombre(centro.getNombre());
 			centroDao.deleteCentro(centro);
-		}
+		
 		assertTrue(true);
 	}
 }

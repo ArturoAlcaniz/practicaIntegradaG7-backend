@@ -27,7 +27,7 @@ public class CentroDao {
 	@Autowired
 	private UsuarioDao usuarioDao;
 	
-	public Centro createCentro(Centro centro) {
+	public Centro createCentro(Centro centro) throws CentroExistException {
 		existeCentro(centro.getNombre());
 		return centroRepository.insert(centro);
 	}
@@ -49,9 +49,9 @@ public class CentroDao {
 		return centroRepository.findAll();
 	}
 	
-	public boolean existeCentro(String nombre) {
+	public void existeCentro(String nombre) throws CentroExistException {
 		Optional<Centro> opt = centroRepository.findByNombre(nombre);
-		return opt.isPresent();
+		if(opt.isPresent()) throw new CentroExistException("El centro que desea guardar ya existe");
 	}
 	
 	public void addVacunas(String centro, int amount) throws CentroNotFoundException, VacunasNoValidasException{

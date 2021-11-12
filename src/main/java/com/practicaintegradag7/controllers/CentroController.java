@@ -38,7 +38,7 @@ public class CentroController {
 	}
 	
 	@PostMapping(path="/api/centros/create")
-	public Centro crearCentro(@RequestBody Map<String, Object> datosCentro) throws JSONException{
+	public Centro crearCentro(@RequestBody Map<String, Object> datosCentro) throws JSONException, CentroExistException{
 		JSONObject jso = new JSONObject(datosCentro);
 		String nombre = jso.getString("nombre");
 		String direccion = jso.getString("direccion");
