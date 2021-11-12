@@ -7,9 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.practicaintegradag7.exceptions.CentroExistException;
+import com.practicaintegradag7.exceptions.CentroNotEmptyException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
+import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.exceptions.VacunasNoValidasException;
 import com.practicaintegradag7.model.Centro;
+import com.practicaintegradag7.model.Usuario;
 import com.practicaintegradag7.repos.CentroRepository;
 
 @Service
@@ -17,6 +20,12 @@ public class CentroDao {
 
 	@Autowired
 	private CentroRepository centroRepository;
+	
+	@Autowired
+	private CupoDao cupoDao;
+	
+	@Autowired
+	private UsuarioDao usuarioDao;
 	
 	public Centro createCentro(Centro centro) throws CentroExistException{
 		existeCentro(centro.getNombre());
@@ -64,6 +73,20 @@ public class CentroDao {
 
 	public void deleteAllCentros() {
 		centroRepository.deleteAll();
+		
+	}
+
+
+	public void deleteCentroWithNoUsers(String nombreCentro) throws CentroNotEmptyException, CupoNotFoundException, CentroNotFoundException {
+
+		List <Usuario> usuarios = usuarioDao.getAllUsuariosByCentro(nombreCentro);
+		
+		if (usuarios.isEmpty()) {
+			cupoDao.deleteAllCuposByCentro(nombreCentro);
+			centroRepository.deleteByNombre(nombreCentro);
+
+		}else throw new CentroNotEmptyException("El centro "+nombreCentro+" no puede ser eliminado porque contiene "+
+			usuarios.size()+" usuario(s).");
 		
 	}
 	
