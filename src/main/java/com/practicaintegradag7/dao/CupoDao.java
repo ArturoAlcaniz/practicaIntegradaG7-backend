@@ -28,13 +28,13 @@ public class CupoDao {
 	private CentroDao centroDao;
 	
 	public Cupo saveCupo(Cupo cupo) throws CentroNotFoundException, CupoExistException {
-		Optional<Centro> opt = centroRepository.findByNombre(cupo.getCentro().getNombre());
+		Optional<Centro> opt = centroRepository.findByNombre(cupo.getCentro());
 		if (opt.isPresent()) {
 			Optional<Cupo> cupoExistente = cupoRepository.findByFechaInicioAndCentro(cupo.getFechaInicio(), cupo.getCentro());
 			if (!cupoExistente.isPresent()) {
 				return cupoRepository.save(cupo);
 			} else throw new CupoExistException("El cupo que intentas crear ya existe");
-		} else throw new CentroNotFoundException("El centro "+cupo.getCentro().getNombre()+"no existe.");
+		} else throw new CentroNotFoundException("El centro "+cupo.getCentro()+"no existe.");
 	}
 	
 	public Cupo getCupoById (String id) throws CupoNotFoundException {
@@ -43,14 +43,18 @@ public class CupoDao {
 		else throw new CupoNotFoundException("El cupo "+id+" no existe!");
 	}
 	
-	public Cupo getCupoByInicialDateAndCentro (LocalDateTime fechaInicio, Centro centro) throws CupoNotFoundException {
+	public Cupo getCupoByInicialDateAndCentro (LocalDateTime fechaInicio, String centro) throws CupoNotFoundException {
 		Optional<Cupo> opt = cupoRepository.findByFechaInicioAndCentro(fechaInicio, centro);
 		if(opt.isPresent()) return opt.get();
-		else throw new CupoNotFoundException("El cupo del centro "+centro.getNombre()+" con fecha "+fechaInicio+" no existe!!");
+		else throw new CupoNotFoundException("El cupo del centro "+centro+" con fecha "+fechaInicio+" no existe!!");
 	}
 	
 	public List<Cupo> getAllCupos() {
 		return cupoRepository.findAll();
+	}
+	
+	public List<Cupo> getAllCuposByCentro(Centro centro) {
+		return cupoRepository.findCuposWithCentro(centro.getNombre());
 	}
 	
 	public Cupo updateCupo (Cupo cupo) throws CupoNotFoundException {
@@ -76,7 +80,7 @@ public class CupoDao {
 		for(int i=0; i<centros.size(); i++) {
 			while(fechaMax.compareTo(fechaInicial)>0) {
 				LocalDateTime fechaFin = fechaInicial.plusMinutes(minutesDif);
-				Cupo cupo = new Cupo(fechaInicial, fechaFin, configuracion.getCitasPorFranja(), centros.get(i));
+				Cupo cupo = new Cupo(fechaInicial, fechaFin, configuracion.getCitasPorFranja(), centros.get(i).getNombre());
 				cupos.add(cupo);
 				if(((fechaFin.getHour()*3600)+fechaFin.getMinute()*60)<(configuracion.getHoraFin().getHour()*3600+configuracion.getHoraFin().getMinute()*60)) {
 					fechaInicial = fechaFin;
@@ -95,14 +99,24 @@ public class CupoDao {
 	}
 	
 	public List<Cupo> getAllCuposAvailable(Centro centro) {
-		return cupoRepository.findCuposWithNcitasMoreThan(0, centro);
+		return cupoRepository.findCuposWithNcitasMoreThan(0, centro.getNombre());
 	}
 
 	public List<Cupo> getAllCuposAvailableAfter(Centro centro, LocalDateTime fechaMinima) {
-		return cupoRepository.findCuposWithCitasMoreThan(0, centro, fechaMinima);
+		return cupoRepository.findCuposWithCitasMoreThan(0, centro.getNombre(), fechaMinima);
 	}
 	
 	public List<Cupo> getAllCuposAvailableInADay(Centro centro, LocalDateTime fecha) {
-		return cupoRepository.findCuposWithCitasMoreThanAndFechaInicioGreaterThanEqualAndFechaInicioLessThan(0, centro, fecha, fecha.plusDays(1));
+		return cupoRepository.findCuposWithCitasMoreThanAndFechaInicioGreaterThanEqualAndFechaInicioLessThan(0, centro.getNombre(), fecha, fecha.plusDays(1));
+	}
+
+	public void deleteAllCuposByCentro(String nombreCentro) throws CupoNotFoundException, CentroNotFoundException {
+				
+		List <Cupo> cupos = cupoRepository.findCuposWithCentro(centroDao.buscarCentroByNombre(nombreCentro).getNombre());
+		
+		for (Cupo cupo : cupos) {
+			deleteCupo(cupo);
+		}
+		
 	}
 }

@@ -39,6 +39,7 @@ class TestCentroController {
 	@Test
 	void shouldChangeCentroThenReturn200() throws Exception{
 		Centro centro= new Centro("Hospital", "--", 10);
+		
 		JSONObject json = new JSONObject();
 		json.put("nombre", centro.getNombre());
 		json.put("direccion", centro.getDireccion());
@@ -48,10 +49,11 @@ class TestCentroController {
 			dao.existeCentro(centro.getNombre());
 		}catch(CentroExistException e) {
 			assertTrue(true);
-			
 		}
 		
+		
 	}
+	
 	@Order(2)
 	@Test
 	void testObtenerCentros() throws Exception {

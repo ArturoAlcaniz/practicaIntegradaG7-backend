@@ -7,9 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.practicaintegradag7.exceptions.CentroExistException;
+import com.practicaintegradag7.exceptions.CentroNotEmptyException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
+import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.exceptions.VacunasNoValidasException;
 import com.practicaintegradag7.model.Centro;
+import com.practicaintegradag7.model.Usuario;
 import com.practicaintegradag7.repos.CentroRepository;
 
 @Service
@@ -18,7 +21,13 @@ public class CentroDao {
 	@Autowired
 	private CentroRepository centroRepository;
 	
-	public Centro createCentro(Centro centro) throws CentroExistException{
+	@Autowired
+	private CupoDao cupoDao;
+	
+	@Autowired
+	private UsuarioDao usuarioDao;
+	
+	public Centro createCentro(Centro centro) throws CentroExistException {
 		existeCentro(centro.getNombre());
 		return centroRepository.insert(centro);
 	}
@@ -27,7 +36,7 @@ public class CentroDao {
 	public Centro buscarCentro(String id) throws CentroNotFoundException{
 		Optional<Centro> opt = centroRepository.findById(id);
 		if(opt.isPresent()) return opt.get();
-		else throw new CentroNotFoundException("El centro "+id+" no existe");
+		else throw new CentroNotFoundException("El centro con id "+id+" no existe");
 	}
 	
 	public Centro buscarCentroByNombre(String centro) throws CentroNotFoundException {
@@ -42,7 +51,7 @@ public class CentroDao {
 	
 	public void existeCentro(String nombre) throws CentroExistException {
 		Optional<Centro> opt = centroRepository.findByNombre(nombre);
-		if(opt.isPresent()) throw new CentroExistException("El centro que desea guardar ya existe.");	
+		if(opt.isPresent()) throw new CentroExistException("El centro que desea guardar ya existe");
 	}
 	
 	public void addVacunas(String centro, int amount) throws CentroNotFoundException, VacunasNoValidasException{
@@ -65,6 +74,29 @@ public class CentroDao {
 	public void deleteAllCentros() {
 		centroRepository.deleteAll();
 		
+	}
+
+
+	public void deleteCentroWithNoUsers(String nombreCentro) throws CentroNotEmptyException, CupoNotFoundException, CentroNotFoundException {
+
+		List <Usuario> usuarios = usuarioDao.getAllUsuariosByCentro(nombreCentro);
+		
+		if (usuarios.isEmpty()) {
+			cupoDao.deleteAllCuposByCentro(nombreCentro);
+			centroRepository.deleteByNombre(nombreCentro);
+
+		}else throw new CentroNotEmptyException("El centro "+nombreCentro+" no puede ser eliminado porque contiene "+
+			usuarios.size()+" usuario(s).");
+		
+	}
+	
+	public Centro modificarCentro(String nombre, String direccion, int vacunas)
+			throws CentroNotFoundException, CentroExistException {
+
+		Centro centroOld = buscarCentroByNombre(nombre);
+		deleteCentro(centroOld);
+		Centro centroNew = new Centro(nombre, direccion, vacunas);
+		return createCentro(centroNew);
 	}
 	
 }

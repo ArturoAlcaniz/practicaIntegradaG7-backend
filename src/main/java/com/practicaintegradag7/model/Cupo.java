@@ -38,7 +38,7 @@ public class Cupo {
 	private int numeroCitas;
 	
 	@ManyToOne
-	private Centro centro;
+	private String centro;
 	
 	@Transient
 	@JsonSerialize
@@ -50,7 +50,7 @@ public class Cupo {
 	@JsonProperty("fechaFin")
 	private String fechaFinFormatted;
 	
-	public Cupo(LocalDateTime fechaInicio, LocalDateTime fechaFin, int numeroCitas, Centro centro) {
+	public Cupo(LocalDateTime fechaInicio, LocalDateTime fechaFin, int numeroCitas, String centro) {
 		
 		if(!validateFechas(fechaInicio, fechaFin)) {
 			throw new IllegalArgumentException("Fecha de inicio no puede ser posterior a la fecha de fin");
@@ -84,7 +84,7 @@ public class Cupo {
 		return numeroCitas;
 	}
 
-	public Centro getCentro() {
+	public String getCentro() {
 		return centro;
 	}
 
