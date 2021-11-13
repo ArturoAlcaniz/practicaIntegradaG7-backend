@@ -130,7 +130,7 @@ class TestUsuarioIntegrated {
 	void shouldSaveUsuarioWithController() throws Exception {
 		JSONObject json = new JSONObject();
 		Centro centro = new Centro("Hospital 1", "Calle Paloma", 10);
-		
+		centroDao.createCentro(centro);
 		Usuario usuario = new UsuarioBuilder()
 				.dni("05718583J")
 				.nombre("Francisco")
@@ -151,6 +151,7 @@ class TestUsuarioIntegrated {
 		usuario.encryptDNI();
 		assertNotNull(usuarioDao.getUsuarioByEmail(usuario.getEmail()));
 		usuarioDao.deleteUsuarioByEmail(usuario.getEmail());
+		centroDao.deleteCentro(centro);
 
 	}
 	

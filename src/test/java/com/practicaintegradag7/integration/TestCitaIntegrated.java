@@ -433,6 +433,13 @@ class TestCitaIntegrated {
 	
 	@Order(25)
 	@Test
+	void deleteCentroMalo() throws CentroNotFoundException {
+		centroDao.deleteCentro(centroPrueba);
+		assertTrue(true);
+	}
+	
+	@Order(26)
+	@Test
 	void failWhenNotGetCitasByCentroAndAllDay() {
 		//TODO check that citaDao gets all citas filtered by centro and day
 		

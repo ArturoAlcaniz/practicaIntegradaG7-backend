@@ -21,8 +21,13 @@ import com.practicaintegradag7.exceptions.CupoExistException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
 import com.practicaintegradag7.dao.CentroDao;
+import com.practicaintegradag7.dao.CitaDao;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
+import com.practicaintegradag7.model.Cita;
+import com.practicaintegradag7.model.LDTFormatter;
 import com.practicaintegradag7.model.Usuario;
 import com.practicaintegradag7.model.UsuarioBuilder;
 
@@ -35,6 +40,9 @@ public class UsuarioController {
 
 	@Autowired
 	private CentroDao centroDao;
+	
+	@Autowired
+	private CitaDao citaDao;
 	
 	private static final String EMAIL = "email";
 	
@@ -95,6 +103,17 @@ public class UsuarioController {
 		response.put("status", "200");
 		response.put("message", "Ha eliminado correctamente el usuario con email "+emailUsuario);
     	return response.toString();
+	}
+	
+	@GetMapping(path="/api/usuario/obtenerPorFechaAndCentro")
+	public List<Cita> obtenerCitasPorFechaAndCentro(@RequestBody Map<String, Object> info) throws JSONException{
+		JSONObject jso = new JSONObject(info);
+		String fechaString = jso.getString("fecha");
+		String centro = jso.getString("centro");
+		LocalDateTime fechaMin = LDTFormatter.parse(fechaString+"T00:00");
+		LocalDateTime fechaMax = LDTFormatter.parse(fechaString+"T23:59");
+		
+		return citaDao.findByFechaAndCentroNombre(fechaMin,fechaMax, centro);
 	}
 	
 }
