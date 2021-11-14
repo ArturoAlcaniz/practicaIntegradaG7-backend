@@ -115,6 +115,7 @@ public class UsuarioController {
 		response.put(EMAIL, usuario.getEmail());
 		response.put(PWD, usuario.getPassword());
 		response.put(CENTRO, usuario.getCentro().getNombre());
+		response.put("rol", usuario.getRol());
     	return response.toString();
 	}
 	
@@ -130,5 +131,7 @@ public class UsuarioController {
 		response.put(MSSG, "Ha eliminado correctamente el usuario con email "+emailUsuario);
     	return response.toString();
 	}
+	
+	
 	
 }
