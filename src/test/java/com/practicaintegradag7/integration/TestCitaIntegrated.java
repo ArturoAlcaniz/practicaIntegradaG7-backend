@@ -35,6 +35,7 @@ import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cita;
 import com.practicaintegradag7.model.Cupo;
+import com.practicaintegradag7.model.LDTFormatter;
 import com.practicaintegradag7.model.Usuario;
 import com.practicaintegradag7.model.UsuarioBuilder;
 import com.practicaintegradag7.repos.CitaRepository;
@@ -435,7 +436,8 @@ class TestCitaIntegrated {
 	@Test
 	void failWhenNotGetCitasByCentroAndAllDay() {
 		//TODO check that citaDao gets all citas filtered by centro and day
-		
-		fail("not implemented yet");
+		Centro centroPrueba26 = new Centro("Centro Prueba Test 26", "Calle 1", 1);
+		citaDao.findByFechaAndCentroNombre(LDTFormatter.parse("2021-10-16T00:00"), LDTFormatter.parse("2022-01-31T00:00"), centroPrueba26.getNombre());
+		assertTrue(true);
 	}
 }

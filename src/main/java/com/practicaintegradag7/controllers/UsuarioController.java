@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,6 @@ import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.dao.CitaDao;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.practicaintegradag7.model.Cita;
@@ -139,26 +139,6 @@ public class UsuarioController {
 		response.put(STATUS, "200");
 		response.put(MSSG, "Ha eliminado correctamente el usuario con email "+emailUsuario);
     	return response.toString();
-	}
-	
-	@GetMapping(path="/api/usuario/obtenerPorFechaAndCentro")
-	public List<Usuario> obtenerCitasPorFechaAndCentro(@RequestBody Map<String, Object> info) throws JSONException, CifradoContrasenaException{
-		JSONObject jso = new JSONObject(info);
-		String fechaString = jso.getString("fecha");
-		String centro = jso.getString("centro");
-		LocalDateTime fechaMin = LDTFormatter.parse(fechaString+"T00:00");
-		LocalDateTime fechaMax = LDTFormatter.parse(fechaString+"T23:59");
-		
-		List<Cita> citas = citaDao.findByFechaAndCentroNombre(fechaMin,fechaMax, centro);
-		List<String> emails = citas.stream().map(Cita::getEmail).collect(Collectors.toList());
-		
-		for (String e : emails) System.out.println(e);
-		
-		List<Usuario> usuarios = usuarioDao.getAllByEmail(emails);
-		
-		System.out.println("Buscamos los usuarios");
-		for (Usuario u : usuarios) System.out.println(u.getEmail()+" : "+u.getNombre());
-		return usuarios;
 	}
 	
 }

@@ -467,14 +467,6 @@ class TestUsuarioIntegrated {
 	
 	@Order(19)
 	@Test
-	void failWhenNotGetUsuariosByListEmail() {
-		//TODO check that you get all users filtered by email list
-		
-		fail("not yet implemented");
-	}
-	
-	@Order(20)
-	@Test
 	void after() throws CentroNotFoundException, CentroExistException {
 		
 			centro = centroDao.buscarCentroByNombre(centro.getNombre());
