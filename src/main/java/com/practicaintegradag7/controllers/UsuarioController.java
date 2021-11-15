@@ -125,7 +125,8 @@ public class UsuarioController {
 		response.put(EMAIL, usuario.getEmail());
 		response.put(PWD, usuario.getPassword());
 		response.put(CENTRO, usuario.getCentro());
-    	return response.toString();
+		response.put("rol", usuario.getRol());    	
+		return response.toString();
 	}
 	
 	@PostMapping(path="api/usuario/eliminar")
@@ -140,5 +141,7 @@ public class UsuarioController {
 		response.put(MSSG, "Ha eliminado correctamente el usuario con email "+emailUsuario);
     	return response.toString();
 	}
+	
+	
 	
 }
