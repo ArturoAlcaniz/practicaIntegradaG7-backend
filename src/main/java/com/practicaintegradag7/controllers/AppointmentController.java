@@ -105,7 +105,7 @@ public class AppointmentController{
 	@PostMapping(path="/api/citas/delete")
     public String eliminarCita(@RequestBody Map<String, Object> datosCita) throws JSONException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		JSONObject jso = new JSONObject(datosCita);
-		String fecha =  jso.getString("fecha");
+		String fecha =  jso.getString("fecha").replace(" a las ", "T");
 		LocalDateTime fechaF = LDTFormatter.parse(fecha);
 		String email = jso.getString("email");
 		String centroNombre = jso.getString("centro");
