@@ -1,5 +1,6 @@
 package com.practicaintegradag7.repos;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -16,5 +17,7 @@ public interface UsuarioRepository extends MongoRepository<Usuario, String> {
 	public Optional<Usuario> findByEmail(String email);
 	public void deleteByEmail(String email);
 	public boolean existsByEmail(String email);
+	
+	public List<Usuario> findByEmailIn(List<String> email);
 	
 }

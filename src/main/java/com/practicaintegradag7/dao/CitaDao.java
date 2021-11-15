@@ -244,4 +244,9 @@ public class CitaDao {
 		return validado;
 	}
 	
+	public List<Cita> findByFechaAndCentroNombre (LocalDateTime fechaMin, LocalDateTime fechaMax, String centro) {
+		return citaRepository.findByFechaAndCentroNombre(fechaMin,fechaMax, centro);
+	}
+
+	
 }
