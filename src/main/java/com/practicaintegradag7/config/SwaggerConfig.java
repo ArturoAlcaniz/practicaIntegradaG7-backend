@@ -1,6 +1,6 @@
 package com.practicaintegradag7.config;
 
-
+// Para ver la documentacion: http://localhost:8080/swagger-ui.html
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
