@@ -28,7 +28,7 @@ public interface CitaRepository extends MongoRepository<Cita, String> {
 
 	public Optional<Cita> findByEmailAndNcita(String email, Short ncita);
 	
-	@Query("{'fecha':{'$gte':?0, 'lte': ?1}, 'centroNombre':?2}")
+	@Query("{'fecha':{'$gte':?0, '$lte': ?1}, 'centroNombre':?2}")
 	public List<Cita> findByFechaAndCentroNombre(LocalDateTime fechaMin,LocalDateTime fechaMax , String centroNombre);
 
 }
