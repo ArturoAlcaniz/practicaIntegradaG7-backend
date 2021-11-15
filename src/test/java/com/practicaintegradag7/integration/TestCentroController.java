@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.practicaintegradag7.dao.CentroDao;
+import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.model.Centro;
 
@@ -38,13 +39,19 @@ class TestCentroController {
 	@Test
 	void shouldChangeCentroThenReturn200() throws Exception{
 		Centro centro= new Centro("Hospital", "--", 10);
+		
 		JSONObject json = new JSONObject();
 		json.put("nombre", centro.getNombre());
 		json.put("direccion", centro.getDireccion());
 		json.put("vacunas", centro.getVacunas());
 		mockMvc.perform( MockMvcRequestBuilders.post("/api/centros/create").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
-
-		assertTrue(dao.existeCentro(centro.getNombre()));
+		try {
+			dao.existeCentro(centro.getNombre());
+		}catch(CentroExistException e) {
+			assertTrue(true);
+		}
+		
+		
 	}
 	
 	@Order(2)

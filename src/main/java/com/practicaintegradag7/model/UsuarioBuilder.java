@@ -9,7 +9,7 @@ public class UsuarioBuilder {
 	private boolean primeraDosis;
 	private boolean segundaDosis;
 	private String password;
-	private Centro centro;
+	private String centro;
 	private String rol;
 
 	public String getDni() {
@@ -40,7 +40,7 @@ public class UsuarioBuilder {
 		return password;
 	}
 
-	public Centro getCentro() {
+	public String getCentro() {
 		return centro;
 	}
 
@@ -73,7 +73,7 @@ public class UsuarioBuilder {
 		return this;
 	}
 	
-	public UsuarioBuilder centro(Centro centro) {
+	public UsuarioBuilder centro(String centro) {
 		this.centro = centro;
 		return this;
 	}

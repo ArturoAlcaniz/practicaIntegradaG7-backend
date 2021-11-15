@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.practicaintegradag7.dao.CentroDao;
+import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotEmptyException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
@@ -24,6 +25,9 @@ public class CentroController {
 	@Autowired
 	private CentroDao centroDao;
 	
+	@Autowired
+	private CentroDao aux;
+	
 	@PostMapping(path="/api/addVaccines")
 	public void addVacunas(@RequestBody Map<String, Object> info) throws CentroNotFoundException, VacunasNoValidasException, JSONException {
 		JSONObject jso = new JSONObject(info);
@@ -34,7 +38,7 @@ public class CentroController {
 	}
 	
 	@PostMapping(path="/api/centros/create")
-	public Centro crearCentro(@RequestBody Map<String, Object> datosCentro) throws JSONException{
+	public Centro crearCentro(@RequestBody Map<String, Object> datosCentro) throws JSONException, CentroExistException{
 		JSONObject jso = new JSONObject(datosCentro);
 		String nombre = jso.getString("nombre");
 		String direccion = jso.getString("direccion");
@@ -59,5 +63,17 @@ public class CentroController {
 		response.put("status", "200");
 		response.put("message", "Ha eliminado correctamente el centro "+nombreCentro);
     	return response.toString();
+	}
+	
+	@PostMapping(path="/api/centro/modify")
+	public Centro modificarCentro(@RequestBody Map<String, Object> datosMCentro) throws JSONException, CentroNotFoundException, CentroExistException{
+		
+		JSONObject jso = new JSONObject(datosMCentro);
+		String nombre = jso.getString("nombre");
+		String direccion = jso.getString("direccion");
+		int vacunas = jso.getInt("vacunas");
+		
+		return aux.modificarCentro(nombre, direccion, vacunas);
+	
 	}
 }

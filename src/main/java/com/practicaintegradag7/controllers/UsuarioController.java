@@ -54,7 +54,7 @@ public class UsuarioController {
 				.apellidos(jso.getString("apellidos"))
 				.email(jso.getString(EMAIL))
 				.password(jso.getString(PWD))
-				.centro(centroDao.buscarCentroByNombre(jso.getString(CENTRO)))
+				.centro(centroDao.buscarCentroByNombre(jso.getString(CENTRO)).getNombre())
 				.rol(rol)
 				.build();
 		usuarioDao.saveUsuario(useri);
@@ -75,7 +75,7 @@ public class UsuarioController {
 				.apellidos(jso.getString("apellidos"))
 				.email(jso.getString(EMAIL))
 				.password(jso.getString(PWD))
-				.centro(centroDao.buscarCentroByNombre(jso.getString(CENTRO)))
+				.centro(centroDao.buscarCentroByNombre(jso.getString(CENTRO)).getNombre())
 				.rol(rol)
 				.build();
 		try {
@@ -114,9 +114,9 @@ public class UsuarioController {
 		response.put(MSSG, "Usuario ha iniciado la sesión correctamente.");
 		response.put(EMAIL, usuario.getEmail());
 		response.put(PWD, usuario.getPassword());
-		response.put(CENTRO, usuario.getCentro().getNombre());
-		response.put("rol", usuario.getRol());
-    	return response.toString();
+		response.put(CENTRO, usuario.getCentro());
+		response.put("rol", usuario.getRol());    	
+		return response.toString();
 	}
 	
 	@PostMapping(path="api/usuario/eliminar")
