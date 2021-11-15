@@ -435,9 +435,7 @@ class TestCitaIntegrated {
 	@Order(26)
 	@Test
 	void failWhenNotGetCitasByCentroAndAllDay() {
-		//TODO check that citaDao gets all citas filtered by centro and day
-		Centro centroPrueba26 = new Centro("Centro Prueba Test 26", "Calle 1", 1);
-		citaDao.findByFechaAndCentroNombre(LDTFormatter.parse("2021-10-16T00:00"), LDTFormatter.parse("2022-01-31T00:00"), centroPrueba26.getNombre());
+		citaDao.findByFechaAndCentroNombre(LDTFormatter.parse("2021-10-16T00:00"), LDTFormatter.parse("2022-01-31T00:00"), "Centro Prueba Test 26");
 		assertTrue(true);
 	}
 }
