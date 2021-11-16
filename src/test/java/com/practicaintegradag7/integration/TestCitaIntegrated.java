@@ -430,4 +430,15 @@ class TestCitaIntegrated {
 		centroDao.deleteCentro(centroPrueba);
 		assertTrue(true);
 	}
+	
+	@Order(26)
+	void vacunarPacienteAllGood() {
+		fail("Not implemented yet");
+	}
+	
+	@Order(27)
+	void vacunarPacienteThrowException() {
+		fail("Not implemented yet");
+	}
+	
 }

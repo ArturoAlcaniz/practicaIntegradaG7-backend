@@ -17,6 +17,8 @@ import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
 import com.practicaintegradag7.exceptions.CupoExistException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
+import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
+import com.practicaintegradag7.exceptions.VacunacionDateException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cita;
 import com.practicaintegradag7.model.Cupo;
@@ -122,5 +124,17 @@ public class AppointmentController{
 		response.put(MSSG, "Ha eliminado su cita");
     	return response.toString();
     }
+	
+	@PostMapping(path="/api/marcarVacunacion")
+	public String marcarVacunacion(@RequestBody Map<String, Object> datosVacunacion) throws JSONException, CitaNotFoundException, VacunacionDateException, UsuarioNotFoundException, CifradoContrasenaException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
+		JSONObject jso = new JSONObject(datosVacunacion);
+		String email = jso.getString("email");
+		short ncita = (short) jso.getString("ncita").charAt(0);
+		citaDao.vacunar(citaDao.findByEmailAndNcita(email, ncita));
+		JSONObject response = new JSONObject();
+		response.put(STATUS,  "200");
+		response.put(MSSG, "Paciente vacunado correctamente");
+		return response.toString();
+	}
 }
 
