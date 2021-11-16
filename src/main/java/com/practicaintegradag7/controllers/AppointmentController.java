@@ -24,10 +24,12 @@ import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cita;
 import com.practicaintegradag7.model.Cupo;
 import com.practicaintegradag7.model.LDTFormatter;
+import com.practicaintegradag7.model.Usuario;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -141,6 +143,19 @@ public class AppointmentController{
 		response.put(STATUS,  "200");
 		response.put(MSSG, "Paciente vacunado correctamente");
 		return response.toString();
+	}
+	
+	@PostMapping(path="/api/citas/obtenerPorFechaAndCentro")
+	public List<Cita> obtenerCitasPorFechaAndCentro(@RequestBody Map<String, Object> info) throws JSONException, CifradoContrasenaException{
+		JSONObject jso = new JSONObject(info);
+		String fechaString = jso.getString("fecha");
+		String centro = jso.getString(CENTRO);
+		LocalDateTime fechaMin = LDTFormatter.parse(fechaString+"T00:00");
+		LocalDateTime fechaMax = LDTFormatter.parse(fechaString+"T23:59");
+		
+		List<Cita> citas = citaDao.findByFechaAndCentroNombre(fechaMin,fechaMax, centro);
+
+		return citas;
 	}
 }
 

@@ -34,6 +34,7 @@ import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cita;
 import com.practicaintegradag7.model.Cupo;
+import com.practicaintegradag7.model.LDTFormatter;
 import com.practicaintegradag7.model.Usuario;
 import com.practicaintegradag7.model.UsuarioBuilder;
 import com.practicaintegradag7.repos.CitaRepository;
@@ -484,4 +485,8 @@ class TestCitaIntegrated {
 		centroDao.deleteCentro(centroPrueba);
 	}
 	
+	void failWhenNotGetCitasByCentroAndAllDay() {
+		citaDao.findByFechaAndCentroNombre(LDTFormatter.parse("2021-10-16T00:00"), LDTFormatter.parse("2022-01-31T00:00"), "Centro Prueba Test 26");
+		assertTrue(true);
+	}
 }

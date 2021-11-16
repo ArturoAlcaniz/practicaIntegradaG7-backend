@@ -1,10 +1,12 @@
 package com.practicaintegradag7.controllers;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +23,13 @@ import com.practicaintegradag7.exceptions.CupoExistException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
 import com.practicaintegradag7.dao.CentroDao;
+import com.practicaintegradag7.dao.CitaDao;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
+import com.practicaintegradag7.model.Cita;
+import com.practicaintegradag7.model.LDTFormatter;
 import com.practicaintegradag7.model.Usuario;
 import com.practicaintegradag7.model.UsuarioBuilder;
 
@@ -35,6 +42,9 @@ public class UsuarioController {
 
 	@Autowired
 	private CentroDao centroDao;
+	
+	@Autowired
+	private CitaDao citaDao;
 	
 	private static final String EMAIL = "email";
 	private static final String PWD = "password";

@@ -134,4 +134,11 @@ public class UsuarioDao {
 	public Usuario save(Usuario usuario) {
 		return usuarioRepository.save(usuario);
 	}
+	
+	public List<Usuario> getAllByEmail(List<String> emails) throws CifradoContrasenaException {
+		List<Usuario> usuarios = usuarioRepository.findByEmailIn(emails);
+		for(Usuario u : usuarios) u.decryptDNI();
+		return usuarios;
+	}
+	
 }

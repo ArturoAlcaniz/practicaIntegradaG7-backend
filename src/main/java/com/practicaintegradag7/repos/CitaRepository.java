@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
@@ -26,4 +27,8 @@ public interface CitaRepository extends MongoRepository<Cita, String> {
 	public List<Cita> findByFechaAndCentroNombre(LocalDateTime fecha, String centroNombre);
 
 	public Optional<Cita> findByEmailAndNcita(String email, Short ncita);
+	
+	@Query("{'fecha':{'$gte':?0, '$lte': ?1}, 'centroNombre':?2}")
+	public List<Cita> findByFechaAndCentroNombre(LocalDateTime fechaMin,LocalDateTime fechaMax , String centroNombre);
+
 }

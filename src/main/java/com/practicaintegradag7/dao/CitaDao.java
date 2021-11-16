@@ -262,4 +262,9 @@ public class CitaDao {
 		this.deleteCita(cita);
 	}
 	
+	public List<Cita> findByFechaAndCentroNombre (LocalDateTime fechaMin, LocalDateTime fechaMax, String centro) {
+		return citaRepository.findByFechaAndCentroNombre(fechaMin,fechaMax, centro);
+	}
+
+	
 }
