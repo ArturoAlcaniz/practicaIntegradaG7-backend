@@ -99,4 +99,8 @@ public class CentroDao {
 		return createCentro(centroNew);
 	}
 	
+	public Centro save(Centro centro) {
+		return centroRepository.save(centro);
+	}
+	
 }

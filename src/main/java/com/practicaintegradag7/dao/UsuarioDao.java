@@ -131,4 +131,7 @@ public class UsuarioDao {
 		usuarioRepository.save(newUser);
 	}
 	
+	public Usuario save(Usuario usuario) {
+		return usuarioRepository.save(usuario);
+	}
 }

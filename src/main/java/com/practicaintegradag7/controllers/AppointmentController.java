@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.dao.CitaDao;
 import com.practicaintegradag7.dao.CupoDao;
+import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitaNotFoundException;
@@ -42,6 +43,8 @@ public class AppointmentController{
 	private CupoDao cupoDao;
 	@Autowired
 	private CentroDao centroDao;
+	@Autowired
+	private UsuarioDao usuarioDao;
 	
 	private static final String STATUS = "status";
 	private static final String MSSG = "message";
@@ -129,8 +132,11 @@ public class AppointmentController{
 	public String marcarVacunacion(@RequestBody Map<String, Object> datosVacunacion) throws JSONException, CitaNotFoundException, VacunacionDateException, UsuarioNotFoundException, CifradoContrasenaException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		JSONObject jso = new JSONObject(datosVacunacion);
 		String email = jso.getString("email");
-		short ncita = (short) jso.getString("ncita").charAt(0);
+		short ncita = (short) jso.getInt("ncita");
 		citaDao.vacunar(citaDao.findByEmailAndNcita(email, ncita));
+		Centro centro = centroDao.buscarCentroByNombre(usuarioDao.getUsuarioByEmail(email).getCentro());
+		centro.setVacunas(centro.getVacunas()-1);
+		centroDao.save(centro);
 		JSONObject response = new JSONObject();
 		response.put(STATUS,  "200");
 		response.put(MSSG, "Paciente vacunado correctamente");

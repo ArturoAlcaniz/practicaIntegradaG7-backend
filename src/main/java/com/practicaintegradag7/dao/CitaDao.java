@@ -253,13 +253,12 @@ public class CitaDao {
 			throw new VacunacionDateException();
 		}
 		Usuario usuarioVacunar = usuarioDao.getUsuarioByEmail(cita.getEmail());
-		usuarioDao.deleteUsuarioByEmail(cita.getEmail());
-		if(Short.compare(cita.getNcita(), (short)'1') == 0) {
+		if(Short.compare(cita.getNcita(), (short) 1) == 0) {
 			usuarioVacunar.setPrimeraDosis(true);
 		} else {
 			usuarioVacunar.setSegundaDosis(true);
 		}
-		usuarioDao.saveUsuario(usuarioVacunar);
+		usuarioDao.save(usuarioVacunar);
 		this.deleteCita(cita);
 	}
 	
