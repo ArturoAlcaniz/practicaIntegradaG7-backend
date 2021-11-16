@@ -16,6 +16,8 @@ import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
 import com.practicaintegradag7.exceptions.CupoExistException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
+import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
+import com.practicaintegradag7.exceptions.VacunacionDateException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cita;
 import com.practicaintegradag7.model.Cupo;
@@ -242,6 +244,22 @@ public class CitaDao {
 			
 		
 		return validado;
+	}
+
+	public void vacunar(Cita cita) throws VacunacionDateException, UsuarioNotFoundException, CifradoContrasenaException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
+		LocalDateTime fechaActual = LocalDateTime.now();
+		if(fechaActual.getYear() != cita.getFecha().getYear() || fechaActual.getMonth() != cita.getFecha().getMonth()
+			|| fechaActual.getDayOfMonth() != cita.getFecha().getDayOfMonth()) {
+			throw new VacunacionDateException();
+		}
+		Usuario usuarioVacunar = usuarioDao.getUsuarioByEmail(cita.getEmail());
+		if(Short.compare(cita.getNcita(), (short) 1) == 0) {
+			usuarioVacunar.setPrimeraDosis(true);
+		} else {
+			usuarioVacunar.setSegundaDosis(true);
+		}
+		usuarioDao.save(usuarioVacunar);
+		this.deleteCita(cita);
 	}
 	
 	public List<Cita> findByFechaAndCentroNombre (LocalDateTime fechaMin, LocalDateTime fechaMax, String centro) {
