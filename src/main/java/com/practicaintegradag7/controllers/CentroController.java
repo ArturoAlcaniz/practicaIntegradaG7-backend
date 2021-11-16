@@ -28,6 +28,9 @@ public class CentroController {
 	@Autowired
 	private CentroDao aux;
 	
+	private static final String STATUS = "status";
+	private static final String MSSG = "message";
+	
 	@PostMapping(path="/api/addVaccines")
 	public void addVacunas(@RequestBody Map<String, Object> info) throws CentroNotFoundException, VacunasNoValidasException, JSONException {
 		JSONObject jso = new JSONObject(info);
@@ -66,14 +69,26 @@ public class CentroController {
 	}
 	
 	@PostMapping(path="/api/centro/modify")
-	public Centro modificarCentro(@RequestBody Map<String, Object> datosMCentro) throws JSONException, CentroNotFoundException, CentroExistException{
+	public String modificarCentro(@RequestBody Map<String, Object> datosMCentro) throws JSONException, CentroNotFoundException, CentroExistException{
 		
 		JSONObject jso = new JSONObject(datosMCentro);
-		String nombre = jso.getString("nombre");
-		String direccion = jso.getString("direccion");
-		int vacunas = jso.getInt("vacunas");
+		String code = "200";
+		String mssg = "OK";
+		try {
+			String nombre = jso.getString("nombre");
+			String direccion = jso.getString("direccion");
+			int vacunas = jso.getInt("vacunas");
+			aux.modificarCentro(nombre, direccion, vacunas);
+		}catch(JSONException e) {
+			code = "500";
+			mssg = e.getMessage();
+		}
 		
-		return aux.modificarCentro(nombre, direccion, vacunas);
+		JSONObject response = new JSONObject();
+		response.put(STATUS, code);
+		response.put(MSSG, mssg);
+		
+		return response.toString();
 	
 	}
 }
