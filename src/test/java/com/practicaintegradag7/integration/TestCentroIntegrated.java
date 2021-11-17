@@ -128,19 +128,6 @@ class TestCentroIntegrated {
 	}
 	
 	@Test
-	void shouldEliminateEmptyCentro() throws CentroNotEmptyException, CupoNotFoundException, CentroExistException{
-
-		try {
-			aux.deleteCentroWithNoUsers(prueba.getNombre());
-			aux.buscarCentro(prueba.getNombre());
-		} catch (CentroNotFoundException e) {
-			assertTrue(e.getMessage().contains("no existe"));
-		} finally {
-			aux.createCentro(prueba);
-		}
-	}
-	
-	@Test
 	void shouldNotEliminateNotEmptyCentro() throws CifradoContrasenaException, CentroNotEmptyException, CupoNotFoundException, CentroNotFoundException{
 		
 		Usuario usuario = new UsuarioBuilder()
