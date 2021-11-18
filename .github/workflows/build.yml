@@ -2,6 +2,7 @@ name: Build
 on: [push]
 
 jobs:
+  if: github.actor != 'ArturoAlcaniz'
   build:
     name: Build
     runs-on: ubuntu-latest
