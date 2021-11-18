@@ -6,8 +6,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Random;
-
+import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
@@ -35,6 +34,7 @@ import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cita;
 import com.practicaintegradag7.model.Cupo;
+import com.practicaintegradag7.model.LDTFormatter;
 import com.practicaintegradag7.model.Usuario;
 import com.practicaintegradag7.model.UsuarioBuilder;
 import com.practicaintegradag7.repos.CitaRepository;
@@ -98,8 +98,7 @@ class TestCitaIntegrated {
 		usuarioDao.deleteAllUsuarios();
 		cupoDao.deleteAllCupos();
 		citaDao.deleteAllCitas();
-		Random random = new Random();
-		centroPrueba = new Centro("Centro Prueba Citas "+random.nextInt(100), "Calle 1", 1);
+		centroPrueba = new Centro("Centro Prueba Citas", "Calle 1", 1);
 		centroDao.createCentro(centroPrueba);
 		assertTrue(true);
 	}
@@ -119,8 +118,7 @@ class TestCitaIntegrated {
 	@Order(3)
 	@Test
 	void failWhenNotCuposAvailable() throws CifradoContrasenaException, CupoNotFoundException, CentroNotFoundException, CupoExistException, CitaNotFoundException {
-		Random random = new Random();
-		String dni = random.nextInt(10)+"0"+random.nextInt(10)+"2"+random.nextInt(10)+"1"+random.nextInt(10)+"1"+"A";
+		String dni = "11336678A";
 		usuarioPrueba = new UsuarioBuilder()
 				.dni(dni)
 				.nombre("Roberto")
@@ -429,6 +427,67 @@ class TestCitaIntegrated {
 	@Test
 	void deleteCentroMalo() throws CentroNotFoundException {
 		centroDao.deleteCentro(centroPrueba);
+		assertTrue(true);
+	}
+	
+	@Order(26)
+	@Test
+	void shouldVacunarPrimeraDosis() throws Exception {
+		centroPrueba = new Centro("Centro Prueba Citas", "Calle 1", 1);
+		centroDao.createCentro(centroPrueba);
+		usuarioPrueba = new UsuarioBuilder()
+				.dni("12345678A")
+				.nombre("Prueba")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centroPrueba.getNombre())
+				.rol("Paciente")
+				.build();
+		usuarioDao.deleteUsuarioByEmail(usuarioPrueba.getEmail());
+		usuarioDao.saveUsuario(usuarioPrueba);
+		citaDao.deleteAllCitas();
+		Cupo cupo = new Cupo(LocalDateTime.now().minusMinutes(10), LocalDateTime.now().plusMinutes(10), 1, centroPrueba.getNombre());
+		cupoDao.saveCupo(cupo);
+		Cita cita = new Cita(usuarioPrueba.getEmail(), cupo.getFechaInicio(), centroPrueba.getNombre(), (short) 1);
+		citaDao.saveCita(cita);
+		JSONObject json = new JSONObject();
+		json.put("email", usuarioPrueba.getEmail());
+		json.put("ncita", cita.getNcita());
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/marcarVacunacion").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		usuarioDao.deleteUsuarioByEmail(usuarioPrueba.getEmail());
+		centroDao.deleteCentro(centroPrueba);
+	}
+	
+	@Order(27)
+	@Test
+	void shouldVacunarSegundaDosis() throws Exception {
+		centroPrueba = new Centro("Centro Prueba Citas", "Calle 1", 1);
+		centroDao.createCentro(centroPrueba);
+		usuarioPrueba = new UsuarioBuilder()
+				.dni("12345678A")
+				.nombre("Prueba")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centroPrueba.getNombre())
+				.rol("Paciente")
+				.build();
+		usuarioDao.saveUsuario(usuarioPrueba);
+		Cupo cupo = new Cupo(LocalDateTime.now().minusMinutes(10), LocalDateTime.now().plusMinutes(10), 2, centroPrueba.getNombre());
+		cupoDao.saveCupo(cupo);
+		Cita cita = new Cita(usuarioPrueba.getEmail(), cupo.getFechaInicio(), centroPrueba.getNombre(), (short) 2);
+		citaDao.saveCita(cita);
+		JSONObject json = new JSONObject();
+		json.put("email", usuarioPrueba.getEmail());
+		json.put("ncita", cita.getNcita());
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/marcarVacunacion").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		usuarioDao.deleteUsuarioByEmail(usuarioPrueba.getEmail());
+		centroDao.deleteCentro(centroPrueba);
+	}
+	
+	void failWhenNotGetCitasByCentroAndAllDay() {
+		citaDao.findByFechaAndCentroNombre(LDTFormatter.parse("2021-10-16T00:00"), LDTFormatter.parse("2022-01-31T00:00"), "Centro Prueba Test 26");
 		assertTrue(true);
 	}
 }

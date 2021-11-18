@@ -66,7 +66,7 @@ public class CentroDao {
 	
 	public void deleteCentro(Centro c) throws CentroNotFoundException {
 		Optional<Centro> opt = centroRepository.findByNombre(c.getNombre());
-		if(opt.isPresent()) centroRepository.delete(c);
+		if(opt.isPresent()) centroRepository.deleteByNombre(c.getNombre());
 		else throw new CentroNotFoundException("Centro no encontrado");
 	}
 
@@ -97,6 +97,10 @@ public class CentroDao {
 		deleteCentro(centroOld);
 		Centro centroNew = new Centro(nombre, direccion, vacunas);
 		return createCentro(centroNew);
+	}
+	
+	public Centro save(Centro centro) {
+		return centroRepository.save(centro);
 	}
 	
 }

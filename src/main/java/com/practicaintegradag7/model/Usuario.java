@@ -6,7 +6,9 @@ import java.util.regex.Pattern;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,6 +35,9 @@ import org.springframework.data.annotation.Transient;
 @Document(collection = "Usuario")
 public class Usuario {
 
+	@Id
+	private String id;
+	
 	@Id
 	@Column(name = "email")
 	private String email;
