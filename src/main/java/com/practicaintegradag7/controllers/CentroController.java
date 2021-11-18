@@ -41,13 +41,28 @@ public class CentroController {
 	}
 	
 	@PostMapping(path="/api/centros/create")
-	public Centro crearCentro(@RequestBody Map<String, Object> datosCentro) throws JSONException, CentroExistException{
+	public String crearCentro(@RequestBody Map<String, Object> datosCentro) throws JSONException, CentroExistException{
+		
 		JSONObject jso = new JSONObject(datosCentro);
-		String nombre = jso.getString("nombre");
-		String direccion = jso.getString("direccion");
-		int vacunas = jso.getInt("vacunas");
-		Centro centro = new Centro(nombre, direccion, vacunas);
-		return centroDao.createCentro(centro);
+		String code = "200";
+		String mssg = "OK";
+		
+		try {
+			String nombre = jso.getString("nombre");
+			String direccion = jso.getString("direccion");
+			int vacunas = jso.getInt("vacunas");
+			Centro centro = new Centro(nombre, direccion, vacunas);
+			centroDao.createCentro(centro);
+		}catch(JSONException e) {
+			code = "500";
+			mssg = e.getMessage();
+		}
+		
+		JSONObject response = new JSONObject();
+		response.put(STATUS, code);
+		response.put(MSSG, mssg);
+		
+		return response.toString();
 	}
 	
 	@GetMapping(path="/api/centros/obtener")
