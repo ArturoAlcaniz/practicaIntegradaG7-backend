@@ -104,7 +104,7 @@ public class UsuarioDao {
     	return compareDni.matches();
     }
     
-	public void modifyUsuario(Usuario newUser) throws UserModificationException, CifradoContrasenaException, UsuarioNotFoundException {
+	public Usuario modifyUsuario(Usuario newUser) throws UserModificationException, CifradoContrasenaException, UsuarioNotFoundException {
 		Optional<Usuario> oldOpt = usuarioRepository.findByEmail(newUser.getEmail());
 		Usuario old;
 		if(oldOpt.isPresent()) old = oldOpt.get();
@@ -127,8 +127,9 @@ public class UsuarioDao {
 		
 		if(!newUser.getCentro().equals(old.getCentro()) && newUser.isPrimeraDosis()) throw new UserModificationException("Un usuario ya vacunado no puede cambiar de centro");
 		newUser.encryptDNI();
-		usuarioRepository.deleteByEmail(old.getEmail());
 		usuarioRepository.save(newUser);
+		
+		return newUser;
 	}
 	
 }

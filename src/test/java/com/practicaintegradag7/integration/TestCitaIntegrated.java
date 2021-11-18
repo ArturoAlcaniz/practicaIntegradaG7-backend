@@ -390,6 +390,7 @@ class TestCitaIntegrated {
 			List<Cita> citas = citaDao.createCitas();
 			citaPrueba2 = citas.get(0);
 			citaPrueba = citas.get(1);
+			cupoDao.deleteAllCuposByCentro(centroPrueba.getNombre());
 			assertTrue(cupoPruebaAlt.getCentro().equals(citaPrueba.getCentroNombre()) && citaPrueba.getFecha().equals(cupoPruebaAlt.getFechaInicio()));
 		} catch(Exception ex) {
 			fail(ex.getMessage());
