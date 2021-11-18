@@ -94,12 +94,14 @@ class TestCitaIntegrated {
 	
 	@Order(1)
 	@Test
-	void before() throws CentroExistException {
+	void before() {
 		usuarioDao.deleteAllUsuarios();
 		cupoDao.deleteAllCupos();
 		citaDao.deleteAllCitas();
 		centroPrueba = new Centro("Centro Prueba Citas", "Calle 1", 1);
-		centroDao.createCentro(centroPrueba);
+			try {
+				centroDao.createCentro(centroPrueba);
+			} catch (CentroExistException e) {}
 		assertTrue(true);
 	}
 	
@@ -410,7 +412,6 @@ class TestCitaIntegrated {
 	@Order(23)
 	@Test
 	void after() throws CupoNotFoundException, CupoExistException {
-		
 		citaDao.deleteAllCitas();
 		assertTrue(true);
 	}
@@ -483,9 +484,14 @@ class TestCitaIntegrated {
 		json.put("ncita", cita.getNcita());
 		mockMvc.perform( MockMvcRequestBuilders.post("/api/marcarVacunacion").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
 		usuarioDao.deleteUsuarioByEmail(usuarioPrueba.getEmail());
+		try {
+			cupoDao.deleteAllCuposByCentro(centroPrueba.getNombre());
+		} catch (CentroNotFoundException e) {}
 		centroDao.deleteCentro(centroPrueba);
 	}
 	
+	@Order(28)
+	@Test
 	void failWhenNotGetCitasByCentroAndAllDay() {
 		citaDao.findByFechaAndCentroNombre(LDTFormatter.parse("2021-10-16T00:00"), LDTFormatter.parse("2022-01-31T00:00"), "Centro Prueba Test 26");
 		assertTrue(true);

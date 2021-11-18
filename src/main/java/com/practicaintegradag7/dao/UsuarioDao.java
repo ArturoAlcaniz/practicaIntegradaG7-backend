@@ -127,6 +127,7 @@ public class UsuarioDao {
 		
 		if(!newUser.getCentro().equals(old.getCentro()) && newUser.isPrimeraDosis()) throw new UserModificationException("Un usuario ya vacunado no puede cambiar de centro");
 		newUser.encryptDNI();
+		
 		usuarioRepository.save(newUser);
 		
 		return newUser;

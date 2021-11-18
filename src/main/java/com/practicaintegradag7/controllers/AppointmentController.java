@@ -24,13 +24,9 @@ import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cita;
 import com.practicaintegradag7.model.Cupo;
 import com.practicaintegradag7.model.LDTFormatter;
-import com.practicaintegradag7.model.Usuario;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
