@@ -2,8 +2,8 @@ name: Build
 on: [push]
 
 jobs:
-  if: github.actor != 'ArturoAlcaniz'
   build:
+    if: github.actor != 'ArturoAlcaniz'
     name: Build
     runs-on: ubuntu-latest
     steps:
