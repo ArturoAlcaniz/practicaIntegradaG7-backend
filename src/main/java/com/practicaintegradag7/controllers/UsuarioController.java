@@ -125,7 +125,8 @@ public class UsuarioController {
 		response.put(EMAIL, usuario.getEmail());
 		response.put(PWD, usuario.getPassword());
 		response.put(CENTRO, usuario.getCentro());
-		response.put("rol", usuario.getRol());    	
+		response.put("rol", usuario.getRol());
+		response.put("nombre", usuario.getNombre() + " " + usuario.getApellidos());
 		return response.toString();
 	}
 	
