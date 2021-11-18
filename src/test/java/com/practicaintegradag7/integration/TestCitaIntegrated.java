@@ -28,6 +28,7 @@ import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitaNotFoundException;
 import com.practicaintegradag7.exceptions.CitaNotModifiedException;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
+import com.practicaintegradag7.exceptions.CitasNotAvailableException;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
 import com.practicaintegradag7.exceptions.CupoExistException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
@@ -481,6 +482,34 @@ class TestCitaIntegrated {
 		json.put("email", usuarioPrueba.getEmail());
 		json.put("ncita", cita.getNcita());
 		mockMvc.perform( MockMvcRequestBuilders.post("/api/marcarVacunacion").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		usuarioDao.deleteUsuarioByEmail(usuarioPrueba.getEmail());
+		centroDao.deleteCentro(centroPrueba);
+	}
+	
+	@Order(28)
+	@Test
+	void failWhenDosisNotAvailable() throws Exception {
+		centroPrueba = new Centro("Centro Prueba Citas", "Calle 1", 0);
+		centroDao.createCentro(centroPrueba);
+		usuarioPrueba = new UsuarioBuilder()
+				.dni("12345678A")
+				.nombre("Prueba")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centroPrueba.getNombre())
+				.rol("Paciente")
+				.build();
+		usuarioDao.saveUsuario(usuarioPrueba);
+		Cupo cupo = new Cupo(LocalDateTime.now().minusMinutes(10), LocalDateTime.now().plusMinutes(10), 2, centroPrueba.getNombre());
+		cupoDao.saveCupo(cupo);
+		Cita cita = new Cita(usuarioPrueba.getEmail(), cupo.getFechaInicio(), centroPrueba.getNombre(), (short) 2);
+		citaDao.saveCita(cita);
+		JSONObject json = new JSONObject();
+		json.put("email", usuarioPrueba.getEmail());
+		json.put("ncita", cita.getNcita());
+		Assertions.assertThrows(org.springframework.web.util.NestedServletException.class, () ->
+			mockMvc.perform( MockMvcRequestBuilders.post("/api/marcarVacunacion").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().is5xxServerError()));
 		usuarioDao.deleteUsuarioByEmail(usuarioPrueba.getEmail());
 		centroDao.deleteCentro(centroPrueba);
 	}
