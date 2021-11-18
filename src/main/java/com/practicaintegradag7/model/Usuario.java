@@ -32,9 +32,6 @@ import org.springframework.data.annotation.Transient;
 
 @Document(collection = "Usuario")
 public class Usuario {
-
-	//@Id
-	//private String id;
 	
 	@Id
 	@Column(name = "email")
