@@ -11,7 +11,6 @@ import com.practicaintegradag7.dao.CitaDao;
 import com.practicaintegradag7.dao.CupoDao;
 import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
-import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitaNotFoundException;
 import com.practicaintegradag7.exceptions.CitaNotModifiedException;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
@@ -53,7 +52,7 @@ public class AppointmentController{
 	private static final String NCITA = "ncita";
 	
 	@PostMapping(path="/api/citas/create")
-    public String crearCita(@RequestBody Map<String, Object> fechaJSON) throws JSONException, CentroNotFoundException, CupoNotFoundException, CupoExistException, CifradoContrasenaException, CitaNotFoundException {
+    public String crearCita(@RequestBody Map<String, Object> fechaJSON) throws JSONException, CentroNotFoundException, CupoNotFoundException, CupoExistException, CitaNotFoundException {
 		JSONObject response = new JSONObject();
 		String mssg = "";
 		String status = "";
@@ -138,7 +137,7 @@ public class AppointmentController{
     }
 	
 	@PostMapping(path="/api/marcarVacunacion")
-	public String marcarVacunacion(@RequestBody Map<String, Object> datosVacunacion) throws JSONException, CitaNotFoundException, VacunacionDateException, UsuarioNotFoundException, CifradoContrasenaException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
+	public String marcarVacunacion(@RequestBody Map<String, Object> datosVacunacion) throws JSONException, CitaNotFoundException, VacunacionDateException, UsuarioNotFoundException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		JSONObject jso = new JSONObject(datosVacunacion);
 		String email = jso.getString(EMAIL);
 		short ncita = (short) jso.getInt(NCITA);
@@ -153,7 +152,7 @@ public class AppointmentController{
 	}
 	
 	@PostMapping(path="/api/citas/obtenerPorFechaAndCentro")
-	public List<Cita> obtenerCitasPorFechaAndCentro(@RequestBody Map<String, Object> info) throws JSONException, CifradoContrasenaException{
+	public List<Cita> obtenerCitasPorFechaAndCentro(@RequestBody Map<String, Object> info) throws JSONException {
 		JSONObject jso = new JSONObject(info);
 		String fechaString = jso.getString("fecha");
 		String centro = jso.getString(CENTRO);

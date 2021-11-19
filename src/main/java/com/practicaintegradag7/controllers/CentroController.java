@@ -63,8 +63,8 @@ public class CentroController {
 		centroDao.deleteCentroWithNoUsers(nombreCentro);
 		
 		JSONObject response = new JSONObject();
-		response.put("status", "200");
-		response.put("message", "Ha eliminado correctamente el centro "+nombreCentro);
+		response.put(STATUS, "200");
+		response.put(MSSG, "Ha eliminado correctamente el centro "+nombreCentro);
     	return response.toString();
 	}
 	
