@@ -255,6 +255,14 @@ public class Usuario {
 		return password;
 	}
 
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public void setCentro(String centro) {
+		this.centro = centro;
+	}
+
 	public String getCentro() {
 		return centro;
 	}

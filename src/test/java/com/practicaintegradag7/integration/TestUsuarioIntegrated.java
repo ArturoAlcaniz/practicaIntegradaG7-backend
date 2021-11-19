@@ -192,7 +192,7 @@ class TestUsuarioIntegrated {
 			usuarioDao.saveUsuario(usuarioMalaPwd);
 			fail("Exception expected");
 		} catch (IllegalArgumentException e) {
-			assertEquals("Password is not valid!", e.getMessage());
+			assertTrue(e.getMessage().contains("no valida"));
 		}
 	}
 	
@@ -214,7 +214,7 @@ class TestUsuarioIntegrated {
 		} catch (CifradoContrasenaException e) {
 			fail("CifradoContrasenaException not expected");
 		} catch (IllegalArgumentException e) {
-			assertTrue(e.toString().contains("not valid"));
+			assertTrue(e.toString().contains("no valida"));
 		}
 	}
 	
@@ -234,7 +234,7 @@ class TestUsuarioIntegrated {
 			usuarioDao.saveUsuario(usuarioMalDni);
 			fail("Exception expected");
 		} catch (IllegalArgumentException e) {
-			assertEquals("Dni is not valid!", e.getMessage());
+			assertTrue(e.getMessage().contains("Dni no valido"));
 		}
 	}
 	

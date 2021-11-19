@@ -20,6 +20,8 @@ public interface CitaRepository extends MongoRepository<Cita, String> {
 	//@Query("{'dni': ?0, 'fecha': ?1}")
 	public void deleteByEmailAndFecha(String email, LocalDateTime fecha);
 	
+	public void deleteByEmailAndFechaAndNcita(String email, LocalDateTime fecha, short ncita);
+	
 	Cita findByEmailAndFecha(String email, LocalDateTime fecha);
 	
 	public void deleteByEmail(String email);

@@ -64,9 +64,14 @@ public class CupoDao {
 	}
 	
 	public void deleteCupo (Cupo cupo) throws CupoNotFoundException {
-		Optional<Cupo> opt = cupoRepository.findById(cupo.id());
-		if(opt.isPresent()) cupoRepository.delete(cupo);
-		else throw new CupoNotFoundException("Cupo para borrar no encontrado");
+		Optional<Cupo> opt;
+		opt = cupoRepository.findById(cupo.id());
+		if(opt.isPresent()) cupoRepository.delete(opt.get());
+		else {
+			opt = cupoRepository.findByFechaInicioAndCentro(cupo.getFechaInicio(), cupo.getCentro());
+			if(opt.isPresent()) cupoRepository.delete(opt.get());
+			else throw new CupoNotFoundException("Cupo para borrar no encontrado");
+		}
 	}
 	
 	public void autogenerarFranjas(Configuration configuracion) {

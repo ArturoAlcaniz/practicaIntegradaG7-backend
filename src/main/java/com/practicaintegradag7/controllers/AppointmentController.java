@@ -63,9 +63,7 @@ public class AppointmentController{
 			Usuario user = usuarioDao.getUsuarioByEmail(email);
 			
 			List<Cita> citas = citaDao.createCitas(user);
-
-			mssg = "Primera cita asignada para el " + LDTFormatter.processLDT(citas.get(0).getFecha())+
-					", segunda cita asignada el " + LDTFormatter.processLDT(citas.get(1).getFecha());
+			mssg = doConfirmMessage(citas);
 			status = "200";
 		} catch (CitasUsuarioNotAvailable | CitasCupoNotAvailable | UsuarioNotFoundException e) {
 			status = "500";
@@ -77,6 +75,17 @@ public class AppointmentController{
 		return response.toString();
     }
 	
+	private String doConfirmMessage(List<Cita> citas) {
+		String mssg;
+		try {
+			mssg = "Primera cita asignada para el " + LDTFormatter.processLDT(citas.get(0).getFecha())+
+					", segunda cita asignada el " + LDTFormatter.processLDT(citas.get(1).getFecha());
+		}catch(IndexOutOfBoundsException e) {
+			mssg = "Nueva segunda cita asignada para el " + LDTFormatter.processLDT(citas.get(0).getFecha());
+		}
+		return mssg;
+	}
+
 	@GetMapping(path="/api/citas/obtener")
 	public List<Cita> obtenerCitas(){
 		return citaDao.getAllCitas();
@@ -88,7 +97,7 @@ public class AppointmentController{
 		String fecha =  jso.getString("fechaSeleccionada");
 		String centroNombre = jso.getString(CENTRO);
 		Centro centro = centroDao.buscarCentroByNombre(centroNombre);
-		LocalDateTime fechaFormateada = LocalDateTime.parse(fecha+"T00:00:00");
+		LocalDateTime fechaFormateada = LDTFormatter.parse(fecha+"T00:00:00");
 		return cupoDao.getAllCuposAvailableInADay(centro, fechaFormateada);
 	}
 	
@@ -103,8 +112,6 @@ public class AppointmentController{
 		String email = jso.getString(EMAIL);
 		String centroNombre = jso.getString(CENTRO);
 		short ncita = Short.parseShort(jso.getString(NCITA));
-		
-		
 		
 		Cita citaAntigua = new Cita(email, fechaAntiguaFormateada, centroNombre, ncita);
 		Cita citaNueva = new Cita(email, fechaNuevaFormateada, centroNombre, ncita);
@@ -139,15 +146,21 @@ public class AppointmentController{
 	@PostMapping(path="/api/marcarVacunacion")
 	public String marcarVacunacion(@RequestBody Map<String, Object> datosVacunacion) throws JSONException, CitaNotFoundException, VacunacionDateException, UsuarioNotFoundException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		JSONObject jso = new JSONObject(datosVacunacion);
+		JSONObject response = new JSONObject();
+		
 		String email = jso.getString(EMAIL);
 		short ncita = (short) jso.getInt(NCITA);
-		citaDao.vacunar(citaDao.findByEmailAndNcita(email, ncita));
 		Centro centro = centroDao.buscarCentroByNombre(usuarioDao.getUsuarioByEmail(email).getCentro());
-		centro.setVacunas(centro.getVacunas()-1);
-		centroDao.save(centro);
-		JSONObject response = new JSONObject();
-		response.put(STATUS,  "200");
-		response.put(MSSG, "Paciente vacunado correctamente");
+		if(centro.getVacunas() > 0) {
+			citaDao.vacunar(citaDao.findByEmailAndNcita(email, ncita));
+			centro.setVacunas(centro.getVacunas()-1);
+			centroDao.save(centro);
+			response.put(STATUS,  "200");
+			response.put(MSSG, "Paciente vacunado correctamente");
+		} else {
+			response.put(STATUS,  "500");
+			response.put(MSSG, "No hay vacunas suficientes");
+		}
 		return response.toString();
 	}
 	

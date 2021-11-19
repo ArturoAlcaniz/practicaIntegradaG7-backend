@@ -47,7 +47,7 @@ public class CitaDao {
 		if(citasUsuario.size()>1) throw new CitasUsuarioNotAvailable();
 		
 		if(citasUsuario.size() == 1) {
-			LocalDateTime fecha = findFechaAvailableAfter(centro, citasUsuario.get(0).getFecha());
+			LocalDateTime fecha = findFechaAvailableAfter(centro, citasUsuario.get(0).getFecha().plusDays(21));
 			Cita cita = new Cita(u.getEmail(), fecha, u.getCentro(), (short) 2);
 			citas.add(citaRepository.save(cita));
 			
@@ -120,6 +120,10 @@ public class CitaDao {
 		citaRepository.deleteByEmailAndFecha(cita.getEmail(), cita.getFecha());
 	}
 	
+	public void deleteCitaUsada (Cita cita) {
+		citaRepository.deleteByEmailAndFechaAndNcita(cita.getEmail(), cita.getFecha(), cita.getNcita());
+	}
+	
 	public void saveCita(Cita cita) throws CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		
 		Centro centro = centroDao.buscarCentroByNombre(cita.getCentroNombre());
@@ -175,7 +179,6 @@ public class CitaDao {
 	}
 	
 	public void sumarCitaCupo(Cupo cupoAntiguo) throws CupoNotFoundException, CentroNotFoundException, CupoExistException {
-		
 		Cupo cupoActualizado = new Cupo(cupoAntiguo.getFechaInicio(), cupoAntiguo.getFechaFin(), cupoAntiguo.getNumeroCitas()+1, cupoAntiguo.getCentro());
 		cupoDao.deleteCupo(cupoAntiguo);
 		cupoDao.saveCupo(cupoActualizado);
@@ -231,7 +234,7 @@ public class CitaDao {
 		return validado;
 	}
 
-	public void vacunar(Cita cita) throws VacunacionDateException, UsuarioNotFoundException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
+	public void vacunar(Cita cita) throws VacunacionDateException, UsuarioNotFoundException {
 		LocalDateTime fechaActual = LocalDateTime.now();
 		if(fechaActual.getYear() != cita.getFecha().getYear() || fechaActual.getMonth() != cita.getFecha().getMonth()
 			|| fechaActual.getDayOfMonth() != cita.getFecha().getDayOfMonth()) {
@@ -244,7 +247,7 @@ public class CitaDao {
 			usuarioVacunar.setSegundaDosis(true);
 		}
 		usuarioDao.save(usuarioVacunar);
-		this.deleteCita(cita);
+		this.deleteCitaUsada(cita);
 	}
 	
 	public List<Cita> findByFechaAndCentroNombre (LocalDateTime fechaMin, LocalDateTime fechaMax, String centro) {

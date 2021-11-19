@@ -23,7 +23,7 @@ public class Cupo {
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	private String id;
-	
+
 	@Indexed
 	@JsonIgnore
 	@Column(name = "fechaInicio")
@@ -86,6 +86,10 @@ public class Cupo {
 
 	public String getCentro() {
 		return centro;
+	}
+	
+	public void setFechaInicio(LocalDateTime fechaInicio) {
+		this.fechaInicio = fechaInicio;
 	}
 
 }
