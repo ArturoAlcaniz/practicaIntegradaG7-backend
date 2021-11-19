@@ -29,13 +29,15 @@ public class UsuarioDao {
 	@Autowired
 	private CitaDao citaDao;
 	
+	private String wrongPwdMssg = "Contrasena no valida, use como minimo 9 caracteres, mayusculas y minusculas, y al menos un numero y un simbolo";
+	
 	public Usuario saveUsuario(Usuario usuario) throws CifradoContrasenaException {
 		
 		if (!validatePasswordPolicy(usuario.getPassword())) {
-			throw new IllegalArgumentException("Password is not valid!");
+			throw new IllegalArgumentException(wrongPwdMssg);
 		}
 		if(!validateDNI(usuario.getDni())) {
-			throw new IllegalArgumentException("Dni is not valid!");
+			throw new IllegalArgumentException("Dni no valido, 8 numeros y letra mayuscula");
 		}
 		usuario.encryptDNI();
 		if (usuarioRepository.existsByEmail(usuario.getEmail()))
@@ -117,7 +119,7 @@ public class UsuarioDao {
 		if(newUser.getPassword().equals("")) newUser.setPassword(old.getPassword());
 		else {
 			if(validatePasswordPolicy(newUser.getPassword())) newUser.hashPassword();
-			else throw new IllegalArgumentException("Password is not valid!");
+			else throw new IllegalArgumentException(wrongPwdMssg);
 		}
 		
 		//Atributos no modificables en la interfaz, aparte del email

@@ -24,6 +24,8 @@ import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cita;
 import com.practicaintegradag7.model.Cupo;
 import com.practicaintegradag7.model.LDTFormatter;
+import com.practicaintegradag7.model.Usuario;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -47,24 +49,33 @@ public class AppointmentController{
 	private static final String STATUS = "status";
 	private static final String MSSG = "message";
 	private static final String CENTRO = "centro";
+	private static final String EMAIL = "email";
+	private static final String NCITA = "ncita";
 	
 	@PostMapping(path="/api/citas/create")
-
-    public String crearCita() throws JSONException, CentroNotFoundException, CupoNotFoundException, CupoExistException, CifradoContrasenaException, CitaNotFoundException {
+    public String crearCita(@RequestBody Map<String, Object> fechaJSON) throws JSONException, CentroNotFoundException, CupoNotFoundException, CupoExistException, CifradoContrasenaException, CitaNotFoundException {
+		JSONObject response = new JSONObject();
+		String mssg = "";
+		String status = "";
+		
 		try {
-			JSONObject response = new JSONObject();
-			List<Cita> citas = citaDao.createCitas();
-			String mssg = "Primera cita asignada para el " + LDTFormatter.processLDT(citas.get(0).getFecha())+
+			JSONObject jso = new JSONObject(fechaJSON);
+			String email =  jso.getString(EMAIL);
+			Usuario user = usuarioDao.getUsuarioByEmail(email);
+			
+			List<Cita> citas = citaDao.createCitas(user);
+
+			mssg = "Primera cita asignada para el " + LDTFormatter.processLDT(citas.get(0).getFecha())+
 					", segunda cita asignada el " + LDTFormatter.processLDT(citas.get(1).getFecha());
-			response.put(STATUS, "200");
-			response.put(MSSG, mssg);
-			return response.toString();
-		} catch (CitasUsuarioNotAvailable | CitasCupoNotAvailable e) {
-			JSONObject response = new JSONObject();
-			response.put(STATUS, "500");
-			response.put(MSSG, e.getMessage());
-			return response.toString();
+			status = "200";
+		} catch (CitasUsuarioNotAvailable | CitasCupoNotAvailable | UsuarioNotFoundException e) {
+			status = "500";
+			mssg = e.getMessage();
 		}
+		response.put(STATUS, status);
+		response.put(MSSG, mssg);
+		
+		return response.toString();
     }
 	
 	@GetMapping(path="/api/citas/obtener")
@@ -90,9 +101,9 @@ public class AppointmentController{
 		LocalDateTime fechaAntiguaFormateada = LDTFormatter.parse(fechaAntigua);	
 		LocalDateTime fechaNuevaFormateada = LDTFormatter.parse(fechaNueva);		
 		
-		String email = jso.getString("email");
+		String email = jso.getString(EMAIL);
 		String centroNombre = jso.getString(CENTRO);
-		short ncita = Short.parseShort(jso.getString("ncita"));
+		short ncita = Short.parseShort(jso.getString(NCITA));
 		
 		
 		
@@ -114,9 +125,9 @@ public class AppointmentController{
 		String fecha =  jso.getString("fecha").replace(" a las ", "T");
 		LocalDateTime fechaF = LDTFormatter.parse(fecha);
 		String centroNombre = jso.getString(CENTRO);
-		String email = jso.getString("email");
+		String email = jso.getString(EMAIL);
 		
-		short ncita = Short.parseShort(jso.getString("ncita"));
+		short ncita = Short.parseShort(jso.getString(NCITA));
 		Cita cita = new Cita(email, fechaF, centroNombre, ncita);
 		citaDao.deleteCita(cita);
 		
@@ -129,8 +140,8 @@ public class AppointmentController{
 	@PostMapping(path="/api/marcarVacunacion")
 	public String marcarVacunacion(@RequestBody Map<String, Object> datosVacunacion) throws JSONException, CitaNotFoundException, VacunacionDateException, UsuarioNotFoundException, CifradoContrasenaException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		JSONObject jso = new JSONObject(datosVacunacion);
-		String email = jso.getString("email");
-		short ncita = (short) jso.getInt("ncita");
+		String email = jso.getString(EMAIL);
+		short ncita = (short) jso.getInt(NCITA);
 		citaDao.vacunar(citaDao.findByEmailAndNcita(email, ncita));
 		Centro centro = centroDao.buscarCentroByNombre(usuarioDao.getUsuarioByEmail(email).getCentro());
 		centro.setVacunas(centro.getVacunas()-1);
@@ -148,10 +159,8 @@ public class AppointmentController{
 		String centro = jso.getString(CENTRO);
 		LocalDateTime fechaMin = LDTFormatter.parse(fechaString+"T00:00");
 		LocalDateTime fechaMax = LDTFormatter.parse(fechaString+"T23:59");
-		
-		List<Cita> citas = citaDao.findByFechaAndCentroNombre(fechaMin,fechaMax, centro);
 
-		return citas;
+		return citaDao.findByFechaAndCentroNombre(fechaMin,fechaMax, centro);
 	}
 }
 

@@ -77,7 +77,7 @@ public class CentroController {
 		try {
 			String nombre = jso.getString("nombre");
 			String direccion = jso.getString("direccion");
-			int vacunas = jso.getInt("vacunas");
+			int vacunas = Integer.parseInt(jso.getString("vacunas"));
 			aux.modificarCentro(nombre, direccion, vacunas);
 		}catch(JSONException e) {
 			code = "500";

@@ -259,9 +259,6 @@ class TestCitaIntegrated {
 		citaPrueba2 = new Cita(citaPrueba.getEmail(), cupo.getFechaInicio(), citaPrueba.getCentroNombre(), citaPrueba.getNcita());
 			
 		assertTrue(citaDao.modifyCita(citaPrueba, citaPrueba2));
-		
-		
-
 	}
 	
 	@Order(13)

@@ -90,10 +90,10 @@ public class CentroDao {
 		
 	}
 	
-	public Centro modificarCentro(String nombre, String direccion, int vacunas)
-			throws CentroNotFoundException, CentroExistException {
-
-		Centro centroOld = buscarCentroByNombre(nombre);
+	public Centro modificarCentro(String nombre, String direccion, int vacunas) throws CentroExistException, CentroNotFoundException {
+		if(direccion.equals("")) throw new CentroNotFoundException("La direccion no puede estar en blanco");
+		Centro centroOld;
+		centroOld = buscarCentroByNombre(nombre);
 		deleteCentro(centroOld);
 		Centro centroNew = new Centro(nombre, direccion, vacunas);
 		return createCentro(centroNew);
