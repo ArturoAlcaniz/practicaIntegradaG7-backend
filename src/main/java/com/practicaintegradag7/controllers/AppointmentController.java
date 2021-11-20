@@ -11,9 +11,11 @@ import com.practicaintegradag7.dao.CitaDao;
 import com.practicaintegradag7.dao.CupoDao;
 import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
+import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitaNotFoundException;
 import com.practicaintegradag7.exceptions.CitaNotModifiedException;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
+import com.practicaintegradag7.exceptions.CitasNotAvailableException;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
 import com.practicaintegradag7.exceptions.CupoExistException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
@@ -26,8 +28,10 @@ import com.practicaintegradag7.model.LDTFormatter;
 import com.practicaintegradag7.model.Usuario;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,7 +148,7 @@ public class AppointmentController{
     }
 	
 	@PostMapping(path="/api/marcarVacunacion")
-	public String marcarVacunacion(@RequestBody Map<String, Object> datosVacunacion) throws JSONException, CitaNotFoundException, VacunacionDateException, UsuarioNotFoundException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
+	public String marcarVacunacion(@RequestBody Map<String, Object> datosVacunacion) throws JSONException, CitaNotFoundException, VacunacionDateException, UsuarioNotFoundException, CifradoContrasenaException, CentroNotFoundException, CupoNotFoundException, CupoExistException, CitasNotAvailableException {
 		JSONObject jso = new JSONObject(datosVacunacion);
 		JSONObject response = new JSONObject();
 		
@@ -165,14 +169,51 @@ public class AppointmentController{
 	}
 	
 	@PostMapping(path="/api/citas/obtenerPorFechaAndCentro")
-	public List<Cita> obtenerCitasPorFechaAndCentro(@RequestBody Map<String, Object> info) throws JSONException {
+	public String obtenerCitasPorFechaAndCentro(@RequestBody Map<String, Object> info) throws JSONException, CifradoContrasenaException{
 		JSONObject jso = new JSONObject(info);
 		String fechaString = jso.getString("fecha");
 		String centro = jso.getString(CENTRO);
 		LocalDateTime fechaMin = LDTFormatter.parse(fechaString+"T00:00");
 		LocalDateTime fechaMax = LDTFormatter.parse(fechaString+"T23:59");
-
-		return citaDao.findByFechaAndCentroNombre(fechaMin,fechaMax, centro);
+		
+		List<Cita> citas = citaDao.findByFechaAndCentroNombre(fechaMin,fechaMax, centro);
+		List<String> emails = new ArrayList<>();
+		
+		for (Cita cita : citas) {
+			emails.add(cita.getEmail());
+		}
+		
+		List<Usuario>usuarios = usuarioDao.getAllByEmail(emails);
+		
+		JSONArray citasConUsuarios = new JSONArray();
+		
+		
+		for (Cita cita : citas) {
+			JSONObject citaUsuario = new JSONObject();
+			
+			String nombre=null;
+			String apellidos=null;
+			String dni=null;
+			
+			for (Usuario usuario : usuarios) {
+				if (cita.getEmail().equals(usuario.getEmail())) {
+					nombre = usuario.getNombre();
+					apellidos = usuario.getApellidos();
+					dni = usuario.getDniDenc();
+					break;
+				}
+			}
+			
+			citaUsuario.put("fecha", cita.getFecha());
+			citaUsuario.put("dni", dni);
+			citaUsuario.put("nombre", nombre);
+			citaUsuario.put("apellidos", apellidos);
+			citaUsuario.put(NCITA, cita.getNcita());
+			
+			citasConUsuarios.put(citaUsuario);
+		}
+		
+		return citasConUsuarios.toString();
 	}
 }
 

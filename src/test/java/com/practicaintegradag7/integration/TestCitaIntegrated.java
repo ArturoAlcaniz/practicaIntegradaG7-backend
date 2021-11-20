@@ -24,6 +24,7 @@ import com.practicaintegradag7.dao.ConfigurationDao;
 import com.practicaintegradag7.dao.CupoDao;
 import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
+import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitaNotFoundException;
 import com.practicaintegradag7.exceptions.ConfigurationLimitException;
 import com.practicaintegradag7.exceptions.ConfigurationTimeException;
@@ -98,7 +99,7 @@ class TestCitaIntegrated {
 	
 	@Test
 	@Order(Integer.MIN_VALUE)
-	void before() throws ConfigurationTimeException, ConfigurationLimitException, InterruptedException {
+	void before() throws ConfigurationTimeException, ConfigurationLimitException, InterruptedException, CifradoContrasenaException {
 		if(!clean) {
 			System.out.println(clean+"- --------------------CLEANING UP--------------------");
 			conf.eliminarConfiguration();
@@ -112,6 +113,8 @@ class TestCitaIntegrated {
 			Configuration c = new Configuration(t1,t2,citasXfranja,franjasXdia);
 			conf.save(c);
 			
+			paciente.encryptDNI();
+			desafortunado.encryptDNI();
 			centropru = centros.save(centropru);
 			centroSinDosis = centros.save(centroSinDosis);
 			paciente = users.save(paciente);
@@ -349,14 +352,15 @@ class TestCitaIntegrated {
 		try {
 			List<Cita> lcitas = citas.getCitasByEmail(paciente.getEmail());
 			Cita unica = lcitas.get(0); //la segunda fue borrada en el anterior metodo
+			String fecha = unica.getFecha().toString().substring(0, unica.getFecha().toString().indexOf("T"));
 			
-			json.put("fecha", unica.getFecha().toString().substring(0, unica.getFecha().toString().indexOf("T")));
+			json.put("fecha", fecha);
 			json.put("centro", paciente.getCentro());
 			
 			MvcResult aux = mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/obtenerPorFechaAndCentro").
 					contentType(MediaType.APPLICATION_JSON).content(json.toString())).andReturn();
 			String res = aux.getResponse().getContentAsString();
-			assertTrue(res.contains(paciente.getCentro()));
+			assertTrue(res.contains(fecha));
 		}catch(Exception ex) {
 			fail(ex.getMessage());
 		}

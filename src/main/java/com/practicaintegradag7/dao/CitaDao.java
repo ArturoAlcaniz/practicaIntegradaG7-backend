@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
+import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitaNotFoundException;
 import com.practicaintegradag7.exceptions.CitaNotModifiedException;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
+import com.practicaintegradag7.exceptions.CitasNotAvailableException;
 import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
 import com.practicaintegradag7.exceptions.CupoExistException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
@@ -226,20 +228,22 @@ public class CitaDao {
 				throw new CitaNotModifiedException("La fecha de la segunda cita no puede ser posterior al 31-1-2022");
 			
 			validado = true;
-		
 		}
-			
-		
 		return validado;
 	}
 
-	public void vacunar(Cita cita) throws VacunacionDateException, UsuarioNotFoundException {
+	public void vacunar(Cita cita) throws VacunacionDateException, UsuarioNotFoundException, CifradoContrasenaException, CentroNotFoundException, CupoNotFoundException, CupoExistException, CitasNotAvailableException {
 		LocalDateTime fechaActual = LocalDateTime.now();
 		if(fechaActual.getYear() != cita.getFecha().getYear() || fechaActual.getMonth() != cita.getFecha().getMonth()
 			|| fechaActual.getDayOfMonth() != cita.getFecha().getDayOfMonth()) {
 			throw new VacunacionDateException();
 		}
 		Usuario usuarioVacunar = usuarioDao.getUsuarioByEmail(cita.getEmail());
+		Centro centro = centroDao.buscarCentroByNombre(usuarioVacunar.getCentro());
+		if(centro.getVacunas() == 0) {
+			throw new CitasNotAvailableException();
+		}
+		
 		if(Short.compare(cita.getNcita(), (short) 1) == 0) {
 			usuarioVacunar.setPrimeraDosis(true);
 		} else {
@@ -252,6 +256,4 @@ public class CitaDao {
 	public List<Cita> findByFechaAndCentroNombre (LocalDateTime fechaMin, LocalDateTime fechaMax, String centro) {
 		return citaRepository.findByFechaAndCentroNombre(fechaMin,fechaMax, centro);
 	}
-
-	
 }
