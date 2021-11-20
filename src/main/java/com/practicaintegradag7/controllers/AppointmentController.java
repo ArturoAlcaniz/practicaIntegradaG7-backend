@@ -152,7 +152,6 @@ public class AppointmentController{
 	public String marcarVacunacion(@RequestBody Map<String, Object> datosVacunacion) throws JSONException, CitaNotFoundException, VacunacionDateException, UsuarioNotFoundException, CentroNotFoundException, CitasNotAvailableException {
 		JSONObject jso = new JSONObject(datosVacunacion);
 		JSONObject response = new JSONObject();
-		
 		String email = jso.getString(EMAIL);
 		short ncita = (short) jso.getInt(NCITA);
 		Centro centro = centroDao.buscarCentroByNombre(usuarioDao.getUsuarioByEmail(email).getCentro());
@@ -195,12 +194,14 @@ public class AppointmentController{
 			String nombre=null;
 			String apellidos=null;
 			String dni=null;
+			String email=null;
 			
 			for (Usuario usuario : usuarios) {
 				if (cita.getEmail().equals(usuario.getEmail())) {
 					nombre = usuario.getNombre();
 					apellidos = usuario.getApellidos();
 					dni = usuario.getDniDenc();
+					email = usuario.getEmail();
 					break;
 				}
 			}
@@ -210,6 +211,8 @@ public class AppointmentController{
 			citaUsuario.put("nombre", nombre);
 			citaUsuario.put("apellidos", apellidos);
 			citaUsuario.put(NCITA, cita.getNcita());
+			citaUsuario.put(EMAIL, email);
+			
 			
 			citasConUsuarios.put(citaUsuario);
 		}

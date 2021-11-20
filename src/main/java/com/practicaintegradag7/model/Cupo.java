@@ -91,5 +91,9 @@ public class Cupo {
 	public void setFechaInicio(LocalDateTime fechaInicio) {
 		this.fechaInicio = fechaInicio;
 	}
+	
+	public void setCitas(int ncitas) {
+		this.numeroCitas = ncitas;
+	}
 
 }
