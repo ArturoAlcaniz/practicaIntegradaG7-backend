@@ -54,6 +54,7 @@ public class AppointmentController{
 	private static final String CENTRO = "centro";
 	private static final String EMAIL = "email";
 	private static final String NCITA = "ncita";
+	private static final String FECHA = "fecha";
 	
 	@PostMapping(path="/api/citas/create")
     public String crearCita(@RequestBody Map<String, Object> fechaJSON) throws JSONException, CentroNotFoundException, CupoNotFoundException, CupoExistException, CitaNotFoundException {
@@ -132,7 +133,7 @@ public class AppointmentController{
 	@PostMapping(path="/api/citas/delete")
     public String eliminarCita(@RequestBody Map<String, Object> datosCita) throws JSONException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		JSONObject jso = new JSONObject(datosCita);
-		String fecha =  jso.getString("fecha").replace(" a las ", "T");
+		String fecha =  jso.getString(FECHA).replace(" a las ", "T");
 		LocalDateTime fechaF = LDTFormatter.parse(fecha);
 		String centroNombre = jso.getString(CENTRO);
 		String email = jso.getString(EMAIL);
@@ -148,7 +149,7 @@ public class AppointmentController{
     }
 	
 	@PostMapping(path="/api/marcarVacunacion")
-	public String marcarVacunacion(@RequestBody Map<String, Object> datosVacunacion) throws JSONException, CitaNotFoundException, VacunacionDateException, UsuarioNotFoundException, CifradoContrasenaException, CentroNotFoundException, CupoNotFoundException, CupoExistException, CitasNotAvailableException {
+	public String marcarVacunacion(@RequestBody Map<String, Object> datosVacunacion) throws JSONException, CitaNotFoundException, VacunacionDateException, UsuarioNotFoundException, CentroNotFoundException, CitasNotAvailableException {
 		JSONObject jso = new JSONObject(datosVacunacion);
 		JSONObject response = new JSONObject();
 		
@@ -171,7 +172,7 @@ public class AppointmentController{
 	@PostMapping(path="/api/citas/obtenerPorFechaAndCentro")
 	public String obtenerCitasPorFechaAndCentro(@RequestBody Map<String, Object> info) throws JSONException, CifradoContrasenaException{
 		JSONObject jso = new JSONObject(info);
-		String fechaString = jso.getString("fecha");
+		String fechaString = jso.getString(FECHA);
 		String centro = jso.getString(CENTRO);
 		LocalDateTime fechaMin = LDTFormatter.parse(fechaString+"T00:00");
 		LocalDateTime fechaMax = LDTFormatter.parse(fechaString+"T23:59");
@@ -204,7 +205,7 @@ public class AppointmentController{
 				}
 			}
 			
-			citaUsuario.put("fecha", cita.getFecha());
+			citaUsuario.put(FECHA, cita.getFecha());
 			citaUsuario.put("dni", dni);
 			citaUsuario.put("nombre", nombre);
 			citaUsuario.put("apellidos", apellidos);

@@ -40,6 +40,7 @@ public class UsuarioController {
 	private static final String STATUS = "status";
 	private static final String MSSG = "message";
 	private static final String CENTRO = "centro";
+	private static final String NOMBRE = "nombre";
 	
 	@PostMapping(path="api/usuario/create")
 	public String crearUsuario(@RequestBody Map<String, Object> datosUsuario) throws JSONException, CentroNotFoundException, CifradoContrasenaException {
@@ -49,7 +50,7 @@ public class UsuarioController {
 		rol = rol.substring(0,1).toUpperCase() + rol.substring(1);
 		Usuario useri= new UsuarioBuilder()
 				.dni(jso.getString("dni"))
-				.nombre(jso.getString("nombre"))
+				.nombre(jso.getString(NOMBRE))
 				.apellidos(jso.getString("apellidos"))
 				.email(jso.getString(EMAIL))
 				.password(jso.getString(PWD))
@@ -70,7 +71,7 @@ public class UsuarioController {
 		String rol = jso.getString("rol");
 		Usuario useri= new UsuarioBuilder()
 				.dni(jso.getString("dni"))
-				.nombre(jso.getString("nombre"))
+				.nombre(jso.getString(NOMBRE))
 				.apellidos(jso.getString("apellidos"))
 				.email(jso.getString(EMAIL))
 				.password(jso.getString(PWD))
@@ -115,7 +116,7 @@ public class UsuarioController {
 		response.put(PWD, usuario.getPassword());
 		response.put(CENTRO, usuario.getCentro());
 		response.put("rol", usuario.getRol());
-		response.put("nombre", usuario.getNombre() + " " + usuario.getApellidos());
+		response.put(NOMBRE, usuario.getNombre() + " " + usuario.getApellidos());
 		return response.toString();
 	}
 	
