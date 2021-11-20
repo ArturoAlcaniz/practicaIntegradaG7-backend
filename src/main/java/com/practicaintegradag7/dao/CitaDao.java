@@ -81,8 +81,7 @@ public class CitaDao {
 	
 	public List<Cita> getCitasByEmail(String email) throws CitaNotFoundException {
 		Optional<List<Cita>> citas = citaRepository.findByEmail(email);
-		if (citas.isPresent()) 
-			return citas.get();
+		if (citas.isPresent()) return citas.get();
 		else throw new CitaNotFoundException("Este usuario no tiene citas");
 	}
 	
