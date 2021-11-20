@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
-import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitaNotFoundException;
 import com.practicaintegradag7.exceptions.CitaNotModifiedException;
 import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
@@ -232,7 +231,7 @@ public class CitaDao {
 		return validado;
 	}
 
-	public void vacunar(Cita cita) throws VacunacionDateException, UsuarioNotFoundException, CifradoContrasenaException, CentroNotFoundException, CupoNotFoundException, CupoExistException, CitasNotAvailableException {
+	public void vacunar(Cita cita) throws VacunacionDateException, UsuarioNotFoundException, CentroNotFoundException, CitasNotAvailableException {
 		LocalDateTime fechaActual = LocalDateTime.now();
 		if(fechaActual.getYear() != cita.getFecha().getYear() || fechaActual.getMonth() != cita.getFecha().getMonth()
 			|| fechaActual.getDayOfMonth() != cita.getFecha().getDayOfMonth()) {
