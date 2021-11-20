@@ -29,13 +29,15 @@ public class UsuarioDao {
 	@Autowired
 	private CitaDao citaDao;
 	
+	private String wrongContraMssg = "Contrasena no valida, use como minimo 9 caracteres, mayusculas y minusculas, y al menos un numero y un simbolo";
+	
 	public Usuario saveUsuario(Usuario usuario) throws CifradoContrasenaException {
 		
 		if (!validatePasswordPolicy(usuario.getPassword())) {
-			throw new IllegalArgumentException("Password is not valid!");
+			throw new IllegalArgumentException(wrongContraMssg);
 		}
 		if(!validateDNI(usuario.getDni())) {
-			throw new IllegalArgumentException("Dni is not valid!");
+			throw new IllegalArgumentException("Dni no valido, 8 numeros y letra mayuscula");
 		}
 		usuario.encryptDNI();
 		if (usuarioRepository.existsByEmail(usuario.getEmail()))
@@ -104,7 +106,7 @@ public class UsuarioDao {
     	return compareDni.matches();
     }
     
-	public void modifyUsuario(Usuario newUser) throws UserModificationException, CifradoContrasenaException, UsuarioNotFoundException {
+	public Usuario modifyUsuario(Usuario newUser) throws UserModificationException, CifradoContrasenaException, UsuarioNotFoundException {
 		Optional<Usuario> oldOpt = usuarioRepository.findByEmail(newUser.getEmail());
 		Usuario old;
 		if(oldOpt.isPresent()) old = oldOpt.get();
@@ -117,7 +119,7 @@ public class UsuarioDao {
 		if(newUser.getPassword().equals("")) newUser.setPassword(old.getPassword());
 		else {
 			if(validatePasswordPolicy(newUser.getPassword())) newUser.hashPassword();
-			else throw new IllegalArgumentException("Password is not valid!");
+			else throw new IllegalArgumentException(wrongContraMssg);
 		}
 		
 		//Atributos no modificables en la interfaz, aparte del email
@@ -127,8 +129,10 @@ public class UsuarioDao {
 		
 		if(!newUser.getCentro().equals(old.getCentro()) && newUser.isPrimeraDosis()) throw new UserModificationException("Un usuario ya vacunado no puede cambiar de centro");
 		newUser.encryptDNI();
-		usuarioRepository.deleteByEmail(old.getEmail());
+		
 		usuarioRepository.save(newUser);
+		
+		return newUser;
 	}
 	
 	public Usuario save(Usuario usuario) {

@@ -1,5 +1,6 @@
 package com.practicaintegradag7.integration;
 
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -59,15 +60,12 @@ class TestCentroIntegrated {
 	
 	@BeforeEach
 	public void before() throws CentroExistException, CentroNotFoundException {
-		Centro c = aux.createCentro(prueba);
-		if(c.getNombre().equals(prueba.getNombre())) {
-			System.out.println("Centro de prueba anadido correctamente");
-			this.prueba = c;
-		}
-		else {
-			System.out.println("Centro de prueba no anadido");
-			System.exit(1);
-		}
+		try {
+			Centro pos = aux.buscarCentroByNombre(prueba.getNombre());
+			aux.deleteCentro(pos);
+		} catch(CentroNotFoundException e) {}
+		prueba = aux.createCentro(prueba);
+		assertNotEquals(prueba.getId(), null);
 	}
 	
 	@Test
@@ -171,6 +169,7 @@ class TestCentroIntegrated {
 		json.put("direccion", "La paz");
 		json.put("vacunas", 89);
 		mockMvc.perform( MockMvcRequestBuilders.post("/api/centro/modify").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		prueba = aux.buscarCentroByNombre(prueba.getNombre());
 		assertEquals("PRUEBA", prueba.getNombre());
 	}
 	
@@ -192,11 +191,6 @@ class TestCentroIntegrated {
 	
 	@AfterEach
 	public void after() {
-		try {
-			aux.deleteCentro(prueba);
-		} catch (CentroNotFoundException ex) {
-			fail(ex.getMessage());
-		}
 		try {
 			aux.deleteCentro(prueba);
 		} catch (CentroNotFoundException e) {

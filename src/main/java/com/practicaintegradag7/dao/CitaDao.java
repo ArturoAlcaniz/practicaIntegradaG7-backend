@@ -40,41 +40,36 @@ public class CitaDao {
 	@Autowired
 	private CentroDao centroDao;
 	
-	public List<Cita> createCitas() throws CitasUsuarioNotAvailable, CitasCupoNotAvailable, CentroNotFoundException, CupoNotFoundException, CupoExistException, CifradoContrasenaException, CitaNotFoundException {
-		Usuario usuario = findUsuarioAvailable();
-		List<Cita> citasUsuario = getCitasByEmail(usuario.getEmail());
+	public List<Cita> createCitas(Usuario u) throws CitasUsuarioNotAvailable, CitasCupoNotAvailable, CentroNotFoundException, CupoNotFoundException, CupoExistException, CitaNotFoundException {
+		List<Cita> citasUsuario = getCitasByEmail(u.getEmail());
 		List<Cita> citas = new ArrayList<>();
 
-		Centro centro = centroDao.buscarCentroByNombre(usuario.getCentro());
+		Centro centro = centroDao.buscarCentroByNombre(u.getCentro());
 		
-		if(citasUsuario.size()>1) {
-			throw new CitasUsuarioNotAvailable();
-		}
+		if(citasUsuario.size()>1) throw new CitasUsuarioNotAvailable();
 		
 		if(citasUsuario.size() == 1) {
-			LocalDateTime fecha = findFechaAvailableAfter(centro, citasUsuario.get(0).getFecha());
-			Cita cita = new Cita(usuario.getEmail(), fecha, usuario.getCentro(), (short) 2);
+			LocalDateTime fecha = findFechaAvailableAfter(centro, citasUsuario.get(0).getFecha().plusDays(21));
+			Cita cita = new Cita(u.getEmail(), fecha, u.getCentro(), (short) 2);
 			citas.add(citaRepository.save(cita));
 			
 			Cupo cupo = cupoDao.getCupoByInicialDateAndCentro(fecha, centro.getNombre());
 			restarCitaCupo(cupo);
-			
-			return citas;
+		} else {
+			LocalDateTime fecha1 = findFechaAvailable(centro);
+			LocalDateTime fecha2 = findFechaAvailableAfter(centro, fecha1.plusDays(21));
+			Cupo cupo1 = cupoDao.getCupoByInicialDateAndCentro(fecha1, centro.getNombre());
+			Cupo cupo2 = cupoDao.getCupoByInicialDateAndCentro(fecha2, centro.getNombre());
+			String centroNombre = u.getCentro();
+			Cita cita1 = new Cita(u.getEmail(), fecha1, centroNombre, (short) 1);
+			Cita cita2 = new Cita(u.getEmail(), fecha2, centroNombre, (short) 2);
+			citaRepository.save(cita1);
+			citaRepository.save(cita2);
+			citas.add(cita1);
+			citas.add(cita2);
+			restarCitaCupo(cupo1);
+			restarCitaCupo(cupo2);
 		}
-
-		LocalDateTime fecha1 = findFechaAvailable(centro);
-		LocalDateTime fecha2 = findFechaAvailableAfter(centro, fecha1.plusDays(21));
-		Cupo cupo1 = cupoDao.getCupoByInicialDateAndCentro(fecha1, centro.getNombre());
-		Cupo cupo2 = cupoDao.getCupoByInicialDateAndCentro(fecha2, centro.getNombre());
-		String centroNombre = usuario.getCentro();
-		Cita cita1 = new Cita(usuario.getEmail(), fecha1, centroNombre, (short) 1);
-		Cita cita2 = new Cita(usuario.getEmail(), fecha2, centroNombre, (short) 2);
-		citaRepository.save(cita1);
-		citaRepository.save(cita2);
-		citas.add(cita1);
-		citas.add(cita2);
-		restarCitaCupo(cupo1);
-		restarCitaCupo(cupo2);
 		return citas;
 	}
 	
@@ -85,25 +80,15 @@ public class CitaDao {
 		}
 		return cupos.get(0).getFechaInicio();
 	}
+	
 	public List<Cita> getCitasByEmail(String email) throws CitaNotFoundException {
 		Optional<List<Cita>> citas = citaRepository.findByEmail(email);
-		if (citas.isPresent()) 
-			return citas.get();
+		if (citas.isPresent()) return citas.get();
 		else throw new CitaNotFoundException("Este usuario no tiene citas");
 	}
 	
 	public List<Cita> getAllCitas() {
 		return citaRepository.findAll();
-	}
-	
-	private Usuario findUsuarioAvailable() throws CitasUsuarioNotAvailable, CifradoContrasenaException {
-		List<Cita> citas = getAllCitas();
-		Optional<Usuario> d = usuarioDao.getAllUsuarios().stream().filter(usuario -> 
-			citas.stream().filter(cita -> usuario.getEmail().equals(cita.getEmail())).count()<2).findFirst();
-		if(!d.isPresent()) {
-			throw new CitasUsuarioNotAvailable();
-		}
-		return d.get();	
 	}
 	
 	private LocalDateTime findFechaAvailable(Centro centro) throws CitasCupoNotAvailable {
@@ -134,6 +119,10 @@ public class CitaDao {
 		
 		sumarCitaCupo(cupo);
 		citaRepository.deleteByEmailAndFecha(cita.getEmail(), cita.getFecha());
+	}
+	
+	public void deleteCitaUsada (Cita cita) {
+		citaRepository.deleteByEmailAndFechaAndNcita(cita.getEmail(), cita.getFecha(), cita.getNcita());
 	}
 	
 	public void saveCita(Cita cita) throws CentroNotFoundException, CupoNotFoundException, CupoExistException {
@@ -191,7 +180,6 @@ public class CitaDao {
 	}
 	
 	public void sumarCitaCupo(Cupo cupoAntiguo) throws CupoNotFoundException, CentroNotFoundException, CupoExistException {
-		
 		Cupo cupoActualizado = new Cupo(cupoAntiguo.getFechaInicio(), cupoAntiguo.getFechaFin(), cupoAntiguo.getNumeroCitas()+1, cupoAntiguo.getCentro());
 		cupoDao.deleteCupo(cupoAntiguo);
 		cupoDao.saveCupo(cupoActualizado);
@@ -240,10 +228,7 @@ public class CitaDao {
 				throw new CitaNotModifiedException("La fecha de la segunda cita no puede ser posterior al 31-1-2022");
 			
 			validado = true;
-		
 		}
-			
-		
 		return validado;
 	}
 
@@ -265,12 +250,10 @@ public class CitaDao {
 			usuarioVacunar.setSegundaDosis(true);
 		}
 		usuarioDao.save(usuarioVacunar);
-		this.deleteCita(cita);
+		this.deleteCitaUsada(cita);
 	}
 	
 	public List<Cita> findByFechaAndCentroNombre (LocalDateTime fechaMin, LocalDateTime fechaMax, String centro) {
 		return citaRepository.findByFechaAndCentroNombre(fechaMin,fechaMax, centro);
 	}
-
-	
 }

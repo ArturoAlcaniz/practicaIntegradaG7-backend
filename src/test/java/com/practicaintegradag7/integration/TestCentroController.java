@@ -50,8 +50,6 @@ class TestCentroController {
 		}catch(CentroExistException e) {
 			assertTrue(true);
 		}
-		
-		
 	}
 	
 	@Order(2)

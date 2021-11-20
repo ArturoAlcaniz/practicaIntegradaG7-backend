@@ -17,8 +17,9 @@ class TestCupo {
 	
 	@Test
 	void checkValidationFecha() {
+		String c = centro.getNombre();
 		try {
-			new Cupo(fechaInicio, fechaFin, 10, centro.getNombre());
+			new Cupo(fechaInicio, fechaFin, 10, c);
 			fail("Exception expected");
 		} catch (IllegalArgumentException e) {
 			assertEquals("Fecha de inicio no puede ser posterior a la fecha de fin", e.getMessage());
@@ -27,8 +28,9 @@ class TestCupo {
 	
 	@Test
 	void checkValidationFechaActual() {
+		String c = centro.getNombre();
 		Assertions.assertThrows(IllegalArgumentException.class, () ->
-			new Cupo(fechaInicio, fechaFin, 10, centro.getNombre()));
+			new Cupo(fechaInicio, fechaFin, 10, c));
 	}
 	
 	@Test

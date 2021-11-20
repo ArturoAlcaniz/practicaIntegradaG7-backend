@@ -5,10 +5,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,13 +26,12 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 
 @Document(collection = "Usuario")
 public class Usuario {
-
-	@Id
-	private String id;
 	
 	@Id
 	@Column(name = "email")
@@ -184,10 +179,10 @@ public class Usuario {
 	}
 	
 	public void decryptDNI() throws CifradoContrasenaException {
-		String pwd = this.dni.substring(1);
+		String nonsense = this.dni.substring(1);
 		String decyph;
 		
-		byte[] bytes = Base64.getDecoder().decode(pwd.getBytes());
+		byte[] bytes = Base64.getDecoder().decode(nonsense.getBytes());
 		
 		try {
 			StringBuilder builder = new StringBuilder();
@@ -260,6 +255,14 @@ public class Usuario {
 		return password;
 	}
 
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public void setCentro(String centro) {
+		this.centro = centro;
+	}
+
 	public String getCentro() {
 		return centro;
 	}
@@ -290,6 +293,10 @@ public class Usuario {
 
 	public void setDniDenc(String dniDenc) {
 		this.dniDenc = dniDenc;
+	}
+
+	public void setDni(String dni) {
+		this.dni = dni;
 	}
 	
 }

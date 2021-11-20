@@ -23,6 +23,7 @@ import com.practicaintegradag7.dao.ConfigurationDao;
 import com.practicaintegradag7.exceptions.ConfigurationEmptyException;
 import com.practicaintegradag7.exceptions.ConfigurationLimitException;
 import com.practicaintegradag7.model.Configuration;
+import com.practicaintegradag7.repos.CupoRepository;
 
 @ExtendWith(SpringExtension.class)
 @TestMethodOrder(OrderAnnotation.class)
@@ -32,6 +33,9 @@ class TestConfigurationIntegrated {
 	
 	@Autowired
 	private final ConfigurationDao configurationDao = new ConfigurationDao();
+	
+	@Autowired
+	private CupoRepository cupoRepository;
 	
 	@Autowired
 	private MockMvc mockMvc;
@@ -56,6 +60,8 @@ class TestConfigurationIntegrated {
 		} catch(ConfigurationLimitException e) {
 			assertEquals("Ya hay una configuración guardada", e.getMessage());
 		}
+		cupoRepository.deleteAll();
+		configurationDao.eliminarConfiguration();
 	}
 	
 	@Order(2)

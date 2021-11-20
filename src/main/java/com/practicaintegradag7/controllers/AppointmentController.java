@@ -29,11 +29,8 @@ import com.practicaintegradag7.model.Usuario;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,26 +52,44 @@ public class AppointmentController{
 	private static final String STATUS = "status";
 	private static final String MSSG = "message";
 	private static final String CENTRO = "centro";
+	private static final String EMAIL = "email";
+	private static final String NCITA = "ncita";
 	
 	@PostMapping(path="/api/citas/create")
-
-    public String crearCita() throws JSONException, CentroNotFoundException, CupoNotFoundException, CupoExistException, CifradoContrasenaException, CitaNotFoundException {
+    public String crearCita(@RequestBody Map<String, Object> fechaJSON) throws JSONException, CentroNotFoundException, CupoNotFoundException, CupoExistException, CitaNotFoundException {
+		JSONObject response = new JSONObject();
+		String mssg = "";
+		String status = "";
+		
 		try {
-			JSONObject response = new JSONObject();
-			List<Cita> citas = citaDao.createCitas();
-			String mssg = "Primera cita asignada para el " + LDTFormatter.processLDT(citas.get(0).getFecha())+
-					", segunda cita asignada el " + LDTFormatter.processLDT(citas.get(1).getFecha());
-			response.put(STATUS, "200");
-			response.put(MSSG, mssg);
-			return response.toString();
-		} catch (CitasUsuarioNotAvailable | CitasCupoNotAvailable e) {
-			JSONObject response = new JSONObject();
-			response.put(STATUS, "500");
-			response.put(MSSG, e.getMessage());
-			return response.toString();
+			JSONObject jso = new JSONObject(fechaJSON);
+			String email =  jso.getString(EMAIL);
+			Usuario user = usuarioDao.getUsuarioByEmail(email);
+			
+			List<Cita> citas = citaDao.createCitas(user);
+			mssg = doConfirmMessage(citas);
+			status = "200";
+		} catch (CitasUsuarioNotAvailable | CitasCupoNotAvailable | UsuarioNotFoundException e) {
+			status = "500";
+			mssg = e.getMessage();
 		}
+		response.put(STATUS, status);
+		response.put(MSSG, mssg);
+		
+		return response.toString();
     }
 	
+	private String doConfirmMessage(List<Cita> citas) {
+		String mssg;
+		try {
+			mssg = "Primera cita asignada para el " + LDTFormatter.processLDT(citas.get(0).getFecha())+
+					", segunda cita asignada el " + LDTFormatter.processLDT(citas.get(1).getFecha());
+		}catch(IndexOutOfBoundsException e) {
+			mssg = "Nueva segunda cita asignada para el " + LDTFormatter.processLDT(citas.get(0).getFecha());
+		}
+		return mssg;
+	}
+
 	@GetMapping(path="/api/citas/obtener")
 	public List<Cita> obtenerCitas(){
 		return citaDao.getAllCitas();
@@ -86,7 +101,7 @@ public class AppointmentController{
 		String fecha =  jso.getString("fechaSeleccionada");
 		String centroNombre = jso.getString(CENTRO);
 		Centro centro = centroDao.buscarCentroByNombre(centroNombre);
-		LocalDateTime fechaFormateada = LocalDateTime.parse(fecha+"T00:00:00");
+		LocalDateTime fechaFormateada = LDTFormatter.parse(fecha+"T00:00:00");
 		return cupoDao.getAllCuposAvailableInADay(centro, fechaFormateada);
 	}
 	
@@ -98,11 +113,9 @@ public class AppointmentController{
 		LocalDateTime fechaAntiguaFormateada = LDTFormatter.parse(fechaAntigua);	
 		LocalDateTime fechaNuevaFormateada = LDTFormatter.parse(fechaNueva);		
 		
-		String email = jso.getString("email");
+		String email = jso.getString(EMAIL);
 		String centroNombre = jso.getString(CENTRO);
-		short ncita = Short.parseShort(jso.getString("ncita"));
-		
-		
+		short ncita = Short.parseShort(jso.getString(NCITA));
 		
 		Cita citaAntigua = new Cita(email, fechaAntiguaFormateada, centroNombre, ncita);
 		Cita citaNueva = new Cita(email, fechaNuevaFormateada, centroNombre, ncita);
@@ -122,9 +135,9 @@ public class AppointmentController{
 		String fecha =  jso.getString("fecha").replace(" a las ", "T");
 		LocalDateTime fechaF = LDTFormatter.parse(fecha);
 		String centroNombre = jso.getString(CENTRO);
-		String email = jso.getString("email");
+		String email = jso.getString(EMAIL);
 		
-		short ncita = Short.parseShort(jso.getString("ncita"));
+		short ncita = Short.parseShort(jso.getString(NCITA));
 		Cita cita = new Cita(email, fechaF, centroNombre, ncita);
 		citaDao.deleteCita(cita);
 		
@@ -137,15 +150,21 @@ public class AppointmentController{
 	@PostMapping(path="/api/marcarVacunacion")
 	public String marcarVacunacion(@RequestBody Map<String, Object> datosVacunacion) throws JSONException, CitaNotFoundException, VacunacionDateException, UsuarioNotFoundException, CifradoContrasenaException, CentroNotFoundException, CupoNotFoundException, CupoExistException, CitasNotAvailableException {
 		JSONObject jso = new JSONObject(datosVacunacion);
-		String email = jso.getString("email");
-		short ncita = (short) jso.getInt("ncita");
-		citaDao.vacunar(citaDao.findByEmailAndNcita(email, ncita));
-		Centro centro = centroDao.buscarCentroByNombre(usuarioDao.getUsuarioByEmail(email).getCentro());
-		centro.setVacunas(centro.getVacunas()-1);
-		centroDao.save(centro);
 		JSONObject response = new JSONObject();
-		response.put(STATUS,  "200");
-		response.put(MSSG, "Paciente vacunado correctamente");
+		
+		String email = jso.getString(EMAIL);
+		short ncita = (short) jso.getInt(NCITA);
+		Centro centro = centroDao.buscarCentroByNombre(usuarioDao.getUsuarioByEmail(email).getCentro());
+		if(centro.getVacunas() > 0) {
+			citaDao.vacunar(citaDao.findByEmailAndNcita(email, ncita));
+			centro.setVacunas(centro.getVacunas()-1);
+			centroDao.save(centro);
+			response.put(STATUS,  "200");
+			response.put(MSSG, "Paciente vacunado correctamente");
+		} else {
+			response.put(STATUS,  "500");
+			response.put(MSSG, "No hay vacunas suficientes");
+		}
 		return response.toString();
 	}
 	
@@ -170,7 +189,6 @@ public class AppointmentController{
 		
 		
 		for (Cita cita : citas) {
-			
 			JSONObject citaUsuario = new JSONObject();
 			
 			String nombre=null;
@@ -190,15 +208,11 @@ public class AppointmentController{
 			citaUsuario.put("dni", dni);
 			citaUsuario.put("nombre", nombre);
 			citaUsuario.put("apellidos", apellidos);
-			citaUsuario.put("ncita", cita.getNcita());
+			citaUsuario.put(NCITA, cita.getNcita());
 			
 			citasConUsuarios.put(citaUsuario);
-			
-			
 		}
-        
 		
-
 		return citasConUsuarios.toString();
 	}
 }
