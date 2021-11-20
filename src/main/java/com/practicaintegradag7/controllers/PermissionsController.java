@@ -44,16 +44,13 @@ public class PermissionsController {
 			
 			if(!u.getPassword().equals(pwd)) throw new UsuarioNotFoundException("Usuario no reconocido");
 			
-			switch(u.getRol()) {
-			case "Paciente":
+			switch(u.getRol().toLowerCase()) {
 			case "paciente":
 				doDefault = !checkExists(PacienteSites, from);
 				break;
-			case "Administrador":
 			case "administrador":
 				doDefault = !checkExists(AdminSites, from);
 				break;
-			case "Sanitario":
 			case "sanitario":
 				doDefault = !checkExists(SanitarioSites, from);
 				break;
