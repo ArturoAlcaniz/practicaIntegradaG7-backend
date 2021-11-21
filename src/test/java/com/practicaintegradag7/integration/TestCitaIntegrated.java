@@ -289,7 +289,7 @@ class TestCitaIntegrated {
 			json.put("fechaNueva", primera.getFecha().plusDays(10).toString());
 			json.put("email", paciente.getEmail());
 			json.put("centro", paciente.getCentro());
-			json.put("ncita", "1");
+			json.put("ncita", "2");
 			
 			Assertions.assertThrows(org.springframework.web.util.NestedServletException.class, () ->
 			mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/modify").contentType(MediaType.APPLICATION_JSON).
