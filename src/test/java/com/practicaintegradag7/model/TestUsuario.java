@@ -65,6 +65,40 @@ class TestUsuario {
 	}
 	
 	@Test
+	void failWhenEmailIsNotValidInBuilder() {
+		try {
+			UsuarioBuilder usuarioBuilder = new UsuarioBuilder()
+					.dni("01234567A")
+					.nombre("Roberto")
+					.apellidos("Brasero Hidalgo")
+					.email("novalido&hotmail.com")
+					.password("Iso+grupo7")
+					.centro(centro.getNombre())
+					.rol("paciente");
+			usuarioBuilder.getDni();
+		} catch (IllegalArgumentException e) {
+			assertEquals("Email is not valid!", e.getMessage());
+		}
+	}
+	
+	@Test
+	void failWhenRolIsNotValidInBuilder() {
+		try {
+			UsuarioBuilder usuarioBuilder = new UsuarioBuilder()
+					.dni("01234567A")
+					.nombre("Roberto")
+					.apellidos("Brasero Hidalgo")
+					.email("valido@hotmail.com")
+					.password("Iso+grupo7")
+					.centro(centro.getNombre())
+					.rol("sarten");
+			usuarioBuilder.getDni();
+		} catch (IllegalArgumentException e) {
+			assertEquals("Rol is not valid!", e.getMessage());
+		}
+	}
+	
+	@Test
 	void failWhenRolNotValid() {
 
 		UsuarioBuilder usuarioBuilder = new UsuarioBuilder()
@@ -358,5 +392,41 @@ class TestUsuario {
 		}
 		usuario.decryptDNI();
 		assertEquals("05718738J", usuario.getDniDenc());
+	}
+	
+	@Test
+	void WhenCentroEqualAfterSetCentro() {
+		centro.setNombre("Centro 2");
+		Usuario usuario = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centro.getNombre())
+				.rol("paciente")
+				.build();
+		
+		
+		assertEquals("Centro 2", usuario.getCentro());
+		centro.setNombre("Centro 1");
+	}
+	
+	@Test
+	void encryptFailMoreThan16() throws CifradoContrasenaException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+		Usuario usuario = new UsuarioBuilder()
+				.dni("05718738J")
+				.nombre("Francisco")
+				.apellidos("Morisco Parra")
+				.email("franMoriscoMorisco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(null)
+				.rol("Paciente")
+				.build();
+		try {
+			usuario.encryptDNI();
+		} catch (CifradoContrasenaException e) {
+			assertEquals("05718738J", usuario.getDniDenc());
+		}
 	}
 }

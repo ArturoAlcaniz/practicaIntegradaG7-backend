@@ -60,9 +60,13 @@ class TestCentroController {
 	
 	@Order(3)
 	@Test
-	void testDelete() throws CentroNotFoundException {
-		Centro centro = dao.buscarCentroByNombre("Hospital");
-		dao.deleteCentro(centro);
+	void testDelete() throws Exception {
+		
+		JSONObject json = new JSONObject();
+		
+		json.put("nombreCentro", "Hospital");
+
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/centros/eliminar").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
 		assertTrue(true);
 	}
 
