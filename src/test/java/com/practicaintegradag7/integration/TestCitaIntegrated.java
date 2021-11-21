@@ -26,6 +26,7 @@ import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitaNotFoundException;
+import com.practicaintegradag7.exceptions.CitaNotModifiedException;
 import com.practicaintegradag7.exceptions.ConfigurationLimitException;
 import com.practicaintegradag7.exceptions.ConfigurationTimeException;
 import com.practicaintegradag7.exceptions.CupoExistException;
@@ -466,6 +467,39 @@ class TestCitaIntegrated {
 			}catch(Exception ex) {
 				fail(ex.getMessage());
 			}
+		}
+	}
+	
+	@Test
+	@Order(17)
+	void testFailModifyCitaSecondDateLessThan21DaysAwayFromFirstFromDao() throws CitaNotFoundException {
+		
+		List<Cita> lcitas = citas.getCitasByEmail(paciente.getEmail());
+		Cita primera = lcitas.get(0);
+		
+		try {
+			citas.modifyCita(primera, primera);
+		} catch (CitaNotModifiedException e) {
+			e.getMessage();
+			assertTrue(true);
+		} catch (CentroNotFoundException e) {
+			e.getMessage();
+		} catch (CupoNotFoundException e) {
+			e.getMessage();
+		} catch (CupoExistException e) {
+			e.getMessage();
+		}
+		
+	}
+	
+	@Test
+	@Order(18)
+	void testFailGetCitasNotFound() {
+		try {
+			citas.getCitasByEmail("");
+		} catch (CitaNotFoundException e) {
+			e.getMessage();
+			assertTrue(true);
 		}
 	}
 

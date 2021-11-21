@@ -178,12 +178,12 @@ public class CitaDao {
 		citaRepository.deleteAll();
 	}
 	
-	public void sumarCitaCupo(Cupo cupoAntiguo) throws CupoNotFoundException, CentroNotFoundException, CupoExistException {
+	public void sumarCitaCupo(Cupo cupoAntiguo) throws CupoNotFoundException {
 		cupoAntiguo.setCitas(cupoAntiguo.getNumeroCitas()+1);
 		cupoDao.updateCupo(cupoAntiguo);
 	}
 	
-	public void restarCitaCupo(Cupo cupoAntiguo) throws CupoNotFoundException, CentroNotFoundException, CupoExistException {
+	public void restarCitaCupo(Cupo cupoAntiguo) throws CupoNotFoundException {
 		cupoAntiguo.setCitas(cupoAntiguo.getNumeroCitas()-1);
 		cupoDao.updateCupo(cupoAntiguo);
 	}

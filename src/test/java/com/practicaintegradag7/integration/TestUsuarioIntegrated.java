@@ -360,6 +360,13 @@ class TestUsuarioIntegrated {
 		assertTrue(true);
 	}
 	
+	@Order(21)
+	@Test
+	void shouldDeleteAllUsers() {
+		usuarioDao.deleteAllUsuarios();
+		assertTrue(true);
+	}
+	
 	@AfterEach
 	void after() throws CentroNotFoundException, CentroExistException {
 		usuarioDao.deleteUsuarioByEmail(userEmail);
