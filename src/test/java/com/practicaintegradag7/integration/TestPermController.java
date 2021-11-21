@@ -95,6 +95,17 @@ class TestPermController {
 	
 	@Order(5)
 	@Test
+	void shouldAllowAccessInIf() throws Exception{
+		JSONObject json = new JSONObject();
+		json.put(EMAIL, usuario.getEmail());
+		json.put(PWD, "Iso+grupo7");
+		json.put(SITE, "appointment");
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/perms/check").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		assertTrue(true);
+	}
+	
+	@Order(6)
+	@Test
 	void testDelete() throws CentroNotFoundException {
 		dao.deleteUsuarioByEmail(usuario.getEmail());
 		assertTrue(true);
