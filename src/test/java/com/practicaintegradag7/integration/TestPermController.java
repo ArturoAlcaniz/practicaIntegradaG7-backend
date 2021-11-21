@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -112,22 +110,74 @@ class TestPermController {
 		String res = aux.getResponse().getContentAsString();
 		assertTrue(res.contains("405"));
 	}
-	
+
 	@Order(5)
-	@ParameterizedTest
-	@CsvSource({"franMorisco@gmail.com,Iso+grupo7,appointment" , "franMorisco@gmail.com,Iso+grupo7,ninguno" ,
-							"sanitario@gmail.com,Iso+grupo7,appointment" , "sanitario@gmail.com,Iso+grupo7,ninguno" ,
-							"admin@gmail.com,Iso+grupo7,appointment" , "admin@gmail.com,Iso+grupo7,ninguno"})
-	void shouldAllowAccessInIf(String email, String pwd, String from) throws Exception{
+	@Test
+	void shouldAllowAccessInIf() throws Exception{
 		JSONObject json = new JSONObject();
-		json.put(EMAIL, email);
-		json.put(PWD,  DigestUtils.sha256Hex(pwd));
-		json.put(SITE, from);
+		json.put(EMAIL, usuario.getEmail());
+		json.put(PWD,  DigestUtils.sha256Hex("Iso+grupo7"));
+		json.put(SITE, "appointment");
 		mockMvc.perform( MockMvcRequestBuilders.post("/api/perms/check").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
 		assertTrue(true);
 	}
 	
 	@Order(6)
+	@Test
+	void shouldAllowAccessInIf1() throws Exception{
+		JSONObject json = new JSONObject();
+		json.put(EMAIL, usuario.getEmail());
+		json.put(PWD,  DigestUtils.sha256Hex("Iso+grupo7"));
+		json.put(SITE, "ninguno");
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/perms/check").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		assertTrue(true);
+	}
+	
+	@Order(7)
+	@Test
+	void shouldAllowAccessInIf2() throws Exception{
+		JSONObject json = new JSONObject();
+		json.put(EMAIL, sanitario.getEmail());
+		json.put(PWD,  DigestUtils.sha256Hex("Iso+grupo7"));
+		json.put(SITE, "appointment");
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/perms/check").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		assertTrue(true);
+	}
+	
+	@Order(8)
+	@Test
+	void shouldAllowAccessInIf3() throws Exception{
+		JSONObject json = new JSONObject();
+		json.put(EMAIL, sanitario.getEmail());
+		json.put(PWD,  DigestUtils.sha256Hex("Iso+grupo7"));
+		json.put(SITE, "ninguno");
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/perms/check").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		assertTrue(true);
+	}
+	
+	@Order(9)
+	@Test
+	void shouldAllowAccessInIf4() throws Exception{
+		JSONObject json = new JSONObject();
+		json.put(EMAIL, administrador.getEmail());
+		json.put(PWD,  DigestUtils.sha256Hex("Iso+grupo7"));
+		json.put(SITE, "appointment");
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/perms/check").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		assertTrue(true);
+	}
+	
+	@Order(10)
+	@Test
+	void shouldAllowAccessInIf5() throws Exception{
+		JSONObject json = new JSONObject();
+		json.put(EMAIL, administrador.getEmail());
+		json.put(PWD,  DigestUtils.sha256Hex("Iso+grupo7"));
+		json.put(SITE, "ninguno");
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/perms/check").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		assertTrue(true);
+	}
+
+	@Order(11)
 	@Test
 	void testDelete() throws CentroNotFoundException {
 		dao.deleteUsuarioByEmail(usuario.getEmail());
