@@ -106,7 +106,7 @@ public class CitaDao {
 		Centro centro = centroDao.buscarCentroByNombre(cita.getCentroNombre());
 		Cupo cupo = cupoDao.getCupoByInicialDateAndCentro(cita.getFecha(), centro.getNombre());
 		
-		if (Short.toUnsignedInt(cita.getNcita())==1) {
+		if (cita.getNcita() == 1) {
 			Optional<Cita> opt = citaRepository.findByEmailAndNcita(cita.getEmail(),Short.valueOf("2"));
 			if (opt.isPresent()) {
 				Cita citaSegunda = opt.get();
@@ -197,7 +197,7 @@ public class CitaDao {
 		
 		if (citaAntigua.getFecha().equals(citaNueva.getFecha()))
 			throw new CitaNotModifiedException("Debe insertar una fecha distinta a la antigua");
-		else if(Short.toUnsignedInt(citaAntigua.getNcita())==1){
+		else if(citaAntigua.getNcita() ==1){
 			
 			Optional<Cita> opt = citaRepository.findByEmailAndNcita(citaAntigua.getEmail(), Short.parseShort("2"));
 			
@@ -212,7 +212,7 @@ public class CitaDao {
 			
 			validado = true;
 		}
-		else if(Short.toUnsignedInt(citaAntigua.getNcita())==2){
+		else if(citaAntigua.getNcita()==2){
 
 			Optional<Cita> opt = citaRepository.findByEmailAndNcita(citaAntigua.getEmail(), Short.parseShort("1"));
 			
@@ -243,7 +243,7 @@ public class CitaDao {
 			throw new CitasNotAvailableException();
 		}
 		
-		if(Short.compare(cita.getNcita(), (short) 1) == 0) {
+		if(cita.getNcita() == 1) {
 			usuarioVacunar.setPrimeraDosis(true);
 		} else {
 			usuarioVacunar.setSegundaDosis(true);

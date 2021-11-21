@@ -21,9 +21,9 @@ public class Cita {
     private String centroNombre;
     
     @Column(name = "ordenCita")
-    private short ncita;
+    private int ncita;
 
-    public Cita(String email, LocalDateTime fecha, String centroNombre, short ncita) {
+    public Cita(String email, LocalDateTime fecha, String centroNombre, int ncita) {
     	this.email= email;
     	this.fecha = fecha;
     	this.centroNombre = centroNombre;
@@ -46,11 +46,11 @@ public class Cita {
     	return fecha;
     }
 
-	public short getNcita() {
+	public int getNcita() {
 		return ncita;
 	}
 
-	public void setNcita(short ncita) {
+	public void setNcita(int ncita) {
 		this.ncita = ncita;
 	}
 
