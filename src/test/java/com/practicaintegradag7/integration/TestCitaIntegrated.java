@@ -502,27 +502,6 @@ class TestCitaIntegrated {
 			assertTrue(true);
 		}
 	}
-	
-	@Test
-	@Order(1)
-	void testFailCitasNotAvailableException() {
-			centroSinDosis.setVacunas(0);
-			try {
-				citas.vacunar(intrusa);
-			} catch (VacunacionDateException e) {
-				e.getMessage();
-				assertTrue(true);
-			} catch (UsuarioNotFoundException e) {
-				e.getMessage();
-				assertTrue(true);
-			} catch (CentroNotFoundException e) {
-				e.getMessage();
-				assertTrue(true);
-			} catch (CitasNotAvailableException e) {
-				e.getMessage();
-				assertTrue(true);
-			}
-	}
 
 	private boolean createCitasT15() {
 		JSONObject json = new JSONObject();
