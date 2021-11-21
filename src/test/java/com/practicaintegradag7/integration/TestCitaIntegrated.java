@@ -1,5 +1,6 @@
 package com.practicaintegradag7.integration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -473,8 +474,8 @@ class TestCitaIntegrated {
 		}
 	}
 	
-	@Test
 	@Order(17)
+	@Test
 	void testFailModifyCitaSecondDateLessThan21DaysAwayFromFirstFromDao() throws CitaNotFoundException {
 		
 		List<Cita> lcitas = citas.getCitasByEmail(paciente.getEmail());
@@ -492,17 +493,42 @@ class TestCitaIntegrated {
 		}
 	}
 	
-	@Test
 	@Order(18)
-	void testFailGetCitasNotFound() {
+	@Test
+	void testFailWhenPacienteHasZeroCitas() {
 		try {
-			citas.getCitasByEmail("noexiste");
+			List<Cita> lcitas = citas.getCitasByEmail("noexiste");
+			if (lcitas.size()<1) throw new CitaNotFoundException("Este usuario no tiene citas");
 		} catch (CitaNotFoundException e) {
-			e.getMessage();
-			assertTrue(true);
+			assertEquals("Este usuario no tiene citas",e.getMessage());
 		}
 	}
 
+	@Order(19)
+	@Test
+	void testFailWhenCitasNotAvailable() throws CentroNotFoundException, CitaNotFoundException {
+			List<Cita> citasUsuario = citas.getCitasByEmail(paciente.getEmail());
+			Centro centro = centros.buscarCentroByNombre(paciente.getCentro());
+			centro.setVacunas(0);
+			try {
+				citas.vacunar(citasUsuario.get(0));
+			} catch (VacunacionDateException e) {
+				e.getMessage();
+				assertTrue(true);
+			} catch (UsuarioNotFoundException e) {
+				e.getMessage();
+				assertTrue(true);
+			} catch (CentroNotFoundException e) {
+				e.getMessage();
+				assertTrue(true);
+			} catch (CitasNotAvailableException e) {
+				e.getMessage();
+				assertTrue(true);
+			}
+			
+
+	}
+	
 	private boolean createCitasT15() {
 		JSONObject json = new JSONObject();
 		json.put("email", paciente.getEmail());
