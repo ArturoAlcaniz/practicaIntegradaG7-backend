@@ -24,6 +24,7 @@ import com.practicaintegradag7.dao.CitaDao;
 import com.practicaintegradag7.dao.ConfigurationDao;
 import com.practicaintegradag7.dao.CupoDao;
 import com.practicaintegradag7.dao.UsuarioDao;
+import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitaNotFoundException;
@@ -506,28 +507,30 @@ class TestCitaIntegrated {
 
 	@Order(19)
 	@Test
-	void testFailWhenCitasNotAvailable() throws CentroNotFoundException, CitaNotFoundException {
+	void testFailWhenCitasNotAvailable() throws CentroNotFoundException, CitaNotFoundException, CentroExistException {
 			List<Cita> citasUsuario = citas.getCitasByEmail(paciente.getEmail());
 			Centro centro = centros.buscarCentroByNombre(paciente.getCentro());
-			centro.setVacunas(0);
+			centros.modificarCentro(centro.getNombre(), centro.getDireccion(), 0);
 			try {
+				System.out.println("vacunando");
 				citas.vacunar(citasUsuario.get(0));
+				System.out.println("vacunado");
 			} catch (VacunacionDateException e) {
-				e.getMessage();
+				System.out.println(e.getClass()+e.getMessage());
 				assertTrue(true);
 			} catch (UsuarioNotFoundException e) {
-				e.getMessage();
+				System.out.println(e.getClass()+e.getMessage());
 				assertTrue(true);
 			} catch (CentroNotFoundException e) {
-				e.getMessage();
+				System.out.println(e.getClass()+e.getMessage());
 				assertTrue(true);
 			} catch (CitasNotAvailableException e) {
-				e.getMessage();
+				System.out.println(e.getClass()+e.getMessage());
 				assertTrue(true);
 			}
-			
-
 	}
+	
+	
 	
 	private boolean createCitasT15() {
 		JSONObject json = new JSONObject();
