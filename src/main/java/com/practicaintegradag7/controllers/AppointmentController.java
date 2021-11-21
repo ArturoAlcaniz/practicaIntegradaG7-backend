@@ -57,7 +57,7 @@ public class AppointmentController{
 	private static final String FECHA = "fecha";
 	
 	@PostMapping(path="/api/citas/create")
-    public String crearCita(@RequestBody Map<String, Object> fechaJSON) throws JSONException, CentroNotFoundException, CupoNotFoundException, CupoExistException, CitaNotFoundException {
+    public String crearCita(@RequestBody Map<String, Object> fechaJSON) throws JSONException, CentroNotFoundException, CupoNotFoundException, CitaNotFoundException {
 		JSONObject response = new JSONObject();
 		String mssg = "";
 		String status = "";
