@@ -334,6 +334,54 @@ class TestUsuarioIntegrated {
 		assertEquals(true, citaDao.getCitasByEmail(usuario.getEmail()).isEmpty());
 	}
 	
+	@Order(19)
+	@Test
+	void shouldNotLoginWithControllerNotUser() throws CentroNotFoundException, JSONException, CifradoContrasenaException, CentroExistException {
+		JSONObject json = new JSONObject();
+		
+		json.put("email", "");
+		json.put("password", usuario.getPassword());
+		
+		try {
+			mockMvc.perform( MockMvcRequestBuilders.post("/api/usuario/login").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isBadRequest());
+		} catch (UsuarioNotFoundException e) {
+			assertEquals("No existe un usuario con ese email y password", e.getMessage());
+		} catch (Exception e) {}
+	}
+	
+	@Order(20)
+	@Test
+	void shouldDeleteWithController() throws Exception {
+		JSONObject json = new JSONObject();
+		
+		json.put("email", usuario.getEmail());
+
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/usuario/eliminar").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		assertTrue(true);
+	}
+	
+	@Order(21)
+	@Test
+	void shouldDeleteAllUsers() {
+		usuarioDao.deleteAllUsuarios();
+		assertTrue(true);
+	}
+	
+	@Order(22)
+	@Test
+	void shouldNotLoginPasswordNotEquals() {
+		JSONObject json = new JSONObject();
+		
+		json.put("email", usuario.getEmail());
+		json.put("password", "malaPassword");
+		
+		try {
+			mockMvc.perform( MockMvcRequestBuilders.post("/api/usuario/login").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isBadRequest());
+		} catch (UsuarioNotFoundException e) {
+			assertEquals("No existe un usuario con ese email y password", e.getMessage());
+		} catch (Exception e) {}
+	}
+	
 	@AfterEach
 	void after() throws CentroNotFoundException, CentroExistException {
 		usuarioDao.deleteUsuarioByEmail(userEmail);

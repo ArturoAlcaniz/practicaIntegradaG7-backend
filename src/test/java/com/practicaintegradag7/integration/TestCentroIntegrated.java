@@ -189,6 +189,28 @@ class TestCentroIntegrated {
 		
 	}
 	
+	@Test
+	void shouldDeleteAllCentros() {
+		aux.deleteAllCentros();
+		assertTrue(true);
+	}
+	
+	@Test
+	void shouldModifyCentro() throws CentroExistException, CentroNotFoundException {	
+		aux.modificarCentro("PRUEBA", "-", 40);
+		assertTrue(true);
+	}
+	
+	@Test
+	void shouldNotModifyCentro() throws CentroExistException, CentroNotFoundException {	
+		try {
+			aux.modificarCentro("PRUEBA", "", 40);
+		} catch (CentroNotFoundException e) {
+			assertTrue(true);
+			e.getMessage();
+		}
+	}
+	
 	@AfterEach
 	public void after() {
 		try {

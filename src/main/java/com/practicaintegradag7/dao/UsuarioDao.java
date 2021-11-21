@@ -13,7 +13,6 @@ import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.UserModificationException;
 import com.practicaintegradag7.exceptions.CitaNotFoundException;
-import com.practicaintegradag7.exceptions.CupoExistException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
 import com.practicaintegradag7.model.Cita;
@@ -84,7 +83,7 @@ public class UsuarioDao {
 		usuarioRepository.deleteByEmail(email);
 	}
 	
-	public void deleteUsuarioAndCitasByEmail(String email) throws CitaNotFoundException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
+	public void deleteUsuarioAndCitasByEmail(String email) throws CitaNotFoundException, CentroNotFoundException, CupoNotFoundException {
 		
 		List <Cita> citas = citaDao.getCitasByEmail(email);
 		for (Cita cita : citas) {

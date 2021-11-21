@@ -3,7 +3,7 @@ package com.practicaintegradag7.integration;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
+import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -48,11 +48,31 @@ class TestPermController {
 			.centro(null)
 			.rol("Paciente")
 			.build();
+	private final Usuario sanitario = new UsuarioBuilder()
+			.dni("05718583J")
+			.nombre("Francisco")
+			.apellidos("Morisco Parra")
+			.email("sanitario@gmail.com")
+			.password("Iso+grupo7")
+			.centro(null)
+			.rol("sanitario")
+			.build();
+	private final Usuario administrador = new UsuarioBuilder()
+			.dni("05718583J")
+			.nombre("Francisco")
+			.apellidos("Morisco Parra")
+			.email("admin@gmail.com")
+			.password("Iso+grupo7")
+			.centro(null)
+			.rol("Administrador")
+			.build();
 	
 	@Order(1)
 	@Test
 	void insertUser() throws Exception{
 		dao.saveUsuario(usuario);
+		dao.saveUsuario(sanitario);
+		dao.saveUsuario(administrador);
 		assertTrue(true);
 	}
 	
@@ -90,12 +110,80 @@ class TestPermController {
 		String res = aux.getResponse().getContentAsString();
 		assertTrue(res.contains("405"));
 	}
-	
+
 	@Order(5)
 	@Test
-	void testDelete() throws CentroNotFoundException {
-		dao.deleteUsuarioByEmail(usuario.getEmail());
+	void shouldAllowAccessInIf() throws Exception{
+		JSONObject json = new JSONObject();
+		json.put(EMAIL, usuario.getEmail());
+		json.put(PWD,  DigestUtils.sha256Hex("Iso+grupo7"));
+		json.put(SITE, "appointment");
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/perms/check").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		assertTrue(true);
+	}
+	
+	@Order(6)
+	@Test
+	void shouldAllowAccessInIf1() throws Exception{
+		JSONObject json = new JSONObject();
+		json.put(EMAIL, usuario.getEmail());
+		json.put(PWD,  DigestUtils.sha256Hex("Iso+grupo7"));
+		json.put(SITE, "ninguno");
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/perms/check").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		assertTrue(true);
+	}
+	
+	@Order(7)
+	@Test
+	void shouldAllowAccessInIf2() throws Exception{
+		JSONObject json = new JSONObject();
+		json.put(EMAIL, sanitario.getEmail());
+		json.put(PWD,  DigestUtils.sha256Hex("Iso+grupo7"));
+		json.put(SITE, "appointment");
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/perms/check").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		assertTrue(true);
+	}
+	
+	@Order(8)
+	@Test
+	void shouldAllowAccessInIf3() throws Exception{
+		JSONObject json = new JSONObject();
+		json.put(EMAIL, sanitario.getEmail());
+		json.put(PWD,  DigestUtils.sha256Hex("Iso+grupo7"));
+		json.put(SITE, "ninguno");
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/perms/check").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		assertTrue(true);
+	}
+	
+	@Order(9)
+	@Test
+	void shouldAllowAccessInIf4() throws Exception{
+		JSONObject json = new JSONObject();
+		json.put(EMAIL, administrador.getEmail());
+		json.put(PWD,  DigestUtils.sha256Hex("Iso+grupo7"));
+		json.put(SITE, "appointment");
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/perms/check").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		assertTrue(true);
+	}
+	
+	@Order(10)
+	@Test
+	void shouldAllowAccessInIf5() throws Exception{
+		JSONObject json = new JSONObject();
+		json.put(EMAIL, administrador.getEmail());
+		json.put(PWD,  DigestUtils.sha256Hex("Iso+grupo7"));
+		json.put(SITE, "ninguno");
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/perms/check").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
 		assertTrue(true);
 	}
 
+	@Order(11)
+	@Test
+	void testDelete() throws CentroNotFoundException {
+		dao.deleteUsuarioByEmail(usuario.getEmail());
+		dao.deleteUsuarioByEmail(sanitario.getEmail());
+		dao.deleteUsuarioByEmail(administrador.getEmail());
+		assertTrue(true);
+	}
+	
 }

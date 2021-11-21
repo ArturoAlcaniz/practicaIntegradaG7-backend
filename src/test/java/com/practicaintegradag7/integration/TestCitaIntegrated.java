@@ -1,5 +1,6 @@
 package com.practicaintegradag7.integration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -23,13 +24,18 @@ import com.practicaintegradag7.dao.CitaDao;
 import com.practicaintegradag7.dao.ConfigurationDao;
 import com.practicaintegradag7.dao.CupoDao;
 import com.practicaintegradag7.dao.UsuarioDao;
+import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitaNotFoundException;
+import com.practicaintegradag7.exceptions.CitaNotModifiedException;
+import com.practicaintegradag7.exceptions.CitasNotAvailableException;
 import com.practicaintegradag7.exceptions.ConfigurationLimitException;
 import com.practicaintegradag7.exceptions.ConfigurationTimeException;
 import com.practicaintegradag7.exceptions.CupoExistException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
+import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
+import com.practicaintegradag7.exceptions.VacunacionDateException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cita;
 import com.practicaintegradag7.model.Configuration;
@@ -468,7 +474,84 @@ class TestCitaIntegrated {
 			}
 		}
 	}
+	
+	@Order(17)
+	@Test
+	void testFailModifyCitaSecondDateLessThan21DaysAwayFromFirstFromDao() throws CitaNotFoundException {
+		
+		List<Cita> lcitas = citas.getCitasByEmail(paciente.getEmail());
+		Cita primera = lcitas.get(0);
+		
+		try {
+			citas.modifyCita(primera, primera);
+		} catch (CitaNotModifiedException e) {
+			e.getMessage();
+			assertTrue(true);
+		} catch (CentroNotFoundException e) {
+			e.getMessage();
+		} catch (CupoNotFoundException e) {
+			e.getMessage();
+		}
+	}
+	
+	@Order(18)
+	@Test
+	void testFailWhenPacienteHasZeroCitas() {
+		try {
+			List<Cita> lcitas = citas.getCitasByEmail("noexiste");
+			if (lcitas.size()<1) throw new CitaNotFoundException("Este usuario no tiene citas");
+		} catch (CitaNotFoundException e) {
+			assertEquals("Este usuario no tiene citas",e.getMessage());
+		}
+	}
 
+	@Order(19)
+	@Test
+	void testFailWhenCitasNotDateVacunacionEquals() throws CitaNotFoundException {
+			Cita cu = (citas.getCitasByEmail(paciente.getEmail())).get(0);
+			cu.setFecha(cu.getFecha().plusDays(3));
+			try {
+				citas.vacunar(cu);
+			} catch (VacunacionDateException e) {
+				System.out.println(e.getClass()+e.getMessage());
+				assertTrue(true);
+			} catch (UsuarioNotFoundException e) {
+				System.out.println(e.getClass()+e.getMessage());
+				assertTrue(true);
+			} catch (CentroNotFoundException e) {
+				System.out.println(e.getClass()+e.getMessage());
+				assertTrue(true);
+			} catch (CitasNotAvailableException e) {
+				System.out.println(e.getClass()+e.getMessage());
+				assertTrue(true);
+			}		
+	}
+	
+	@Order(20)
+	@Test
+	void testFailWhenCitasNotAvailable() throws CentroNotFoundException, CitaNotFoundException, CentroExistException {
+			List<Cita> citasUsuario = citas.getCitasByEmail(paciente.getEmail());
+			Centro centro = centros.buscarCentroByNombre(paciente.getCentro());
+			centros.modificarCentro(centro.getNombre(), centro.getDireccion(), 0);
+			try {
+				citas.vacunar(citasUsuario.get(0));
+			} catch (VacunacionDateException e) {
+				e.getMessage();
+				assertTrue(true);
+			} catch (UsuarioNotFoundException e) {
+				e.getMessage();
+				assertTrue(true);
+			} catch (CentroNotFoundException e) {
+				e.getMessage();
+				assertTrue(true);
+			} catch (CitasNotAvailableException e) {
+				e.getMessage();
+				assertTrue(true);
+			}
+	}
+	
+	
+	
 	private boolean createCitasT15() {
 		JSONObject json = new JSONObject();
 		json.put("email", paciente.getEmail());

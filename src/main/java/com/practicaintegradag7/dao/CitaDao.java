@@ -39,7 +39,7 @@ public class CitaDao {
 	@Autowired
 	private CentroDao centroDao;
 	
-	public List<Cita> createCitas(Usuario u) throws CitasUsuarioNotAvailable, CitasCupoNotAvailable, CentroNotFoundException, CupoNotFoundException, CupoExistException, CitaNotFoundException {
+	public List<Cita> createCitas(Usuario u) throws CitasUsuarioNotAvailable, CitasCupoNotAvailable, CentroNotFoundException, CupoNotFoundException, CitaNotFoundException {
 		List<Cita> citasUsuario = getCitasByEmail(u.getEmail());
 		List<Cita> citas = new ArrayList<>();
 
@@ -124,7 +124,7 @@ public class CitaDao {
 		citaRepository.deleteByEmailAndFechaAndNcita(cita.getEmail(), cita.getFecha(), cita.getNcita());
 	}
 	
-	public void saveCita(Cita cita) throws CentroNotFoundException, CupoNotFoundException, CupoExistException {
+	public void saveCita(Cita cita) throws CentroNotFoundException, CupoNotFoundException {
 		
 		Centro centro = centroDao.buscarCentroByNombre(cita.getCentroNombre());
 		Cupo cupo = cupoDao.getCupoByInicialDateAndCentro(cita.getFecha(), centro.getNombre());
@@ -132,7 +132,7 @@ public class CitaDao {
 		restarCitaCupo(cupo);
 	}
 
-	public void deleteCitaModificar(Cita cita) throws CentroNotFoundException, CupoNotFoundException, CupoExistException {
+	public void deleteCitaModificar(Cita cita) throws CentroNotFoundException, CupoNotFoundException {
 		Centro centro = centroDao.buscarCentroByNombre(cita.getCentroNombre());
 		Cupo cupo = cupoDao.getCupoByInicialDateAndCentro(cita.getFecha(), centro.getNombre());
 		sumarCitaCupo(cupo);
@@ -151,7 +151,7 @@ public class CitaDao {
 		
 	}
 
-	public boolean modifyCita(Cita citaAntigua, Cita citaNueva) throws CitaNotModifiedException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
+	public boolean modifyCita(Cita citaAntigua, Cita citaNueva) throws CitaNotModifiedException, CentroNotFoundException, CupoNotFoundException {
 		
 		boolean modified = false;
 		
@@ -178,12 +178,12 @@ public class CitaDao {
 		citaRepository.deleteAll();
 	}
 	
-	public void sumarCitaCupo(Cupo cupoAntiguo) throws CupoNotFoundException, CentroNotFoundException, CupoExistException {
+	public void sumarCitaCupo(Cupo cupoAntiguo) throws CupoNotFoundException {
 		cupoAntiguo.setCitas(cupoAntiguo.getNumeroCitas()+1);
 		cupoDao.updateCupo(cupoAntiguo);
 	}
 	
-	public void restarCitaCupo(Cupo cupoAntiguo) throws CupoNotFoundException, CentroNotFoundException, CupoExistException {
+	public void restarCitaCupo(Cupo cupoAntiguo) throws CupoNotFoundException {
 		cupoAntiguo.setCitas(cupoAntiguo.getNumeroCitas()-1);
 		cupoDao.updateCupo(cupoAntiguo);
 	}

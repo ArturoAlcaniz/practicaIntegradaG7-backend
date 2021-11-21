@@ -27,5 +27,12 @@ class TestCita {
 		cita.setCentroNombre(centro);
 		assertEquals(centro.getNombre(), cita.getCentroNombre());
 	}
+	
+	@Test
+	void failWhenSetNCitaNotEquals() {
+		Cita cita = new Cita("alice@example.es", LocalDateTime.of(2021, 10, 20, 12, 00), "", (short) 1);
+		cita.setNcita((short) 2);
+		assertEquals((short)2,cita.getNcita());
+	}
 
 }
