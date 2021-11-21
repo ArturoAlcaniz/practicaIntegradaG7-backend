@@ -11,6 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,11 +53,31 @@ class TestPermController {
 			.centro(null)
 			.rol("Paciente")
 			.build();
+	private final Usuario sanitario = new UsuarioBuilder()
+			.dni("05718583J")
+			.nombre("Francisco")
+			.apellidos("Morisco Parra")
+			.email("sanitario@gmail.com")
+			.password("Iso+grupo7")
+			.centro(null)
+			.rol("sanitario")
+			.build();
+	private final Usuario administrador = new UsuarioBuilder()
+			.dni("05718583J")
+			.nombre("Francisco")
+			.apellidos("Morisco Parra")
+			.email("admin@gmail.com")
+			.password("Iso+grupo7")
+			.centro(null)
+			.rol("Administrador")
+			.build();
 	
 	@Order(1)
 	@Test
 	void insertUser() throws Exception{
 		dao.saveUsuario(usuario);
+		dao.saveUsuario(sanitario);
+		dao.saveUsuario(administrador);
 		assertTrue(true);
 	}
 	
@@ -94,12 +117,15 @@ class TestPermController {
 	}
 	
 	@Order(5)
-	@Test
-	void shouldAllowAccessInIf() throws Exception{
+	@ParameterizedTest
+	@CsvSource({"franMorisco@gmail.com,Iso+grupo7,appointment" , "franMorisco@gmail.com,Iso+grupo7,ninguno" ,
+							"sanitario@gmail.com,Iso+grupo7,appointment" , "sanitario@gmail.com,Iso+grupo7,ninguno" ,
+							"admin@gmail.com,Iso+grupo7,appointment" , "admin@gmail.com,Iso+grupo7,ninguno"})
+	void shouldAllowAccessInIf(String email, String pwd, String from) throws Exception{
 		JSONObject json = new JSONObject();
-		json.put(EMAIL, usuario.getEmail());
-		json.put(PWD,  DigestUtils.sha256Hex(("Iso+grupo7")));
-		json.put(SITE, "appointment");
+		json.put(EMAIL, email);
+		json.put(PWD,  DigestUtils.sha256Hex(pwd));
+		json.put(SITE, from);
 		mockMvc.perform( MockMvcRequestBuilders.post("/api/perms/check").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
 		assertTrue(true);
 	}
@@ -108,6 +134,8 @@ class TestPermController {
 	@Test
 	void testDelete() throws CentroNotFoundException {
 		dao.deleteUsuarioByEmail(usuario.getEmail());
+		dao.deleteUsuarioByEmail(sanitario.getEmail());
+		dao.deleteUsuarioByEmail(administrador.getEmail());
 		assertTrue(true);
 	}
 	
