@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
+import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -98,7 +98,7 @@ class TestPermController {
 	void shouldAllowAccessInIf() throws Exception{
 		JSONObject json = new JSONObject();
 		json.put(EMAIL, usuario.getEmail());
-		json.put(PWD, "Iso+grupo7");
+		json.put(PWD,  DigestUtils.sha256Hex(("Iso+grupo7")));
 		json.put(SITE, "appointment");
 		mockMvc.perform( MockMvcRequestBuilders.post("/api/perms/check").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
 		assertTrue(true);
