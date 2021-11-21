@@ -151,7 +151,7 @@ public class CitaDao {
 		
 	}
 
-	public boolean modifyCita(Cita citaAntigua, Cita citaNueva) throws CitaNotModifiedException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
+	public boolean modifyCita(Cita citaAntigua, Cita citaNueva) throws CitaNotModifiedException, CentroNotFoundException, CupoNotFoundException {
 		
 		boolean modified = false;
 		

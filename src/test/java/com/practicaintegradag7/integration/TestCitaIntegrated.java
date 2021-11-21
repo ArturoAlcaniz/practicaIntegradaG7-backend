@@ -27,10 +27,13 @@ import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitaNotFoundException;
 import com.practicaintegradag7.exceptions.CitaNotModifiedException;
+import com.practicaintegradag7.exceptions.CitasNotAvailableException;
 import com.practicaintegradag7.exceptions.ConfigurationLimitException;
 import com.practicaintegradag7.exceptions.ConfigurationTimeException;
 import com.practicaintegradag7.exceptions.CupoExistException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
+import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
+import com.practicaintegradag7.exceptions.VacunacionDateException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cita;
 import com.practicaintegradag7.model.Configuration;
@@ -486,21 +489,39 @@ class TestCitaIntegrated {
 			e.getMessage();
 		} catch (CupoNotFoundException e) {
 			e.getMessage();
-		} catch (CupoExistException e) {
-			e.getMessage();
 		}
-		
 	}
 	
 	@Test
 	@Order(18)
 	void testFailGetCitasNotFound() {
 		try {
-			citas.getCitasByEmail("");
+			citas.getCitasByEmail("noexiste");
 		} catch (CitaNotFoundException e) {
 			e.getMessage();
 			assertTrue(true);
 		}
+	}
+	
+	@Test
+	@Order(1)
+	void testFailCitasNotAvailableException() {
+			centroSinDosis.setVacunas(0);
+			try {
+				citas.vacunar(intrusa);
+			} catch (VacunacionDateException e) {
+				e.getMessage();
+				assertTrue(true);
+			} catch (UsuarioNotFoundException e) {
+				e.getMessage();
+				assertTrue(true);
+			} catch (CentroNotFoundException e) {
+				e.getMessage();
+				assertTrue(true);
+			} catch (CitasNotAvailableException e) {
+				e.getMessage();
+				assertTrue(true);
+			}
 	}
 
 	private boolean createCitasT15() {

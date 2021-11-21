@@ -84,7 +84,7 @@ public class UsuarioDao {
 		usuarioRepository.deleteByEmail(email);
 	}
 	
-	public void deleteUsuarioAndCitasByEmail(String email) throws CitaNotFoundException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
+	public void deleteUsuarioAndCitasByEmail(String email) throws CitaNotFoundException, CentroNotFoundException, CupoNotFoundException {
 		
 		List <Cita> citas = citaDao.getCitasByEmail(email);
 		for (Cita cita : citas) {
