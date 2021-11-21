@@ -68,8 +68,18 @@ class TestConfigurationIntegrated {
 	@Order(2)
 	@Test
 	void testGetConfiguration() throws Exception {
-		mockMvc.perform( MockMvcRequestBuilders.get("/api/configuracion").accept(MediaType.ALL)).andExpect(status().isOk());
+		LocalTime horaInicio = LocalTime.parse("09:00");
+		LocalTime horaFin = LocalTime.parse("10:00");
+		int citasPorFranja = 10;
+		int franjasPorDia = 2;
+		Configuration configuration = new Configuration(horaInicio, horaFin, citasPorFranja, franjasPorDia);
+		configurationDao.save(configuration);
+		
+		mockMvc.perform( MockMvcRequestBuilders.get("/api/configuration/obtener").accept(MediaType.ALL)).andExpect(status().isOk());
 		assertTrue(true);
+		
+		cupoRepository.deleteAll();
+		configurationDao.eliminarConfiguration();
 	}
 	
 	@Order(3)
