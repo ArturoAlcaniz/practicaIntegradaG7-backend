@@ -1,6 +1,7 @@
 package com.practicaintegradag7.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalTime;
@@ -65,6 +66,13 @@ class TestConfigurationIntegrated {
 	}
 	
 	@Order(2)
+	@Test
+	void testGetConfiguration() throws Exception {
+		mockMvc.perform( MockMvcRequestBuilders.get("/api/configuracion").accept(MediaType.ALL)).andExpect(status().isOk());
+		assertTrue(true);
+	}
+	
+	@Order(3)
 	@Test
 	void failWhenConfigurationNotSaved() throws Exception {
 		configurationDao.eliminarConfiguration();

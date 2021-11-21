@@ -373,6 +373,21 @@ class TestUsuario {
 				.build();
 		assertEquals(centro.getNombre(),usuario.getCentro());
 	}
+	
+	@Test
+	void failWhenSetCentroNotEquals() {
+		Usuario usuario = new UsuarioBuilder()
+				.dni("01234567A")
+				.nombre("Roberto")
+				.apellidos("Brasero Hidalgo")
+				.email("robertoBrasero@a3media.es")
+				.password("Iso+grupo7")
+				.centro(centro.getNombre())
+				.rol("paciente")
+				.build();
+		usuario.setCentro("Centro ninguno");
+		assertEquals("Centro ninguno",usuario.getCentro());
+	}
 
 	@Test
 	void encryptAndDecrypt() throws CifradoContrasenaException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {

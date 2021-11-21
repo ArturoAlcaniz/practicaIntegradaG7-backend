@@ -367,6 +367,21 @@ class TestUsuarioIntegrated {
 		assertTrue(true);
 	}
 	
+	@Order(22)
+	@Test
+	void shouldNotLoginPasswordNotEquals() {
+		JSONObject json = new JSONObject();
+		
+		json.put("email", usuario.getEmail());
+		json.put("password", "malaPassword");
+		
+		try {
+			mockMvc.perform( MockMvcRequestBuilders.post("/api/usuario/login").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isBadRequest());
+		} catch (UsuarioNotFoundException e) {
+			assertEquals("No existe un usuario con ese email y password", e.getMessage());
+		} catch (Exception e) {}
+	}
+	
 	@AfterEach
 	void after() throws CentroNotFoundException, CentroExistException {
 		usuarioDao.deleteUsuarioByEmail(userEmail);

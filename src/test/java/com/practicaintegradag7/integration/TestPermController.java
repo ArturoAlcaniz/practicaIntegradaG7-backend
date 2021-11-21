@@ -93,8 +93,6 @@ class TestPermController {
 		assertTrue(res.contains("405"));
 	}
 	
-	
-	
 	@Order(5)
 	@Test
 	void testDelete() throws CentroNotFoundException {
@@ -102,18 +100,4 @@ class TestPermController {
 		assertTrue(true);
 	}
 	
-	@Order(6)
-	@Test
-	void testCheckExists() throws Exception {
-		JSONObject json = new JSONObject();
-		json.put(EMAIL, usuario.getEmail());
-		json.put(PWD, "nada");
-		json.put(SITE, "appointment");
-		try {
-		mockMvc.perform( MockMvcRequestBuilders.post("/api/perms/check").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andReturn();
-		} catch (UsuarioNotFoundException e) {
-			assertEquals("Usuario no reconocido",e.getMessage());
-		}		
-	}
-
 }
