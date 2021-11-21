@@ -179,16 +179,13 @@ public class CitaDao {
 	}
 	
 	public void sumarCitaCupo(Cupo cupoAntiguo) throws CupoNotFoundException, CentroNotFoundException, CupoExistException {
-		Cupo cupoActualizado = new Cupo(cupoAntiguo.getFechaInicio(), cupoAntiguo.getFechaFin(), cupoAntiguo.getNumeroCitas()+1, cupoAntiguo.getCentro());
-		cupoDao.deleteCupo(cupoAntiguo);
-		cupoDao.saveCupo(cupoActualizado);
+		cupoAntiguo.setCitas(cupoAntiguo.getNumeroCitas()+1);
+		cupoDao.updateCupo(cupoAntiguo);
 	}
 	
 	public void restarCitaCupo(Cupo cupoAntiguo) throws CupoNotFoundException, CentroNotFoundException, CupoExistException {
-		
-		Cupo cupoActualizado = new Cupo(cupoAntiguo.getFechaInicio(), cupoAntiguo.getFechaFin(), cupoAntiguo.getNumeroCitas()-1, cupoAntiguo.getCentro());
-		cupoDao.deleteCupo(cupoAntiguo);
-		cupoDao.saveCupo(cupoActualizado);
+		cupoAntiguo.setCitas(cupoAntiguo.getNumeroCitas()-1);
+		cupoDao.updateCupo(cupoAntiguo);
 	}
 	
 	public boolean validarModificacion(Cita citaAntigua, Cita citaNueva) throws CitaNotModifiedException {
