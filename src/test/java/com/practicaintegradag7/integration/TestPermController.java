@@ -1,6 +1,7 @@
 package com.practicaintegradag7.integration;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
+import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
 import com.practicaintegradag7.model.Usuario;
 import com.practicaintegradag7.model.UsuarioBuilder;
 
@@ -91,11 +93,27 @@ class TestPermController {
 		assertTrue(res.contains("405"));
 	}
 	
+	
+	
 	@Order(5)
 	@Test
 	void testDelete() throws CentroNotFoundException {
 		dao.deleteUsuarioByEmail(usuario.getEmail());
 		assertTrue(true);
+	}
+	
+	@Order(6)
+	@Test
+	void testCheckExists() throws Exception {
+		JSONObject json = new JSONObject();
+		json.put(EMAIL, usuario.getEmail());
+		json.put(PWD, "nada");
+		json.put(SITE, "appointment");
+		try {
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/perms/check").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andReturn();
+		} catch (UsuarioNotFoundException e) {
+			assertEquals("Usuario no reconocido",e.getMessage());
+		}		
 	}
 
 }

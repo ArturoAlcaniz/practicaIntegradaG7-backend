@@ -507,14 +507,11 @@ class TestCitaIntegrated {
 
 	@Order(19)
 	@Test
-	void testFailWhenCitasNotAvailable() throws CentroNotFoundException, CitaNotFoundException, CentroExistException {
-			List<Cita> citasUsuario = citas.getCitasByEmail(paciente.getEmail());
-			Centro centro = centros.buscarCentroByNombre(paciente.getCentro());
-			centros.modificarCentro(centro.getNombre(), centro.getDireccion(), 0);
+	void testFailWhenCitasNotDateVacunacionEquals() throws CitaNotFoundException {
+			Cita cu = (citas.getCitasByEmail(paciente.getEmail())).get(0);
+			cu.setFecha(cu.getFecha().plusDays(3));
 			try {
-				System.out.println("vacunando");
-				citas.vacunar(citasUsuario.get(0));
-				System.out.println("vacunado");
+				citas.vacunar(cu);
 			} catch (VacunacionDateException e) {
 				System.out.println(e.getClass()+e.getMessage());
 				assertTrue(true);
@@ -526,6 +523,29 @@ class TestCitaIntegrated {
 				assertTrue(true);
 			} catch (CitasNotAvailableException e) {
 				System.out.println(e.getClass()+e.getMessage());
+				assertTrue(true);
+			}		
+	}
+	
+	@Order(20)
+	@Test
+	void testFailWhenCitasNotAvailable() throws CentroNotFoundException, CitaNotFoundException, CentroExistException {
+			List<Cita> citasUsuario = citas.getCitasByEmail(paciente.getEmail());
+			Centro centro = centros.buscarCentroByNombre(paciente.getCentro());
+			centros.modificarCentro(centro.getNombre(), centro.getDireccion(), 0);
+			try {
+				citas.vacunar(citasUsuario.get(0));
+			} catch (VacunacionDateException e) {
+				e.getMessage();
+				assertTrue(true);
+			} catch (UsuarioNotFoundException e) {
+				e.getMessage();
+				assertTrue(true);
+			} catch (CentroNotFoundException e) {
+				e.getMessage();
+				assertTrue(true);
+			} catch (CitasNotAvailableException e) {
+				e.getMessage();
 				assertTrue(true);
 			}
 	}
