@@ -107,7 +107,7 @@ public class AppointmentController{
 	}
 	
 	@PostMapping(path="/api/citas/modify")
-    public String modificarCita(@RequestBody Map<String, Object> datosCita) throws JSONException, CitaNotModifiedException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
+    public String modificarCita(@RequestBody Map<String, Object> datosCita) throws JSONException, CitaNotModifiedException, CentroNotFoundException, CupoNotFoundException {
 		JSONObject jso = new JSONObject(datosCita);
 		String fechaAntigua =  jso.getString("fechaAntigua");
 		String fechaNueva =  jso.getString("fechaNueva");
