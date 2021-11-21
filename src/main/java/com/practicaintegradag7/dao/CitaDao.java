@@ -210,7 +210,7 @@ public class CitaDao {
 		
 		if (citaAntigua.getFecha().equals(citaNueva.getFecha()))
 			throw new CitaNotModifiedException("Debe insertar una fecha distinta a la antigua");
-		else if(Short.toUnsignedInt(citaAntigua.getNcita())==1){
+		if(Short.toUnsignedInt(citaAntigua.getNcita())==1){
 			
 			Optional<Cita> opt = citaRepository.findByEmailAndNcita(citaAntigua.getEmail(), Short.parseShort("2"));
 			
@@ -219,13 +219,9 @@ public class CitaDao {
 				if (!citaNueva.getFecha().isBefore(citaSegunda.getFecha()))
 					throw new CitaNotModifiedException("La fecha de la primera cita no puede ser posterior a la segunda ("+citaSegunda.getFecha()+")");	
 			}		
-			
-			if (citaNueva.getFecha().isAfter(LocalDateTime.of(2022, 1, 10, 23, 59)))
-				throw new CitaNotModifiedException("La fecha de la primera cita no puede ser posterior al 10-1-2022");
-			
 			validado = true;
 		}
-		else if(Short.toUnsignedInt(citaAntigua.getNcita())==2){
+		if(Short.toUnsignedInt(citaAntigua.getNcita())==2){
 
 			Optional<Cita> opt = citaRepository.findByEmailAndNcita(citaAntigua.getEmail(), Short.parseShort("1"));
 			
@@ -235,15 +231,14 @@ public class CitaDao {
 					throw new CitaNotModifiedException("La fecha de la segunda cita no puede ser anterior a "
 							+ "21 dias despues de la primera ("+citaPrimera.getFecha()+")");	
 			}
-			
-			if (citaNueva.getFecha().isAfter(LocalDateTime.of(2022, 1, 31, 23, 59)))
-				throw new CitaNotModifiedException("La fecha de la segunda cita no puede ser posterior al 31-1-2022");
-			
 			validado = true;
-		
 		}
-			
+		if(Short.toUnsignedInt(citaAntigua.getNcita())==1 && citaNueva.getFecha().isAfter(LocalDateTime.of(2022, 1, 10, 23, 59)))
+			throw new CitaNotModifiedException("La fecha de la primera cita no puede ser posterior al 10-1-2022");
 		
+		if (Short.toUnsignedInt(citaAntigua.getNcita())==2 && citaNueva.getFecha().isAfter(LocalDateTime.of(2022, 1, 31, 23, 59)))
+			throw new CitaNotModifiedException("La fecha de la segunda cita no puede ser posterior al 31-1-2022");
+			
 		return validado;
 	}
 
