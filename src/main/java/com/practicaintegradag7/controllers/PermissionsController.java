@@ -28,23 +28,9 @@ public class PermissionsController {
 	private static final String[] SanitarioSites = {"listaVacunacion"};
 	private static final String[] PacienteSites = {"appointment", "modificarCita"};
 	
-	@PostMapping(path="api/perms/check")
-	public String checkPrivilegesAdmin(@RequestBody Map<String, Object> datosUsuario) throws JSONException {
-		JSONObject jso = new JSONObject(datosUsuario);
-		String code = "200";
-		String mssg = "OK";
-		
-		try {
-			String email = jso.getString(EMAIL);
-			String pwd = jso.getString(PWD);
-			String from = jso.getString("site");
-			boolean doDefault = true;
-			Usuario u = usuarioDao.getUsuarioByEmail(email);
-			checkSiteExists(from);
-			
-			if(!u.getPassword().equals(pwd)) throw new UsuarioNotFoundException("Usuario no reconocido");
-			
-			switch(u.getRol().toLowerCase()) {
+	private boolean checkPermissionsForRol(Usuario u, String from) {
+		boolean doDefault = true;
+		switch(u.getRol().toLowerCase()) {
 			case "paciente":
 				doDefault = !checkExists(PacienteSites, from);
 				break;
@@ -56,7 +42,25 @@ public class PermissionsController {
 				break;
 			default:
 				break;
-			}
+		}
+		return doDefault;
+	}
+	
+	@PostMapping(path="api/perms/check")
+	public String checkPrivilegesAdmin(@RequestBody Map<String, Object> datosUsuario) throws JSONException {
+		JSONObject jso = new JSONObject(datosUsuario);
+		String code = "200";
+		String mssg = "OK";
+		
+		try {
+			String email = jso.getString(EMAIL);
+			String pwd = jso.getString(PWD);
+			String from = jso.getString("site");
+			Usuario u = usuarioDao.getUsuarioByEmail(email);
+			checkSiteExists(from);
+			
+			if(!u.getPassword().equals(pwd)) throw new UsuarioNotFoundException("Usuario no reconocido");
+			boolean doDefault = checkPermissionsForRol(u, from);
 			
 			if(doDefault) throw new UsuarioNotFoundException("Rol " + u.getRol() + " no permitido en este sitio");
 		} catch(UsuarioNotFoundException e) {

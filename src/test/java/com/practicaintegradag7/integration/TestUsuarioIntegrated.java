@@ -410,6 +410,42 @@ class TestUsuarioIntegrated {
 		}
 	}
 	
+	@Order(24)
+	@Test
+	void failWhenEmailNotValid() {
+		try {
+			new UsuarioBuilder()
+				.dni("04718584J")
+				.nombre("Julio")
+				.apellidos("Parra Morisco")
+				.email("franMscom")
+				.password("Iso+grupo7")
+				.centro(centro.getNombre())
+				.rol("Paciente")
+				.build();
+		} catch(IllegalArgumentException e) {
+			assertEquals("Email is not valid!", e.getMessage());
+		}
+	}
+	
+	@Order(25)
+	@Test
+	void failWhenRolNotValid() {
+		try {
+			new UsuarioBuilder()
+				.dni("04718584J")
+				.nombre("Julio")
+				.apellidos("Parra Morisco")
+				.email("franMscom@hotmail.com")
+				.password("Iso+grupo7")
+				.centro(centro.getNombre())
+				.rol("NotValid")
+				.build();
+		} catch(IllegalArgumentException e) {
+			assertEquals("Rol is not valid!", e.getMessage());
+		}
+	}
+	
 	@AfterEach
 	void after() throws CentroNotFoundException, CentroExistException {
 		usuarioDao.deleteUsuarioByEmail(userEmail);

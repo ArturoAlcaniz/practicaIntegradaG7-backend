@@ -105,7 +105,7 @@ public class UsuarioController {
 		
 		Usuario usuario = usuarioDao.getUsuarioByEmail(email);
 		
-		if (usuario==null || !email.equals(usuario.getEmail()) || !password.equals(usuario.getPassword())) {
+		if (!email.equals(usuario.getEmail()) || !password.equals(usuario.getPassword())) {
 			throw new UsuarioNotFoundException("No existe un usuario con ese email y password");
 		}
 		
