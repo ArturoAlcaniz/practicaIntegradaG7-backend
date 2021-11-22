@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
@@ -181,7 +182,6 @@ class TestCentroIntegrated {
 		
 		try {
 			aux.deleteCentroWithNoUsers(prueba.getNombre());
-			aux.createCentro(prueba);
 			assertEquals(0, cupoDao.getAllCuposByCentro(prueba).size());
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -191,8 +191,10 @@ class TestCentroIntegrated {
 	
 	@Test
 	void shouldDeleteAllCentros() {
+		List<Centro> centrosCopy = aux.getAllCitas();
 		aux.deleteAllCentros();
-		assertTrue(true);
+		assertEquals(0, aux.getAllCitas().size());
+		aux.saveAll(centrosCopy);
 	}
 	
 	@Test

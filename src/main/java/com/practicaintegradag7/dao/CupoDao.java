@@ -99,6 +99,27 @@ public class CupoDao {
 		cupoRepository.saveAll(cupos);
 	}
 	
+	public void autogenerarFranjaParaCentro(Configuration configuracion, Centro centro) {
+		cupoRepository.deleteAll();
+		LocalDateTime fechaInicial = LocalDateTime.now().withHour(configuracion.getHoraInicio().getHour()).withMinute(configuracion.getHoraInicio().getMinute()).withSecond(0).withNano(0).plusDays(1);
+		LocalDateTime fechaMax = LocalDateTime.parse("2022-01-31T23:59");
+		int dif = configuracion.getHoraFin().toSecondOfDay() - configuracion.getHoraInicio().toSecondOfDay();
+		int minutesDif = (dif / 60)/configuracion.getFranjasPorDia();
+		List<Cupo> cupos = new ArrayList<>();
+		while(fechaMax.compareTo(fechaInicial)>0) {
+			LocalDateTime fechaFin = fechaInicial.plusMinutes(minutesDif);
+			Cupo cupo = new Cupo(fechaInicial, fechaFin, configuracion.getCitasPorFranja(), centro.getNombre());
+			cupos.add(cupo);
+			if(((fechaFin.getHour()*3600)+fechaFin.getMinute()*60)<(configuracion.getHoraFin().getHour()*3600+configuracion.getHoraFin().getMinute()*60)) {
+				fechaInicial = fechaFin;
+			}else {
+				fechaInicial = fechaInicial.withHour(configuracion.getHoraInicio().getHour()).withMinute(configuracion.getHoraInicio().getMinute()).withSecond(0).withNano(0).plusDays(1);
+			}
+			
+		}
+		cupoRepository.saveAll(cupos);
+	}
+	
 	public void deleteAllCupos() {
 		cupoRepository.deleteAll();
 	}

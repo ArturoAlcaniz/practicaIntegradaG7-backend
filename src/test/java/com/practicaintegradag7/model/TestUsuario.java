@@ -382,10 +382,9 @@ class TestUsuario {
 				.apellidos("Brasero Hidalgo")
 				.email("robertoBrasero@a3media.es")
 				.password("Iso+grupo7")
-				.centro(centro.getNombre())
+				.centro("Centro ninguno")
 				.rol("paciente")
 				.build();
-		usuario.setCentro("Centro ninguno");
 		assertEquals("Centro ninguno",usuario.getCentro());
 	}
 

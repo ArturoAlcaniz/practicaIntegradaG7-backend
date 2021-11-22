@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.practicaintegradag7.dao.ConfigurationDao;
 import com.practicaintegradag7.dao.CupoDao;
+import com.practicaintegradag7.exceptions.ConfigurationCitasFranjaException;
 import com.practicaintegradag7.exceptions.ConfigurationEmptyException;
 import com.practicaintegradag7.exceptions.ConfigurationLimitException;
 import com.practicaintegradag7.exceptions.ConfigurationTimeException;
@@ -30,7 +31,7 @@ public class ConfigurationController {
 	private CupoDao cupoDao;
 	
 	@PostMapping(path="/api/configuracion/create")
-	public String crearConfiguration(@RequestBody Map<String, Object> info) throws JSONException, ConfigurationLimitException, ConfigurationTimeException {
+	public String crearConfiguration(@RequestBody Map<String, Object> info) throws JSONException, ConfigurationLimitException, ConfigurationTimeException, ConfigurationCitasFranjaException {
 		JSONObject jso = new JSONObject(info);
 		int citasPorFranja = Integer.parseInt(jso.getString("citasPorFranja"));
 		int franjasPorDia = Integer.parseInt(jso.getString("franjasPorDia"));

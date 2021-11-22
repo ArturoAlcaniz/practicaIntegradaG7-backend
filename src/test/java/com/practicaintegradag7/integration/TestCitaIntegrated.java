@@ -30,6 +30,7 @@ import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitaNotFoundException;
 import com.practicaintegradag7.exceptions.CitaNotModifiedException;
 import com.practicaintegradag7.exceptions.CitasNotAvailableException;
+import com.practicaintegradag7.exceptions.ConfigurationCitasFranjaException;
 import com.practicaintegradag7.exceptions.ConfigurationLimitException;
 import com.practicaintegradag7.exceptions.ConfigurationTimeException;
 import com.practicaintegradag7.exceptions.CupoExistException;
@@ -105,7 +106,7 @@ class TestCitaIntegrated {
 	
 	@Test
 	@Order(Integer.MIN_VALUE)
-	void before() throws ConfigurationTimeException, ConfigurationLimitException, InterruptedException, CifradoContrasenaException {
+	void before() throws ConfigurationTimeException, ConfigurationLimitException, InterruptedException, CifradoContrasenaException, ConfigurationCitasFranjaException {
 		if(!clean) {
 			System.out.println(clean+"- --------------------CLEANING UP--------------------");
 			conf.eliminarConfiguration();
