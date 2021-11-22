@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -36,6 +38,7 @@ import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
 import com.practicaintegradag7.exceptions.CupoExistException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
+import com.practicaintegradag7.exceptions.UsuarioVacunadoException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Usuario;
 import com.practicaintegradag7.model.UsuarioBuilder;
@@ -329,7 +332,7 @@ class TestUsuarioIntegrated {
 	
 	@Order(18)
 	@Test 
-	void shouldEliminateUsuarioAndCitas() throws CentroExistException, CifradoContrasenaException, CentroNotFoundException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, CupoNotFoundException, CupoExistException, CitaNotFoundException, UsuarioNotFoundException {
+	void shouldEliminateUsuarioAndCitas() throws CentroExistException, CifradoContrasenaException, CentroNotFoundException, CitasUsuarioNotAvailable, CitasCupoNotAvailable, CupoNotFoundException, CupoExistException, CitaNotFoundException, UsuarioNotFoundException, UsuarioVacunadoException {
 		usuarioDao.deleteUsuarioAndCitasByEmail(usuario.getEmail());
 		assertEquals(true, citaDao.getCitasByEmail(usuario.getEmail()).isEmpty());
 	}
@@ -362,9 +365,11 @@ class TestUsuarioIntegrated {
 	
 	@Order(21)
 	@Test
-	void shouldDeleteAllUsers() {
+	void shouldDeleteAllUsers() throws CifradoContrasenaException {
+		List<Usuario> usuariosCopy = usuarioDao.getAllUsuarios();
 		usuarioDao.deleteAllUsuarios();
-		assertTrue(true);
+		assertEquals(0, usuarioDao.getAllUsuarios().size());
+		usuarioDao.saveAll(usuariosCopy);
 	}
 	
 	@Order(22)
@@ -380,6 +385,29 @@ class TestUsuarioIntegrated {
 		} catch (UsuarioNotFoundException e) {
 			assertEquals("No existe un usuario con ese email y password", e.getMessage());
 		} catch (Exception e) {}
+	}
+	
+	@Order(23)
+	@Test
+	void failWhenTryDeleteVacunados() throws CitaNotFoundException, CentroNotFoundException, CupoNotFoundException, UsuarioNotFoundException {
+		Usuario usuarioVacunado = new UsuarioBuilder()
+				.dni("04718584J")
+				.nombre("Julio")
+				.apellidos("Parra Morisco")
+				.email("franMsco@gmail.com")
+				.password("Iso+grupo7")
+				.centro(centro.getNombre())
+				.rol("Paciente")
+				.build();
+		usuarioVacunado.setPrimeraDosis(true);
+		usuarioDao.save(usuarioVacunado);
+		try {
+			usuarioDao.deleteUsuarioAndCitasByEmail(usuarioVacunado.getEmail());
+			fail("Exception expected");
+		} catch (UsuarioVacunadoException e) {
+			usuarioDao.deleteUsuarioByEmail(usuarioVacunado.getEmail());
+			assertEquals("El usuario que intentas eliminar ya se encuentra vacunado", e.getMessage());
+		}
 	}
 	
 	@AfterEach

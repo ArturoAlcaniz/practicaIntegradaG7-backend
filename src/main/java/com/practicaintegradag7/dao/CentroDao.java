@@ -103,4 +103,8 @@ public class CentroDao {
 		return centroRepository.save(centro);
 	}
 	
+	public void saveAll(List<Centro> centros) {
+		centroRepository.saveAll(centros);
+	}
+	
 }

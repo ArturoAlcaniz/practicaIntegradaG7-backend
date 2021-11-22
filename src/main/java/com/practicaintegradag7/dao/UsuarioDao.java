@@ -15,6 +15,7 @@ import com.practicaintegradag7.exceptions.UserModificationException;
 import com.practicaintegradag7.exceptions.CitaNotFoundException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
+import com.practicaintegradag7.exceptions.UsuarioVacunadoException;
 import com.practicaintegradag7.model.Cita;
 import com.practicaintegradag7.model.Usuario;
 import com.practicaintegradag7.repos.UsuarioRepository;
@@ -83,8 +84,13 @@ public class UsuarioDao {
 		usuarioRepository.deleteByEmail(email);
 	}
 	
-	public void deleteUsuarioAndCitasByEmail(String email) throws CitaNotFoundException, CentroNotFoundException, CupoNotFoundException {
+	public void deleteUsuarioAndCitasByEmail(String email) throws CitaNotFoundException, CentroNotFoundException, CupoNotFoundException, UsuarioNotFoundException, UsuarioVacunadoException {
 		
+		Usuario usuario = getUsuarioByEmail(email);
+		if(usuario.isPrimeraDosis()) {
+			throw new UsuarioVacunadoException();
+		}
+
 		List <Cita> citas = citaDao.getCitasByEmail(email);
 		for (Cita cita : citas) {
 			citaDao.deleteCitaModificar(cita);
@@ -136,6 +142,10 @@ public class UsuarioDao {
 	
 	public Usuario save(Usuario usuario) {
 		return usuarioRepository.save(usuario);
+	}
+	
+	public void saveAll(List<Usuario> usuarios) {
+		usuarioRepository.saveAll(usuarios);
 	}
 	
 	public List<Usuario> getAllByEmail(List<String> emails) throws CifradoContrasenaException {

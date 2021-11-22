@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.exceptions.CentroExistException;
-import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.model.Centro;
 
 @ExtendWith(SpringExtension.class)

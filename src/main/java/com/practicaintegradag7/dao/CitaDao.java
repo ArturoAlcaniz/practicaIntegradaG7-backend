@@ -190,42 +190,35 @@ public class CitaDao {
 	
 	public boolean validarModificacion(Cita citaAntigua, Cita citaNueva) throws CitaNotModifiedException {
 		
-		boolean validado = false;
-		
-		if (citaAntigua.getFecha().equals(citaNueva.getFecha()))
+		if (citaAntigua.getFecha().equals(citaNueva.getFecha())) {
 			throw new CitaNotModifiedException("Debe insertar una fecha distinta a la antigua");
-		else if(citaAntigua.getNcita() ==1){
-			
-			Optional<Cita> opt = citaRepository.findByEmailAndNcita(citaAntigua.getEmail(), Short.parseShort("2"));
-			
-			if (opt.isPresent()) {
-				Cita citaSegunda = opt.get();
-				if (!citaNueva.getFecha().isBefore(citaSegunda.getFecha()))
-					throw new CitaNotModifiedException("La fecha de la primera cita no puede ser posterior a la segunda ("+citaSegunda.getFecha()+")");	
-			}		
-			
-			if (citaNueva.getFecha().isAfter(LocalDateTime.of(2022, 1, 10, 23, 59)))
-				throw new CitaNotModifiedException("La fecha de la primera cita no puede ser posterior al 10-1-2022");
-			
-			validado = true;
 		}
-		else if(citaAntigua.getNcita()==2){
-
-			Optional<Cita> opt = citaRepository.findByEmailAndNcita(citaAntigua.getEmail(), Short.parseShort("1"));
-			
-			if (opt.isPresent()) {
-				Cita citaPrimera = opt.get();
-				if (!citaNueva.getFecha().isAfter(citaPrimera.getFecha().plusDays(21)))
-					throw new CitaNotModifiedException("La fecha de la segunda cita no puede ser anterior a "
-							+ "21 dias despues de la primera ("+citaPrimera.getFecha()+")");	
+		
+		Optional<Cita> opt = citaRepository.findByEmailAndNcita(citaAntigua.getEmail(), Short.parseShort("2"));
+		
+		if (citaAntigua.getNcita() == 1) {
+			if(opt.isPresent() && !citaNueva.getFecha().isBefore(opt.get().getFecha())) {
+				throw new CitaNotModifiedException("La fecha de la primera cita no puede ser posterior a la segunda ("+opt.get().getFecha()+")");
 			}
-			
-			if (citaNueva.getFecha().isAfter(LocalDateTime.of(2022, 1, 31, 23, 59)))
-				throw new CitaNotModifiedException("La fecha de la segunda cita no puede ser posterior al 31-1-2022");
-			
-			validado = true;
+			if (citaNueva.getFecha().isAfter(LocalDateTime.of(2022, 1, 10, 23, 59))) {
+				throw new CitaNotModifiedException("La fecha de la primera cita no puede ser posterior al 10-1-2022");
+			}
+			return true;
 		}
-		return validado;
+		
+		Optional<Cita> opt2 = citaRepository.findByEmailAndNcita(citaAntigua.getEmail(), Short.parseShort("1"));
+
+		if(citaAntigua.getNcita()==2){
+			if(opt2.isPresent() && !citaNueva.getFecha().isAfter(opt2.get().getFecha().plusDays(21))) {
+				throw new CitaNotModifiedException("La fecha de la segunda cita no puede ser anterior a "
+						+ "21 dias despues de la primera ("+opt2.get().getFecha()+")");
+			}
+			if (citaNueva.getFecha().isAfter(LocalDateTime.of(2022, 1, 31, 23, 59))) {
+				throw new CitaNotModifiedException("La fecha de la segunda cita no puede ser posterior al 31-1-2022");
+			}
+		}
+			
+		return true;
 	}
 
 	public void vacunar(Cita cita) throws VacunacionDateException, UsuarioNotFoundException, CentroNotFoundException, CitasNotAvailableException {

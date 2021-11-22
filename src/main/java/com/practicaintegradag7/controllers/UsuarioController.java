@@ -18,6 +18,7 @@ import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 import com.practicaintegradag7.exceptions.CitaNotFoundException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
+import com.practicaintegradag7.exceptions.UsuarioVacunadoException;
 import com.practicaintegradag7.dao.CentroDao;
 import java.util.List;
 
@@ -120,7 +121,7 @@ public class UsuarioController {
 	}
 	
 	@PostMapping(path="api/usuario/eliminar")
-	public String eliminarUsuario(@RequestBody Map<String, Object> emailJSON) throws JSONException, CitaNotFoundException, CentroNotFoundException, CupoNotFoundException {
+	public String eliminarUsuario(@RequestBody Map<String, Object> emailJSON) throws JSONException, CitaNotFoundException, CentroNotFoundException, CupoNotFoundException, UsuarioNotFoundException, UsuarioVacunadoException {
 		JSONObject jso = new JSONObject(emailJSON);
 		String emailUsuario =  jso.getString(EMAIL);
 		
