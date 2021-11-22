@@ -49,7 +49,7 @@ class TestConfigurationIntegrated {
 		configurationDao.eliminarConfiguration();
 		JSONObject json = new JSONObject();
 		json.put("horaInicio", "09:00");
-		json.put("horaFin", "10:00");
+		json.put("horaFin", "10:00"); 
 		json.put("citasPorFranja", "10");
 		json.put("franjasPorDia", "2");
 		mockMvc.perform( MockMvcRequestBuilders.post("/api/configuracion/create").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
