@@ -182,7 +182,6 @@ class TestCentroIntegrated {
 		
 		try {
 			aux.deleteCentroWithNoUsers(prueba.getNombre());
-			aux.createCentro(prueba);
 			assertEquals(0, cupoDao.getAllCuposByCentro(prueba).size());
 		} catch (Exception e) {
 			fail(e.getMessage());

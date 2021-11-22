@@ -66,9 +66,6 @@ public class PermissionsController {
 		} catch(UsuarioNotFoundException e) {
 			code = "405"; //HTTP ACCESS DENIED
 			mssg = e.getMessage();
-		} catch(JSONException e) {
-			code = "500";
-			mssg = e.getMessage();
 		} catch(IllegalArgumentException e) {
 			code = "404";
 			mssg = e.getMessage();

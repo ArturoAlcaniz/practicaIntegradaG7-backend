@@ -389,6 +389,21 @@ class TestUsuarioIntegrated {
 	
 	@Order(23)
 	@Test
+	void shouldNotLoginPasswordNotEqualsAndEmailNotEquals() {
+		JSONObject json = new JSONObject();
+		
+		json.put("email", "malEmail");
+		json.put("password", "malaPassword");
+		
+		try {
+			mockMvc.perform( MockMvcRequestBuilders.post("/api/usuario/login").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isBadRequest());
+		} catch (UsuarioNotFoundException e) {
+			assertEquals("No existe un usuario con ese email y password", e.getMessage());
+		} catch (Exception e) {}
+	}
+	
+	@Order(24)
+	@Test
 	void failWhenTryDeleteVacunados() throws CitaNotFoundException, CentroNotFoundException, CupoNotFoundException, UsuarioNotFoundException {
 		Usuario usuarioVacunado = new UsuarioBuilder()
 				.dni("04718584J")
@@ -410,7 +425,7 @@ class TestUsuarioIntegrated {
 		}
 	}
 	
-	@Order(24)
+	@Order(25)
 	@Test
 	void failWhenEmailNotValid() {
 		try {
@@ -428,7 +443,7 @@ class TestUsuarioIntegrated {
 		}
 	}
 	
-	@Order(25)
+	@Order(26)
 	@Test
 	void failWhenRolNotValid() {
 		try {

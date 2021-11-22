@@ -186,4 +186,11 @@ class TestPermController {
 		assertTrue(true);
 	}
 	
+	@Order(12)
+	@Test
+	void shouldThrowException() throws Exception{
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/perms/check").contentType(MediaType.APPLICATION_JSON).content("")).andExpect(status().is4xxClientError());
+		assertTrue(true);
+	}
+	
 }

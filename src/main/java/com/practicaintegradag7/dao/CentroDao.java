@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotEmptyException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
+import com.practicaintegradag7.exceptions.ConfigurationEmptyException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.exceptions.VacunasNoValidasException;
 import com.practicaintegradag7.model.Centro;
+import com.practicaintegradag7.model.Configuration;
 import com.practicaintegradag7.model.Usuario;
 import com.practicaintegradag7.repos.CentroRepository;
 
@@ -27,9 +29,19 @@ public class CentroDao {
 	@Autowired
 	private UsuarioDao usuarioDao;
 	
+	@Autowired
+	private ConfigurationDao configurationDao;
+	
 	public Centro createCentro(Centro centro) throws CentroExistException {
 		existeCentro(centro.getNombre());
-		return centroRepository.insert(centro);
+		Configuration configuracion;
+		try {
+			configuracion = configurationDao.obtenerConfiguration();
+			cupoDao.autogenerarFranjaParaCentro(configuracion, centro);
+			return centroRepository.insert(centro);
+		} catch (ConfigurationEmptyException e) {
+			return centroRepository.insert(centro);
+		}
 	}
 	
 	
@@ -73,7 +85,6 @@ public class CentroDao {
 
 	public void deleteAllCentros() {
 		centroRepository.deleteAll();
-		
 	}
 
 
