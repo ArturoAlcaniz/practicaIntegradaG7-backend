@@ -114,7 +114,7 @@ class TestCitaIntegrated {
 			LocalTime t1 = LocalTime.parse("08:00");
 			LocalTime t2 = LocalTime.parse("20:00");
 			int citasXfranja = 1;
-			int franjasXdia = 10;
+			int franjasXdia = 2;
 			
 			Configuration c = new Configuration(t1,t2,citasXfranja,franjasXdia);
 			conf.save(c);
@@ -383,10 +383,8 @@ class TestCitaIntegrated {
 		JSONObject json = new JSONObject();
 		json.put("email", paciente.getEmail());
 		try {
-			MvcResult aux = mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/create").
+			mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/create").
 					contentType(MediaType.APPLICATION_JSON).content(json.toString())).andReturn();
-			String res = aux.getResponse().getContentAsString();
-			System.out.println("\n\n\n-----------------------------------------------------------------------------------------"+res);
 			assertTrue(true); //Should be !res.contains(LDTFormatter.processLDT(intrusa.getFecha()))
 		}catch(Exception ex) {
 			fail(ex.getMessage());
