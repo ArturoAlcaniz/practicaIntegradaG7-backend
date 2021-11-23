@@ -1,7 +1,6 @@
 package com.practicaintegradag7.controllers;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -91,9 +90,11 @@ public class AppointmentController{
 		return mssg;
 	}
 
-	@GetMapping(path="/api/citas/obtener")
-	public List<Cita> obtenerCitas(){
-		return citaDao.getAllCitas();
+	@PostMapping(path="/api/citas/obtener")
+	public List<Cita> obtenerCitas(@RequestBody Map<String, Object> JSON) throws CitaNotFoundException{
+		JSONObject jso = new JSONObject(JSON);
+		String email =  jso.getString(EMAIL);
+		return citaDao.getCitasByEmail(email);
 	}
 	
 	@PostMapping(path="/api/citas/obtenerCuposLibres")
@@ -124,7 +125,7 @@ public class AppointmentController{
 		citaDao.modifyCita(citaAntigua, citaNueva);
 		JSONObject response = new JSONObject();
 		response.put(STATUS, "200");
-		response.put(MSSG, "Ha modificado su cita correctamente para el "+ citaNueva.getFecha());
+		response.put(MSSG, "Ha modificado su cita correctamente para el "+ LDTFormatter.processLDT(citaNueva.getFecha()));
 		
     	return response.toString();
     }
