@@ -238,7 +238,7 @@ public class CitaDao {
 			usuarioVacunar.setSegundaDosis(true);
 		}
 		usuarioDao.save(usuarioVacunar);
-		this.deleteCitaUsada(cita);
+		
 	}
 	
 	public List<Cita> findByFechaAndCentroNombre (LocalDateTime fechaMin, LocalDateTime fechaMax, String centro) {
