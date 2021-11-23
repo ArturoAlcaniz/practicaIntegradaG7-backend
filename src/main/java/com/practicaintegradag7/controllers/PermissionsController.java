@@ -69,6 +69,10 @@ public class PermissionsController {
 		} catch(IllegalArgumentException e) {
 			code = "404";
 			mssg = e.getMessage();
+		} catch(JSONException e) {
+			if(e.getMessage().contains(EMAIL) || e.getMessage().contains(PWD)) mssg = "No esta logeado";
+			else if(e.getMessage().contains("site")) mssg = "Ha intentado acceder a una página mágica";
+			else mssg = e.getMessage();
 		}
 		
 		JSONObject response = new JSONObject();

@@ -91,10 +91,14 @@ public class AppointmentController{
 	}
 
 	@PostMapping(path="/api/citas/obtener")
-	public List<Cita> obtenerCitas(@RequestBody Map<String, Object> json) throws CitaNotFoundException{
-		JSONObject jso = new JSONObject(json);
-		String email =  jso.getString(EMAIL);
-		return citaDao.getCitasByEmail(email);
+	public List<Cita> obtenerCitas(@RequestBody Map<String, Object> json) throws CitaNotFoundException, UsuarioNotFoundException{
+		try {
+			JSONObject jso = new JSONObject(json);
+			String email =  jso.getString(EMAIL);
+			return citaDao.getCitasByEmail(email);
+		}catch(JSONException e) {
+			throw new UsuarioNotFoundException("Email no encontrado, ¿se ha logeado?");
+		}
 	}
 	
 	@PostMapping(path="/api/citas/obtenerCuposLibres")
