@@ -105,8 +105,8 @@ public class CentroDao {
 		if(direccion.equals("")) throw new CentroNotFoundException("La direccion no puede estar en blanco");
 		Centro centroOld;
 		centroOld = buscarCentroByNombre(nombre);
-		deleteCentro(centroOld);
 		Centro centroNew = new Centro(nombre, direccion, vacunas);
+		deleteCentro(centroOld);
 		return createCentro(centroNew);
 	}
 	
