@@ -41,7 +41,7 @@ public class Centro implements Serializable {
 	public Centro(String nombre, String direccion, int vacunasDisponibles) {
 		
 		if(vacunasDisponibles < 0) {
-			throw new IllegalArgumentException("vacunas is not valid");
+			throw new IllegalArgumentException("El numero de vacunas debe ser mayor o igual a 0");
 		}
 
 		this.nombre = nombre;
