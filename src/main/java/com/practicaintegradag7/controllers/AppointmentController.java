@@ -200,6 +200,8 @@ public class AppointmentController{
 			String apellidos=null;
 			String dni=null;
 			String email=null;
+			boolean primeraDosis=false;
+			boolean segundaDosis=false;
 			
 			for (Usuario usuario : usuarios) {
 				if (cita.getEmail().equals(usuario.getEmail())) {
@@ -207,6 +209,8 @@ public class AppointmentController{
 					apellidos = usuario.getApellidos();
 					dni = usuario.getDniDenc();
 					email = usuario.getEmail();
+					primeraDosis=usuario.isPrimeraDosis();
+					segundaDosis=usuario.isSegundaDosis();
 					break;
 				}
 			}
@@ -217,6 +221,8 @@ public class AppointmentController{
 			citaUsuario.put("apellidos", apellidos);
 			citaUsuario.put(NCITA, cita.getNcita());
 			citaUsuario.put(EMAIL, email);
+			citaUsuario.put("primeraDosis", primeraDosis);
+			citaUsuario.put("segundaDosis", segundaDosis);
 			
 			
 			citasConUsuarios.put(citaUsuario);
