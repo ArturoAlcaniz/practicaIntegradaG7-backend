@@ -75,7 +75,7 @@ public class Usuario {
 			throw new IllegalArgumentException("Rol is not valid!");
 		}
 		
-		if (builder.getRol().equalsIgnoreCase("paciente")) {
+		if (builder.getRol().equalsIgnoreCase("paciente") || builder.getRol().equalsIgnoreCase("sanitario")) {
 			this.primeraDosis = false;
 			this.segundaDosis = false;
 		} else {
