@@ -91,8 +91,8 @@ public class AppointmentController{
 	}
 
 	@PostMapping(path="/api/citas/obtener")
-	public List<Cita> obtenerCitas(@RequestBody Map<String, Object> JSON) throws CitaNotFoundException{
-		JSONObject jso = new JSONObject(JSON);
+	public List<Cita> obtenerCitas(@RequestBody Map<String, Object> json) throws CitaNotFoundException{
+		JSONObject jso = new JSONObject(json);
 		String email =  jso.getString(EMAIL);
 		return citaDao.getCitasByEmail(email);
 	}
