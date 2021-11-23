@@ -125,7 +125,6 @@ public class CitaDao {
 	}
 	
 	public void saveCita(Cita cita) throws CentroNotFoundException, CupoNotFoundException {
-		
 		Centro centro = centroDao.buscarCentroByNombre(cita.getCentroNombre());
 		Cupo cupo = cupoDao.getCupoByInicialDateAndCentro(cita.getFecha(), centro.getNombre());
 		citaRepository.save(cita);
