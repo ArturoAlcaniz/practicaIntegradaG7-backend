@@ -140,4 +140,18 @@ class TestConfigurationIntegrated {
 		cupoRepository.deleteAll();
 		configurationDao.eliminarConfiguration();
 	}
+	
+	@Order(7)
+	@Test
+	void shouldSaveWithSameHour2() throws Exception {
+		configurationDao.eliminarConfiguration();
+		JSONObject json = new JSONObject();
+		json.put("horaInicio", "09:00");
+		json.put("horaFin", "09:00"); 
+		json.put("citasPorFranja", "10");
+		json.put("franjasPorDia", "2");
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/configuracion/create").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		cupoRepository.deleteAll();
+		configurationDao.eliminarConfiguration();
+	}
 }

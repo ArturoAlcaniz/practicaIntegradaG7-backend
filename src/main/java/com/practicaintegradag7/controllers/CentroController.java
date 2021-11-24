@@ -66,17 +66,12 @@ public class CentroController {
 		String code = "200";
 		String mssg = "OK";
 		
-		try {
-			String nombre = jso.getString("nombre");
-			String direccion = jso.getString("direccion");
-			int vacunas = jso.getInt("vacunas");
-			Centro centro = new Centro(nombre, direccion, vacunas);
-			centroDao.createCentro(centro);
-		}catch(JSONException e) {
-			code = "500";
-			mssg = e.getMessage();
-		}
-		
+		String nombre = jso.getString("nombre");
+		String direccion = jso.getString("direccion");
+		int vacunas = jso.getInt("vacunas");
+		Centro centro = new Centro(nombre, direccion, vacunas);
+		centroDao.createCentro(centro);
+
 		JSONObject response = new JSONObject();
 		response.put(STATUS, code);
 		response.put(MSSG, mssg);
