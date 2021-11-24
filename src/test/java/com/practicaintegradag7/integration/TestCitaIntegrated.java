@@ -391,7 +391,8 @@ class TestCitaIntegrated {
 		try {
 			mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/create").
 					contentType(MediaType.APPLICATION_JSON).content(json.toString())).andReturn();
-			assertTrue(true); //Should be !res.contains(LDTFormatter.processLDT(intrusa.getFecha()))
+			assertTrue(citas.getCitasByEmail(paciente.getEmail()).size()>0); //Should be !res.contains(LDTFormatter.processLDT(intrusa.getFecha()))
+			assertTrue(citas.getAllCitas().size()>0);
 		}catch(Exception ex) {
 			fail(ex.getMessage());
 		}

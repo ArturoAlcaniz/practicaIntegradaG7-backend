@@ -45,7 +45,12 @@ public class PermissionsController {
 		}
 		return doDefault;
 	}
-	
+	/**
+	 * Método para comprobar los permisos para el RBAC
+	 * @param datosUsuario los datos del usuario que intenta acceder
+	 * @return la respuesta al intento de acceso
+	 * @throws JSONException
+	 */
 	@PostMapping(path="api/perms/check")
 	public String checkPrivilegesAdmin(@RequestBody Map<String, Object> datosUsuario) throws JSONException {
 		JSONObject jso = new JSONObject(datosUsuario);
@@ -69,10 +74,6 @@ public class PermissionsController {
 		} catch(IllegalArgumentException e) {
 			code = "404";
 			mssg = e.getMessage();
-		} catch(JSONException e) {
-			if(e.getMessage().contains(EMAIL) || e.getMessage().contains(PWD)) mssg = "No esta logeado";
-			else if(e.getMessage().contains("site")) mssg = "Ha intentado acceder a una página mágica";
-			else mssg = e.getMessage();
 		}
 		
 		JSONObject response = new JSONObject();
