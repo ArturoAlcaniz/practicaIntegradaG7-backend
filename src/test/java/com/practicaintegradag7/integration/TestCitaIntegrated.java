@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
-import java.util.Random;
-
+import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
@@ -21,255 +21,573 @@ import org.springframework.http.MediaType;
 
 import com.practicaintegradag7.dao.CentroDao;
 import com.practicaintegradag7.dao.CitaDao;
+import com.practicaintegradag7.dao.ConfigurationDao;
 import com.practicaintegradag7.dao.CupoDao;
 import com.practicaintegradag7.dao.UsuarioDao;
 import com.practicaintegradag7.exceptions.CentroExistException;
 import com.practicaintegradag7.exceptions.CentroNotFoundException;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
-import com.practicaintegradag7.exceptions.CitasCupoNotAvailable;
-import com.practicaintegradag7.exceptions.CitasUsuarioNotAvailable;
+import com.practicaintegradag7.exceptions.CitaNotFoundException;
+import com.practicaintegradag7.exceptions.CitaNotModifiedException;
+import com.practicaintegradag7.exceptions.CitasNotAvailableException;
+import com.practicaintegradag7.exceptions.ConfigurationCitasFranjaException;
+import com.practicaintegradag7.exceptions.ConfigurationLimitException;
+import com.practicaintegradag7.exceptions.ConfigurationTimeException;
 import com.practicaintegradag7.exceptions.CupoExistException;
 import com.practicaintegradag7.exceptions.CupoNotFoundException;
+import com.practicaintegradag7.exceptions.UsuarioNotFoundException;
+import com.practicaintegradag7.exceptions.VacunacionDateException;
 import com.practicaintegradag7.model.Centro;
 import com.practicaintegradag7.model.Cita;
+import com.practicaintegradag7.model.Configuration;
 import com.practicaintegradag7.model.Cupo;
 import com.practicaintegradag7.model.Usuario;
 import com.practicaintegradag7.model.UsuarioBuilder;
+import com.practicaintegradag7.repos.CentroRepository;
+import com.practicaintegradag7.repos.CitaRepository;
 
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
 @TestMethodOrder(OrderAnnotation.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 class TestCitaIntegrated {
-
 	@Autowired
-	private final CitaDao citaDao = new CitaDao();
+	private ConfigurationDao conf;
 	
 	@Autowired
-	private final UsuarioDao usuarioDao = new UsuarioDao();
+	private CupoDao cupos;
 	
 	@Autowired
-	private final CupoDao cupoDao = new CupoDao();
+	private CentroDao centros;
 	
 	@Autowired
-	private final CentroDao centroDao = new CentroDao();
+	private UsuarioDao users;
+	
+	@Autowired
+	private CitaDao citas;
 	
 	@Autowired
 	private MockMvc mockMvc;
 	
-	private static Cita citaPrueba;
-	private static Cita citaPrueba2;
-	private static Cita citaPrueba3;
-	private static Cita citaPrueba4;
-	private static Cita citaPrueba5;
-	private static Usuario usuarioPrueba;
-	private static Usuario usuarioPrueba2;
-	private static Centro centroPrueba;
-	private static Cupo cupoPrueba;
+	@Autowired
+	private CitaRepository citaRepository; //Access chain violation, for testing only
 	
+	@Autowired
+	CentroRepository ax;
+	
+	private Usuario paciente = new UsuarioBuilder()
+			.dni("12345678A")
+			.nombre("PRUEBA_CITAINT")
+			.apellidos("A A")
+			.email("PRUEBACITAINT@TESTCITAINT.COM")
+			.password("Iso+grupo7")
+			.centro("HOSPITAL_PRUEBACITAINT")
+			.rol("Paciente")
+			.build();
+	private Usuario desafortunado = new UsuarioBuilder()
+			.dni("12345678A")
+			.nombre("PRUEBA_CITAINT_DES")
+			.apellidos("A A")
+			.email("DESAFORTUNADO@TESTCITAINT.COM")
+			.password("Iso+grupo7")
+			.centro("CENTROSINDOSIS_TESTCITAINT")
+			.rol("Paciente")
+			.build();
+	private Centro centropru = new Centro("HOSPITAL_PRUEBACITAINT", "CALLE_PRUEBACITAINT", 200);
+	private Centro centroSinDosis = new Centro("CENTROSINDOSIS_TESTCITAINT", "CALLE_PRUEBACITAINT", 0);
+	private boolean clean = false;
+	private Cita intrusa;
+	
+	@Test
+	@Order(Integer.MIN_VALUE)
+	void before() throws ConfigurationTimeException, ConfigurationLimitException, InterruptedException, CifradoContrasenaException, ConfigurationCitasFranjaException {
+		if(!clean) {
+			System.out.println(clean+"- --------------------CLEANING UP--------------------");
+			conf.eliminarConfiguration();
+			cupos.deleteAllCupos();
+			
+			LocalTime t1 = LocalTime.parse("08:00");
+			LocalTime t2 = LocalTime.parse("20:00");
+			int citasXfranja = 1;
+			int franjasXdia = 2;
+			
+			Configuration c = new Configuration(t1,t2,citasXfranja,franjasXdia);
+			conf.save(c);
+			
+			paciente.encryptDNI();
+			desafortunado.encryptDNI();
+			centropru = centros.save(centropru);
+			centroSinDosis = centros.save(centroSinDosis);
+			paciente = users.save(paciente);
+			desafortunado = users.save(desafortunado);
+			
+			cupos.autogenerarFranjas(c);
+
+			this.clean = true;
+		}
+		assertTrue(clean);
+	}
+	
+	@Test
 	@Order(1)
-	@Test
-	void before() {
-		List<Usuario> usuarios = usuarioDao.getAllUsuarios();
-		for(int i=0; i<usuarios.size(); i++) {
-			usuarioDao.deleteUsuarioByDni(usuarios.get(i).getDni());
-		}
-		cupoDao.getAllCupos().forEach((p) -> { try {
-			cupoDao.deleteCupo(p);
-		} catch (CupoNotFoundException e) {
-		} });
-		Random random = new Random();
-		centroPrueba = new Centro("Centro Prueba Citas "+random.nextInt(100), "Calle 1", 1);
+	void testCrearCitas() {
+		JSONObject json = new JSONObject();
+		json.put("email", paciente.getEmail());
 		try {
-			centroDao.createCentro(centroPrueba);
-		} catch (CentroExistException e1) {
-			fail("CentroExistException not expected");
+			MvcResult aux = mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/create").
+					contentType(MediaType.APPLICATION_JSON).content(json.toString())).andReturn();
+			String res = aux.getResponse().getContentAsString();
+			assertTrue(res.contains("200"));
+		}catch(Exception ex) {
+			fail(ex.getMessage());
 		}
 	}
 	
+	@Test
 	@Order(2)
-	@Test
-	void failWhenNotUsuariosAvailable() throws CifradoContrasenaException {
+	void testFailCrearCitas() {
+		JSONObject json = new JSONObject();
+		json.put("email", "nonsense@shouldfail.com");
 		try {
-			citaDao.createCita();
-		} catch (CitasUsuarioNotAvailable e) {
-			assertEquals("Todos los usuarios tienen el maximo de citas", e.getMessage());
-		} catch (CitasCupoNotAvailable e) {
-			fail("CitasUsuarioNotAvailable expected");
+			citas.getCitasByEmail("nonsense@shouldfail.com");
+		}catch(CitaNotFoundException e) {
+			assertEquals("Este usuario no tiene citas", e.getMessage());
+		}
+		
+		try {
+			MvcResult aux = mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/create").
+					contentType(MediaType.APPLICATION_JSON).content(json.toString())).andReturn();
+			String res = aux.getResponse().getContentAsString();
+			assertTrue(res.contains("500"));
+		}catch(Exception ex) {
+			fail(ex.getMessage());
 		}
 	}
 	
+	@Test
 	@Order(3)
-	@Test
-	void failWhenNotCuposAvailable() throws CifradoContrasenaException {
-		Random random = new Random();
-		String dni = random.nextInt(10)+"0"+random.nextInt(10)+"2"+random.nextInt(10)+"1"+random.nextInt(10)+"1"+"A";
-		usuarioPrueba = new UsuarioBuilder()
-				.dni(dni)
-				.nombre("Roberto")
-				.apellidos("Brasero Hidalgo")
-				.email("robertoBrasero@a3media.es")
-				.password("Iso+grupo7")
-				.centro(centroPrueba)
-				.rol("paciente")
-				.build();
+	void testGetCitas() {
+		JSONObject json = new JSONObject();
 		try {
-			usuarioPrueba = usuarioDao.saveUsuario(usuarioPrueba);
-			citaDao.createCita();
-		} catch (CitasUsuarioNotAvailable e) {
-			fail("CitasCupoNotAvailable expected");
-		} catch (CitasCupoNotAvailable e) {
-			assertEquals("No hay cupos disponibles", e.getMessage());
-		} catch (CifradoContrasenaException e) {
-			fail("CitasCupoNotAvailable expected");
+			json.put("email", paciente.getEmail());
+			MvcResult aux = mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/obtener").
+					contentType(MediaType.APPLICATION_JSON).content(json.toString())).andReturn();
+			String res = aux.getResponse().getContentAsString();
+			assertTrue(res.contains(paciente.getEmail()));
+		}catch(Exception ex) {
+			fail(ex.getMessage());
 		}
 	}
-
+	
+	@Test
 	@Order(4)
-	@Test
-	void shouldSaveCita() throws CifradoContrasenaException {
-		cupoPrueba = new Cupo(LocalDateTime.of(2022, 10, 20, 12, 00), LocalDateTime.of(2022, 10, 20, 12, 00).plusMinutes(15), 10, centroPrueba);
+	void testGetCuposLibres() {
+		JSONObject json = new JSONObject();
+		LocalDateTime tomorrow = LocalDateTime.now().plusDays(1);
+		json.put("fechaSeleccionada", tomorrow.toString().substring(0, tomorrow.toString().indexOf("T")));
+		json.put("centro", centropru.getNombre());
 		try {
-			cupoPrueba = cupoDao.saveCupo(cupoPrueba);
-			citaPrueba = citaDao.createCita();
-		} catch (CitasUsuarioNotAvailable e) {
-			fail("CitasUsuarioNotAvailable not expected");
-		} catch (CitasCupoNotAvailable e) {
-			fail("CitasCuposNotAvailable not expected");
-		} catch (CentroNotFoundException e) {
-			fail("CentroNotFoundException not expected");
-		} catch (CupoExistException e) {
-			fail("CupoExistException not expected");
+			MvcResult aux = mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/obtenerCuposLibres").
+					contentType(MediaType.APPLICATION_JSON).content(json.toString())).andReturn();
+			String res = aux.getResponse().getContentAsString();
+			assertTrue(res.contains(centropru.getNombre()));
+		}catch(Exception ex) {
+			fail(ex.getMessage());
 		}
 	}
 	
+	@Test
 	@Order(5)
-	@Test
-	void findAllCitas() {
-		Assertions.assertTrue(citaDao.getAllCitas().size() > 0);
-	}
-	
-	@Order(6)
-	void failWhenCreateMoreThan2Citas() {
+	void testModifyCita() {
+		JSONObject json = new JSONObject();
 		try {
-			citaDao.createCita();
-			citaDao.createCita();
-		} catch (CitasUsuarioNotAvailable e) {
-			assertTrue(true);
-		} catch (CitasCupoNotAvailable e) {
-			fail("CitasCupoNotAvailbale not expected");
+			List<Cita> lcitas = citas.getCitasByEmail(paciente.getEmail());
+			Cita antigua = lcitas.get(1);
+			json.put("fechaAntigua", antigua.getFecha().toString());
+			antigua.setFecha(antigua.getFecha().plusDays(2));
+			json.put("fechaNueva", antigua.getFecha().toString());
+			json.put("email", paciente.getEmail());
+			json.put("centro", paciente.getCentro());
+			json.put("ncita", "2");
+			
+			MvcResult aux = mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/modify").
+					contentType(MediaType.APPLICATION_JSON).content(json.toString())).andReturn();
+			String res = aux.getResponse().getContentAsString();
+			assertTrue(res.contains("200"));
+		}catch(Exception ex) {
+			fail(ex.getMessage());
 		}
 	}
 	
+	@Test
+	@Order(6)
+	void testFailModifyCitaSameDate() {
+		JSONObject json = new JSONObject();
+		try {
+			List<Cita> lcitas = citas.getCitasByEmail(paciente.getEmail());
+			Cita antigua = lcitas.get(1);
+			json.put("fechaAntigua", antigua.getFecha().toString());
+			json.put("fechaNueva", antigua.getFecha().toString());
+			json.put("email", paciente.getEmail());
+			json.put("centro", paciente.getCentro());
+			json.put("ncita", "2");
+			Assertions.assertThrows(org.springframework.web.util.NestedServletException.class, () ->
+				mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/modify").contentType(MediaType.APPLICATION_JSON).
+					content(json.toString())));
+		}catch(Exception ex) {
+			fail(ex.getMessage());
+		}
+	}
+	
+	@Test
 	@Order(7)
-	@Test
-	void zeroCitas() {
-		citaDao.deleteCita(citaPrueba);
-		Assertions.assertEquals(0, citaDao.getCitasByDni(citaPrueba.getDni()).size());
+	void testFailModifyCitaFirstDateAfterSecondOne() {
+		JSONObject json = new JSONObject();
+		try {
+			List<Cita> lcitas = citas.getCitasByEmail(paciente.getEmail());
+			Cita primera = lcitas.get(0);
+			Cita segunda = lcitas.get(1);
+			
+			json.put("fechaAntigua", primera.getFecha().toString());
+			json.put("fechaNueva", segunda.getFecha().plusDays(5).toString());
+			json.put("email", paciente.getEmail());
+			json.put("centro", paciente.getCentro());
+			json.put("ncita", "1");
+			
+			Assertions.assertThrows(org.springframework.web.util.NestedServletException.class, () ->
+			mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/modify").contentType(MediaType.APPLICATION_JSON).
+				content(json.toString())));
+		}catch(Exception ex) {
+			fail(ex.getMessage());
+		}
 	}
 	
+	@Test
 	@Order(8)
-	@Test
-	void validSaveThenReturn200() throws Exception {
-		mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/create").accept(MediaType.ALL)).andExpect(status().isOk());
+	void testFailModifyCitaFirstDateLimitSurpassed() {
+		JSONObject json = new JSONObject();
+		try {
+			List<Cita> lcitas = citas.getCitasByEmail(paciente.getEmail());
+			Cita primera = lcitas.get(0);
+			
+			LocalDateTime surpassed = LocalDateTime.of(2022, 1, 11, 23, 59);
+			
+			json.put("fechaAntigua", primera.getFecha().toString());
+			json.put("fechaNueva", surpassed.toString());
+			json.put("email", paciente.getEmail());
+			json.put("centro", paciente.getCentro());
+			json.put("ncita", "1");
+			
+			Assertions.assertThrows(org.springframework.web.util.NestedServletException.class, () ->
+			mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/modify").contentType(MediaType.APPLICATION_JSON).
+				content(json.toString())));
+		}catch(Exception ex) {
+			fail(ex.getMessage());
+		}
 	}
 	
+	@Test
 	@Order(9)
-	@Test
-	void findCitaByDni() {		
-		assertTrue(citaDao.getCitasByDni(citaPrueba.getDni()).size() > 0);
+	void testFailModifyCitaSecondDateLessThan21DaysAwayFromFirst() {
+		JSONObject json = new JSONObject();
+		try {
+			List<Cita> lcitas = citas.getCitasByEmail(paciente.getEmail());
+			Cita primera = lcitas.get(0);
+			
+			json.put("fechaAntigua", primera.getFecha().toString());
+			json.put("fechaNueva", primera.getFecha().plusDays(10).toString());
+			json.put("email", paciente.getEmail());
+			json.put("centro", paciente.getCentro());
+			json.put("ncita", "2");
+			
+			Assertions.assertThrows(org.springframework.web.util.NestedServletException.class, () ->
+			mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/modify").contentType(MediaType.APPLICATION_JSON).
+				content(json.toString())));
+		}catch(Exception ex) {
+			fail(ex.getMessage());
+		}
 	}
 	
+	@Test
 	@Order(10)
-	@Test
-	void checkCentroCita() {
-		assertEquals(citaDao.getCitasByDni(citaPrueba.getDni()).get(0).getCentroNombre(), centroPrueba.getNombre());
+	void testFailModifyCitaSecondDateLimitSurpassed() {
+		JSONObject json = new JSONObject();
+		try {
+			List<Cita> lcitas = citas.getCitasByEmail(paciente.getEmail());
+			Cita segunda = lcitas.get(1);
+			
+			LocalDateTime surpassed = LocalDateTime.of(2022, 3, 1, 23, 59);
+			
+			json.put("fechaAntigua", segunda.getFecha().toString());
+			json.put("fechaNueva", surpassed.toString());
+			json.put("email", paciente.getEmail());
+			json.put("centro", paciente.getCentro());
+			json.put("ncita", "1");
+			
+			Assertions.assertThrows(org.springframework.web.util.NestedServletException.class, () ->
+			mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/modify").contentType(MediaType.APPLICATION_JSON).
+				content(json.toString())));
+		}catch(Exception ex) {
+			fail(ex.getMessage());
+		}
 	}
 	
+	@Test
 	@Order(11)
-	@Test
-	void findUsuarioWithCitasDifferentDni() throws CifradoContrasenaException, CitasUsuarioNotAvailable, CitasCupoNotAvailable {
-		Random random = new Random();
-		String dni = random.nextInt(10)+"0"+random.nextInt(10)+"2"+random.nextInt(10)+"1"+random.nextInt(10)+"1"+"A";
-		usuarioPrueba2 = new UsuarioBuilder()
-				.dni(dni)
-				.nombre("Roberto")
-				.apellidos("Brasero Hidalgo")
-				.email("robertoBrasero@a3media.es")
-				.password("Iso+grupo7")
-				.centro(centroPrueba)
-				.rol("paciente")
-				.build();
-		usuarioPrueba2 = usuarioDao.saveUsuario(usuarioPrueba2);
-		citaPrueba3 = citaDao.createCita();
-		citaPrueba4 = citaDao.createCita();
-		citaPrueba5 = citaDao.createCita();
-		assertTrue(citaDao.getAllCitas().size() > 2);
-
+	void testEliminarCita() {
+		JSONObject json = new JSONObject();
+		try {
+			List<Cita> lcitas = citas.getCitasByEmail(paciente.getEmail());
+			Cita segunda = lcitas.get(1);
+			
+			json.put("fecha", segunda.getFecha().toString());
+			json.put("email", paciente.getEmail());
+			json.put("centro", paciente.getCentro());
+			json.put("ncita", "2");
+			
+			MvcResult aux = mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/delete").
+					contentType(MediaType.APPLICATION_JSON).content(json.toString())).andReturn();
+			String res = aux.getResponse().getContentAsString();
+			assertTrue(res.contains("200"));
+		}catch(Exception ex) {
+			fail(ex.getMessage());
+		}
 	}
 	
-	@Order(12)
 	@Test
-	void deleteCitasPrueba() {
-		if(citaPrueba3 != null) {
-			citaDao.deleteCita(citaPrueba3);
+	@Order(12)
+	void testGetCitasFechaCentro() {
+		JSONObject json = new JSONObject();
+		try {
+			List<Cita> lcitas = citas.getCitasByEmail(paciente.getEmail());
+			Cita unica = lcitas.get(0); //la segunda fue borrada en el anterior metodo
+			String fecha = unica.getFecha().toString().substring(0, unica.getFecha().toString().indexOf("T"));
+			
+			json.put("fecha", fecha);
+			json.put("centro", paciente.getCentro());
+			
+			MvcResult aux = mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/obtenerPorFechaAndCentro").
+					contentType(MediaType.APPLICATION_JSON).content(json.toString())).andReturn();
+			String res = aux.getResponse().getContentAsString();
+			assertTrue(res.contains(fecha));
+		}catch(Exception ex) {
+			fail(ex.getMessage());
 		}
-
-		if(citaPrueba4 != null) {
-			citaDao.deleteCita(citaPrueba4);
-		}
-
-		if(citaPrueba5 != null) {
-			citaDao.deleteCita(citaPrueba5);
-		}
-		assertTrue(true);
 	}
+	
+
 	
 	@Order(13)
 	@Test
-	void deleteCitasPrueba2() {
-		if(citaPrueba != null) {
-			citaDao.deleteCita(citaPrueba);
+	void testRegenerateSegundaCitaWithATwist() throws Exception {
+		twist();
+		JSONObject json = new JSONObject();
+		json.put("email", paciente.getEmail());
+		try {
+			mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/create").
+					contentType(MediaType.APPLICATION_JSON).content(json.toString())).andReturn();
+			assertTrue(true); //Should be !res.contains(LDTFormatter.processLDT(intrusa.getFecha()))
+		}catch(Exception ex) {
+			fail(ex.getMessage());
 		}
-		if(citaPrueba2 != null) {
-			citaDao.deleteCita(citaPrueba2);
-		}
-		assertTrue(true);
+	}
+	
+	/**
+	 * Genera una cita intrusa 21 dias despues de la primera que tiene el Usuario "paciente"
+	 * @throws CitaNotFoundException 
+	 * @throws CupoNotFoundException 
+	 * @throws CentroNotFoundException 
+	 */
+	private void twist() throws CitaNotFoundException, CentroNotFoundException, CupoNotFoundException {
+		List<Cita> citaAsign = citas.getCitasByEmail(paciente.getEmail());
+		Cita primera = citaAsign.get(0);
+		
+		intrusa = new Cita(desafortunado.getEmail(), primera.getFecha().plusDays(21), centropru.getNombre(), (short)1);
+		citas.saveCita(intrusa);
+		// citaRepository.save(intrusa);
 	}
 	
 	@Order(14)
 	@Test
-	void deleteUsuarioPrueba() {
-		if(usuarioPrueba != null) {
-			usuarioDao.deleteUsuarioByDni(usuarioPrueba.getDni());
+	void shouldVacunarPrimeraDosis() throws Exception {
+		rigCitas();
+		JSONObject json = new JSONObject();
+		try {
+			json.put("email", paciente.getEmail());
+			json.put("ncita", "1");
+			
+			MvcResult aux = mockMvc.perform( MockMvcRequestBuilders.post("/api/marcarVacunacion").
+					contentType(MediaType.APPLICATION_JSON).content(json.toString())).andReturn();
+			String res = aux.getResponse().getContentAsString();
+			assertTrue(res.contains("200"));
+		}catch(Exception ex) {
+			fail(ex.getMessage());
 		}
-		if(usuarioPrueba2 != null) {
-			usuarioDao.deleteUsuarioByDni(usuarioPrueba2.getDni());
-		}
-		assertTrue(true);
+	}
+	
+	private void rigCitas() throws CitaNotFoundException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
+		LocalDateTime t = LocalDateTime.now();
+		Cita citaP = citas.findByEmailAndNcita(paciente.getEmail(), (short)1);
+		Cita citaS = citas.findByEmailAndNcita(paciente.getEmail(), (short)2);
+		Cita citades = citas.findByEmailAndNcita(desafortunado.getEmail(), (short)1);
+		Cupo cup = cupos.getCupoByInicialDateAndCentro(citaP.getFecha(), centropru.getNombre());
+		citas.deleteCita(citaS);
+		citas.deleteCita(citaP);
+		citaRepository.deleteByEmailAndFechaAndNcita(citades.getEmail(), citades.getFecha(), citades.getNcita());
+		cup.setFechaInicio(t);
+		citaP.setFecha(t);
+		citaS.setFecha(t);
+		citades.setFecha(t);
+		citaRepository.save(citaP);
+		citaRepository.save(citaS);
+		citaRepository.save(citades);
+		cupos.saveCupo(cup);
 	}
 	
 	@Order(15)
 	@Test
-	void after() {
+	void shouldVacunarSegundaDosis() throws Exception {
+		JSONObject json = new JSONObject();
 		try {
-			if(centroPrueba != null) { 
-				centroDao.deleteCentro(centroPrueba);
+			json.put("email", paciente.getEmail());
+			json.put("ncita", "2");
+			
+			MvcResult aux = mockMvc.perform( MockMvcRequestBuilders.post("/api/marcarVacunacion").
+					contentType(MediaType.APPLICATION_JSON).content(json.toString())).andReturn();
+			String res = aux.getResponse().getContentAsString();
+			assertTrue(res.contains("200"));
+		}catch(Exception ex) {
+			fail(ex.getMessage());
+		}
+	}
+	
+	@Order(16)
+	@Test
+	void failWhenDosisNotAvailable() throws Exception {
+		if(createCitasT15()) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("email", desafortunado.getEmail());
+				json.put("ncita", "1");
+
+				MvcResult aux = mockMvc.perform( MockMvcRequestBuilders.post("/api/marcarVacunacion").
+						contentType(MediaType.APPLICATION_JSON).content(json.toString())).andReturn();
+				String res = aux.getResponse().getContentAsString();
+				assertTrue(res.contains("500"));
+			}catch(Exception ex) {
+				fail(ex.getMessage());
 			}
-			if(cupoPrueba != null) {
-				cupoDao.deleteCupo(cupoPrueba);
-			}
+		}
+	}
+	
+	@Order(17)
+	@Test
+	void testFailModifyCitaSecondDateLessThan21DaysAwayFromFirstFromDao() throws CitaNotFoundException {
+		
+		List<Cita> lcitas = citas.getCitasByEmail(paciente.getEmail());
+		Cita primera = lcitas.get(0);
+		
+		try {
+			citas.modifyCita(primera, primera);
+		} catch (CitaNotModifiedException e) {
+			e.getMessage();
+			assertTrue(true);
 		} catch (CentroNotFoundException e) {
-			fail("CentroNotFoundException not expected");
+			e.getMessage();
 		} catch (CupoNotFoundException e) {
-			fail("CupoNotFoundException not expected");
+			e.getMessage();
+		}
+	}
+	
+	@Order(18)
+	@Test
+	void testFailWhenPacienteHasZeroCitas() {
+		try {
+			List<Cita> lcitas = citas.getCitasByEmail("noexiste");
+			if (lcitas.size()<1) throw new CitaNotFoundException("Este usuario no tiene citas");
+		} catch (CitaNotFoundException e) {
+			assertEquals("Este usuario no tiene citas",e.getMessage());
 		}
 	}
 
+	@Order(19)
+	@Test
+	void testFailWhenCitasNotDateVacunacionEquals() throws CitaNotFoundException {
+			Cita cu = (citas.getCitasByEmail(paciente.getEmail())).get(0);
+			cu.setFecha(cu.getFecha().plusDays(3));
+			try {
+				citas.vacunar(cu);
+			} catch (VacunacionDateException e) {
+				System.out.println(e.getClass()+e.getMessage());
+				assertTrue(true);
+			} catch (UsuarioNotFoundException e) {
+				System.out.println(e.getClass()+e.getMessage());
+				assertTrue(true);
+			} catch (CentroNotFoundException e) {
+				System.out.println(e.getClass()+e.getMessage());
+				assertTrue(true);
+			} catch (CitasNotAvailableException e) {
+				System.out.println(e.getClass()+e.getMessage());
+				assertTrue(true);
+			}		
+	}
+	
+	@Order(20)
+	@Test
+	void testFailWhenCitasNotAvailable() throws CentroNotFoundException, CitaNotFoundException, CentroExistException {
+			List<Cita> citasUsuario = citas.getCitasByEmail(paciente.getEmail());
+			Centro centro = centros.buscarCentroByNombre(paciente.getCentro());
+			centros.modificarCentro(centro.getNombre(), centro.getDireccion(), 0);
+			try {
+				citas.vacunar(citasUsuario.get(0));
+			} catch (VacunacionDateException e) {
+				e.getMessage();
+				assertTrue(true);
+			} catch (UsuarioNotFoundException e) {
+				e.getMessage();
+				assertTrue(true);
+			} catch (CentroNotFoundException e) {
+				e.getMessage();
+				assertTrue(true);
+			} catch (CitasNotAvailableException e) {
+				e.getMessage();
+				assertTrue(true);
+			}
+	}
+	
+	
+	
+	private boolean createCitasT15() {
+		JSONObject json = new JSONObject();
+		json.put("email", paciente.getEmail());
+		try {
+			MvcResult aux = mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/create").
+					contentType(MediaType.APPLICATION_JSON).content(json.toString())).andReturn();
+			String res = aux.getResponse().getContentAsString();
+			return res.contains("200");
+		}catch(Exception ex) {
+			System.out.println("SETUP ERROR TEST N15: " + ex.getMessage());
+			return false;
+		}
+	}
+	
+	@Order(Integer.MAX_VALUE)
+	@Test
+	void after() {
+			citas.deleteAllCitas();
+			conf.eliminarConfiguration();
+			cupos.deleteAllCupos();
+			
+			ax.deleteByNombre(centropru.getNombre());
+			ax.deleteByNombre(centroSinDosis.getNombre());
+			
+			users.deleteUsuarioByEmail(paciente.getEmail());
+			users.deleteUsuarioByEmail(desafortunado.getEmail());
+			assertTrue(true);
+	}
 }

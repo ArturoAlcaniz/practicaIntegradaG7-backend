@@ -5,10 +5,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.persistence.Column;
-import javax.persistence.Id;
-
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.practicaintegradag7.exceptions.CifradoContrasenaException;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -27,10 +27,16 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+
 @Document(collection = "Usuario")
 public class Usuario {
-
+	
 	@Id
+	@Column(name = "email")
+	private String email;
+	
 	@Column(name = "dni")
 	private String dni;
 	
@@ -39,9 +45,6 @@ public class Usuario {
 	
 	@Column(name = "apellidos")
 	private String apellidos;
-	
-	@Column(name = "email")
-	private String email;
 	
 	@Column(name = "primeraDosis")
 	private boolean primeraDosis;
@@ -53,15 +56,16 @@ public class Usuario {
 	private String password;
 	
 	@Column(name = "centro")
-	private Centro centro;
+	private String centro;
 	
 	@Column(name = "rol")
 	private String rol;
 	
-	Usuario() {
-		
-	}
-	
+	@Transient
+	@JsonSerialize
+	@JsonProperty("dniDenc")
+	private String dniDenc;
+
 	Usuario(UsuarioBuilder builder){
 		if (!validateEmail(builder.getEmail())) {
 			throw new IllegalArgumentException("Email is not valid!");
@@ -71,7 +75,7 @@ public class Usuario {
 			throw new IllegalArgumentException("Rol is not valid!");
 		}
 		
-		if (builder.getRol().equalsIgnoreCase("paciente")) {
+		if (builder.getRol().equalsIgnoreCase("paciente") || builder.getRol().equalsIgnoreCase("sanitario")) {
 			this.primeraDosis = false;
 			this.segundaDosis = false;
 		} else {
@@ -80,6 +84,7 @@ public class Usuario {
 		}
 		
 		this.dni = builder.getDni();
+		
 		this.nombre = builder.getNombre();
 		this.apellidos = builder.getApellidos();
 		this.email = builder.getEmail();
@@ -87,6 +92,8 @@ public class Usuario {
 		this.centro = builder.getCentro();
 		this.rol = builder.getRol().toLowerCase();
 	}
+	
+	public Usuario() {}
 	
 	public void hashPassword() {
 		this.password = DigestUtils.sha256Hex(password);
@@ -102,7 +109,7 @@ public class Usuario {
 	private boolean validateRol(String rol) {
 		boolean validez = false;
 		
-		if (rol.equalsIgnoreCase("administrador") || rol.equalsIgnoreCase("sanitario") || rol.equalsIgnoreCase("paciente")) 
+		if (rol.equalsIgnoreCase("Administrador") || rol.equalsIgnoreCase("Sanitario") || rol.equalsIgnoreCase("Paciente")) 
 			validez = true;
 		
 		return validez;
@@ -119,9 +126,10 @@ public class Usuario {
 		
 		try {
 			StringBuilder builder = new StringBuilder();
-			builder.append(this.nombre);
+			builder.append(this.email.substring(0, this.email.indexOf("@")));
 			if(builder.toString().length() < 16)
 				while(builder.toString().length() < 16) builder.append('a');
+			builder.setLength(16);
 			String flag = "a";
 			String keyS = builder.toString();
 	        Key aesKey = new SecretKeySpec(keyS.getBytes(), "AES");
@@ -171,16 +179,17 @@ public class Usuario {
 	}
 	
 	public void decryptDNI() throws CifradoContrasenaException {
-		String pwd = this.dni.substring(1);
+		String nonsense = this.dni.substring(1);
 		String decyph;
 		
-		byte[] bytes = Base64.getDecoder().decode(pwd.getBytes());
+		byte[] bytes = Base64.getDecoder().decode(nonsense.getBytes());
 		
 		try {
 			StringBuilder builder = new StringBuilder();
-			builder.append(this.nombre);
+			builder.append(this.email.substring(0, this.email.indexOf("@")));
 			if(builder.toString().length() < 16)
 				while(builder.toString().length() < 16) builder.append('a');
+			builder.setLength(16);
 			String keyS = builder.toString();
 			Key aesKey = new SecretKeySpec(keyS.getBytes(), "AES");
 			AlgorithmParameterSpec gcmIv = new GCMParameterSpec(128, bytes, 0, 1);
@@ -195,7 +204,7 @@ public class Usuario {
 		
 		decyph = decypher(decyph, 3);
 		
-		this.dni = decyph;
+		this.dniDenc = decyph;
 	}
 	
 	private static String decypher(String og, int n) {
@@ -217,23 +226,7 @@ public class Usuario {
 		if((!lowercase && c > 90) || (lowercase && c > 122)) c += 26;
 		return m1 + c + m2;
 	}
-
-	public String getDni() {
-		return dni;
-	}
-
-	public Centro getCentro() {
-		return centro;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPrimeraDosis(boolean b) {
-		primeraDosis = b;
-	}
-
+	
 	public boolean isPrimeraDosis() {
 		return primeraDosis;
 	}
@@ -242,8 +235,12 @@ public class Usuario {
 		return segundaDosis;
 	}
 
-	public void setSegundaDosis(boolean b) {
-		segundaDosis = b;
+	public String getEmail() {
+		return email;
+	}
+
+	public String getDni() {
+		return dni;
 	}
 
 	public String getNombre() {
@@ -254,12 +251,42 @@ public class Usuario {
 		return apellidos;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getPassword() {
+		return password;
+	}
+
+	public String getCentro() {
+		return centro;
 	}
 
 	public String getRol() {
 		return rol;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public void setPrimeraDosis(boolean primeraDosis) {
+		this.primeraDosis = primeraDosis;
+	}
+
+	public void setSegundaDosis(boolean segundaDosis) {
+		this.segundaDosis = segundaDosis;
+	}
+
+	public void setRol(String rol) {
+		this.rol = rol;
+	}
+
+	public String getDniDenc() {
+		return dniDenc;
+	}
+
+
+
+	public void setDni(String dni) {
+		this.dni = dni;
 	}
 	
 }

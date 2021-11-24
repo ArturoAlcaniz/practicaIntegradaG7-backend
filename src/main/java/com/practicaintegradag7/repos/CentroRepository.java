@@ -13,4 +13,5 @@ import com.practicaintegradag7.model.Centro;
 public interface CentroRepository extends MongoRepository<Centro, Serializable>{
 	@Query("{ 'nombre': ?0}")
 	Optional<Centro> findByNombre(String centro);
+	public void deleteByNombre(String nombre);
 }

@@ -1,0 +1,12 @@
+# Maven
+# Build your Java project and run tests with Apache Maven.
+steps:
+- task: Maven@3
+  displayName: Testing
+  inputs:
+    codeCoverageToolOption: JaCoCo
+    jdkVersionOption: 1.8
+    mavenOptions: '-Xmx4024m'
+- task: SonarCloudPublish@1
+  inputs:
+    pollingTimeoutSec: '300'

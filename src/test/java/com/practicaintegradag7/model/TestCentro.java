@@ -58,7 +58,7 @@ class TestCentro {
 	
 	@Test
 	void failWhenCentroCitasNotEquals() {
-		Cita cita = new Cita("01234567A", LocalDateTime.of(2021, 10, 20, 12, 00), "");
+		Cita cita = new Cita("01234567A", LocalDateTime.of(2021, 10, 20, 12, 00), "", (short) 1);
 		Set<Cita> citas = new HashSet<Cita>();
 		citas.add(cita);
 		Centro centro = new Centro("Centro 1", "Calle 1", 1);
