@@ -80,7 +80,7 @@ public class UsuarioController {
 	/**
 	 * Método que permite modificar un usuario
 	 * @param datosUsuario del usuario que se quiere modificar
-	 * @return mensaje de respuesta si todo ha salido bien o mal
+	 * @return mensaje devuelve el resultado de la modificacion de usuario
 	 * @throws JSONException excepción que se lanza al tratar el json con los datos del usuario
 	 * @throws CentroNotFoundException excepción que se lanza si el centro no existe
 	 * @throws CifradoContrasenaException excepción que se lanza al cifrar la contraseña
