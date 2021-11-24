@@ -55,6 +55,15 @@ public class AppointmentController{
 	private static final String NCITA = "ncita";
 	private static final String FECHA = "fecha";
 	
+	/**
+	 * Método para crear una cita, este método comunica la parte del front con el back
+	 * @param fechaJSON, se le pasan los datos de la fecha que se quiere crear
+	 * @return te devuelve un mensaje y un código para mostarlo en el front
+	 * @throws JSONException excepción que se lanzará en el caso de que no esté bien formado el json
+	 * @throws CentroNotFoundException excepción que se lanzará en el caso de que no se encuentre el centro
+	 * @throws CupoNotFoundException excepción que se lanzará en el caso de que no se encuentre ese cupo (franja horaria)
+	 * @throws CitaNotFoundException excepción que se lanzará en el caso de que no se encuentren citas en ese cupo.
+	 */
 	@PostMapping(path="/api/citas/create")
     public String crearCita(@RequestBody Map<String, Object> fechaJSON) throws JSONException, CentroNotFoundException, CupoNotFoundException, CitaNotFoundException {
 		JSONObject response = new JSONObject();
@@ -79,6 +88,11 @@ public class AppointmentController{
 		return response.toString();
     }
 	
+	/**
+	 * Método de mensaje de confirmación para la creación de citas
+	 * @param citas
+	 * @return devuelve un mensaje con la información de las fechas de vacunación
+	 */
 	private String doConfirmMessage(List<Cita> citas) {
 		String mssg;
 		try {
@@ -89,7 +103,13 @@ public class AppointmentController{
 		}
 		return mssg;
 	}
-
+	/**
+	 * Método para obtener todas las citas de la base de datos relacionadas con el usuario
+	 * @param json datos del json
+	 * @return devuelve todas las citas del usuario
+	 * @throws CitaNotFoundException excepción que se lanzará en el caso de que no se encuentren citas asignadas a ese usuario
+	 * @throws UsuarioNotFoundException excepción que se lanzará en el caso de que no se encuentre el usuario
+	 */
 	@PostMapping(path="/api/citas/obtener")
 	public List<Cita> obtenerCitas(@RequestBody Map<String, Object> json) throws CitaNotFoundException, UsuarioNotFoundException{
 		try {
@@ -100,7 +120,13 @@ public class AppointmentController{
 			throw new UsuarioNotFoundException("Email no encontrado, ¿se ha logeado?");
 		}
 	}
-	
+	/**
+	 * Método que devuelve los los cupos libres
+	 * @param fechaJSON, datos del json
+	 * @return lista con todos los cupos libres
+	 * @throws JSONException excepción que se lanzará en el caso de que haya un problema con el json (formato)
+	 * @throws CentroNotFoundException excepción que se lanzará en el caso de que no se encuentre el centro.
+	 */
 	@PostMapping(path="/api/citas/obtenerCuposLibres")
 	public List<Cupo> obtenerCuposLibres(@RequestBody Map<String, Object> fechaJSON) throws JSONException, CentroNotFoundException{
 		JSONObject jso = new JSONObject(fechaJSON);
@@ -110,7 +136,15 @@ public class AppointmentController{
 		LocalDateTime fechaFormateada = LDTFormatter.parse(fecha+"T00:00:00");
 		return cupoDao.getAllCuposAvailableInADay(centro, fechaFormateada);
 	}
-	
+	/**
+	 * Método para modificar la cita, este método enlaza el front con el back
+	 * @param datosCita, datos de la cita a modificar
+	 * @return mensaje para saber si se ha modificado o hay un error al modificar la cita
+	 * @throws JSONException excepción que se lanzará en el caso de que haya un problema con el json (formato)
+	 * @throws CitaNotModifiedException excepción que se lanzará en el caso de que haya algún problema con la modificación de la cita.
+	 * @throws CentroNotFoundException excepción que se lanzará en el caso de que no se encuentre el centro.
+	 * @throws CupoNotFoundException excepción que se lanzará en el caso de que no se encuentre el cupo.
+	 */
 	@PostMapping(path="/api/citas/modify")
     public String modificarCita(@RequestBody Map<String, Object> datosCita) throws JSONException, CitaNotModifiedException, CentroNotFoundException, CupoNotFoundException {
 		JSONObject jso = new JSONObject(datosCita);
@@ -134,7 +168,15 @@ public class AppointmentController{
     	return response.toString();
     }
 	
-	
+	/**
+	 * Método para eliminar las citas, enlaza el front con el back
+	 * @param datosCita, los datos de la cita a eliminar
+	 * @return mensaje para saber si se ha eliminado o hay un error al eliminar la cita
+	 * @throws JSONException excepción que se lanzará en el caso de que haya un problema con el json (formato)
+	 * @throws CentroNotFoundException excepción que se lanzará en el caso de que no se encuentre el centro.
+	 * @throws CupoNotFoundException excepción que se lanzará en el caso de que no se encuentre el cupo
+	 * @throws CupoExistException excepción que se lanzará en el caso de que el cupo exista.
+	 */
 	@PostMapping(path="/api/citas/delete")
     public String eliminarCita(@RequestBody Map<String, Object> datosCita) throws JSONException, CentroNotFoundException, CupoNotFoundException, CupoExistException {
 		JSONObject jso = new JSONObject(datosCita);
@@ -152,7 +194,17 @@ public class AppointmentController{
 		response.put(MSSG, "Ha eliminado su cita");
     	return response.toString();
     }
-	
+	/**
+	 * Método para marcar la vacunación como realizada
+	 * @param datosVacunacion, datos de la vacunación
+	 * @return mensaje de confirmación o de error, para comunicarselo al front
+	 * @throws JSONException excepción que se lanzará en el caso de que haya problemas con el json.
+	 * @throws CitaNotFoundException excepción que se lanzará en el caso de que no se encuentren citas.
+	 * @throws VacunacionDateException excepción que se lanzará en el caso de que la fecha no coincida con la fecha de la vacunación
+	 * @throws UsuarioNotFoundException excepción que se lanzará en el caso de que no se encuentre/exista el usuario
+	 * @throws CentroNotFoundException excepción que se lanzará en el caso de que no se encuentre el centro.
+	 * @throws CitasNotAvailableException excepción que se lanzará en el caso de que no haya citas disponibles
+	 */
 	@PostMapping(path="/api/marcarVacunacion")
 	public String marcarVacunacion(@RequestBody Map<String, Object> datosVacunacion) throws JSONException, CitaNotFoundException, VacunacionDateException, UsuarioNotFoundException, CentroNotFoundException, CitasNotAvailableException {
 		JSONObject jso = new JSONObject(datosVacunacion);
@@ -172,7 +224,13 @@ public class AppointmentController{
 		}
 		return response.toString();
 	}
-	
+	/**
+	 * Método para obtener las citas por fecha y centro, enlaza el front con el back
+	 * @param info, información del centro y las fechas de inicio y fin
+	 * @return devuelve un string con las citas de ese centro y esa fecha
+	 * @throws JSONException excepción que se lanzará en el caso de que haya un problema con el json
+	 * @throws CifradoContrasenaException excepción que se lanzará en el caso que haya un problema con el cifrado de la contraseña.
+	 */
 	@PostMapping(path="/api/citas/obtenerPorFechaAndCentro")
 	public String obtenerCitasPorFechaAndCentro(@RequestBody Map<String, Object> info) throws JSONException, CifradoContrasenaException{
 		JSONObject jso = new JSONObject(info);
