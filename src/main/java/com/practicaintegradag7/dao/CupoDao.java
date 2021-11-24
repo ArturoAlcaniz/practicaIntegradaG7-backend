@@ -140,7 +140,7 @@ public class CupoDao {
 				LocalDateTime fechaFin = fechaInicial.plusMinutes(minutesDif);
 				Cupo cupo = new Cupo(fechaInicial, fechaFin, configuracion.getCitasPorFranja(), centros.get(i).getNombre());
 				cupos.add(cupo);
-				if(((fechaFin.getHour()*3600)+fechaFin.getMinute()*60)<(configuracion.getHoraFin().getHour()*3600+configuracion.getHoraFin().getMinute()*60)) {
+				if(((fechaFin.getHour()*3600)+fechaFin.getMinute()*60)<(configuracion.getHoraFin().getHour()*3600+configuracion.getHoraFin().getMinute()*60) || configuracion.getHoraInicio().equals(configuracion.getHoraFin())) {
 					fechaInicial = fechaFin;
 				}else {
 					fechaInicial = fechaInicial.withHour(configuracion.getHoraInicio().getHour()).withMinute(configuracion.getHoraInicio().getMinute()).withSecond(0).withNano(0).plusDays(1);
@@ -173,7 +173,7 @@ public class CupoDao {
 			LocalDateTime fechaFin = fechaInicial.plusMinutes(minutesDif);
 			Cupo cupo = new Cupo(fechaInicial, fechaFin, configuracion.getCitasPorFranja(), centro.getNombre());
 			cupos.add(cupo);
-			if(((fechaFin.getHour()*3600)+fechaFin.getMinute()*60)<(configuracion.getHoraFin().getHour()*3600+configuracion.getHoraFin().getMinute()*60)) {
+			if(((fechaFin.getHour()*3600)+fechaFin.getMinute()*60)<(configuracion.getHoraFin().getHour()*3600+configuracion.getHoraFin().getMinute()*60) || configuracion.getHoraInicio().equals(configuracion.getHoraFin())) {
 				fechaInicial = fechaFin;
 			}else {
 				fechaInicial = fechaInicial.withHour(configuracion.getHoraInicio().getHour()).withMinute(configuracion.getHoraInicio().getMinute()).withSecond(0).withNano(0).plusDays(1);
