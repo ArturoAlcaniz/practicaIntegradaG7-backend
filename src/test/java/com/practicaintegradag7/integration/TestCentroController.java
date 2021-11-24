@@ -80,6 +80,13 @@ class TestCentroController {
 
 		mockMvc.perform( MockMvcRequestBuilders.post("/api/centros/eliminar").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
 		assertTrue(true);
-	}	
+	}
+	
+	@Order(5)
+	@Test
+	void shouldThrowException() throws Exception {
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/centros/obtener").contentType(MediaType.APPLICATION_JSON).content("")).andExpect(status().is4xxClientError());
+		assertTrue(true);
+	}
 
 }

@@ -126,4 +126,18 @@ class TestConfigurationIntegrated {
 		}
 	}
 
+	@Order(6)
+	@Test
+	void shouldSaveWithSameHour() throws ConfigurationTimeException, ConfigurationLimitException, ConfigurationCitasFranjaException, ConfigurationEmptyException {
+		LocalTime horaInicio = LocalTime.parse("08:00");
+		LocalTime horaFin = LocalTime.parse("08:00");
+		int citasPorFranja = 1;
+		int franjasPorDia = 1;
+		Configuration configuration = new Configuration(horaInicio, horaFin, citasPorFranja, franjasPorDia);
+		configurationDao.save(configuration);
+		assertEquals(horaInicio, configurationDao.obtenerConfiguration().getHoraInicio());
+		assertEquals(horaFin, configurationDao.obtenerConfiguration().getHoraFin());
+		cupoRepository.deleteAll();
+		configurationDao.eliminarConfiguration();
+	}
 }
