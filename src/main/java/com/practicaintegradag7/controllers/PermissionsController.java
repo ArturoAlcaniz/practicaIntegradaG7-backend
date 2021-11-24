@@ -74,6 +74,8 @@ public class PermissionsController {
 		} catch(IllegalArgumentException e) {
 			code = "404";
 			mssg = e.getMessage();
+		} catch(JSONException e) {
+			mssg = "Ha intentado acceder a una página mágica";
 		}
 		
 		JSONObject response = new JSONObject();
