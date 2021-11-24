@@ -30,6 +30,24 @@ public class ConfigurationController {
 	@Autowired
 	private CupoDao cupoDao;
 	
+	/**
+	 * Tomam los datos pasados desde el frontend en la variable info, mas especificamente
+	 * las horas de inicio y fin de los periodos diarios de vacunacion, las franjas por dia
+	 * de vacunacion, y la capacidad de cada franja en 'citasPorFranja'.
+	 * A posterior guarda la configuracion y genera las franjas con los datos.
+	 * @param info
+	 * Los datos del frontend, en formato JSON
+	 * @return 200 OK si se ha establecido la configuracion correctamente
+	 * 500 Internal Server Error si ocurre alguna excepcion
+	 * @throws JSONException
+	 * Si no consigue un campo por que no este, o falle el metodo por el tipo de dato
+	 * @throws ConfigurationLimitException
+	 * Si ya hay una configuracion guardada
+	 * @throws ConfigurationTimeException
+	 * Si la hora de inicio es posterior a la hora de fin
+	 * @throws ConfigurationCitasFranjaException
+	 * Si las citas o franjas son 0
+	 */
 	@PostMapping(path="/api/configuracion/create")
 	public String crearConfiguration(@RequestBody Map<String, Object> info) throws JSONException, ConfigurationLimitException, ConfigurationTimeException, ConfigurationCitasFranjaException {
 		JSONObject jso = new JSONObject(info);
@@ -46,6 +64,12 @@ public class ConfigurationController {
 		return response.toString();
 	}
 	
+	/**
+	 * Devuelve la configuracion de la base de datos
+	 * @return La configuracion de la base de datos
+	 * @throws ConfigurationEmptyException
+	 * Si no hay una configuracion guardada
+	 */
 	@GetMapping(path="/api/configuration/obtener")
 	public Configuration obtenerConfiguracion() throws ConfigurationEmptyException {
 		return configurationDao.obtenerConfiguration();
