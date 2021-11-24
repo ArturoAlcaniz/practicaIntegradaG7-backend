@@ -19,6 +19,11 @@ import com.practicaintegradag7.exceptions.CupoNotFoundException;
 import com.practicaintegradag7.exceptions.VacunasNoValidasException;
 import com.practicaintegradag7.model.Centro;
 
+/**
+ * 
+ * Clase para gestionar las peticiones relacionadas con los centros
+ *
+ */
 @CrossOrigin(origins = {"http://localhost:3000", "https://iso-g7-frontend.herokuapp.com"})
 @RestController
 public class CentroController {
@@ -31,6 +36,13 @@ public class CentroController {
 	private static final String STATUS = "status";
 	private static final String MSSG = "message";
 	
+	/**
+	 * Metodo para añadir vacunas
+	 * @param info la información del centro al que se van a añadir las vacunas
+	 * @throws CentroNotFoundException Excepción que se lanzará cuando no se encuentre el centro
+	 * @throws VacunasNoValidasException Excepción que se lanzará cuando se introduzca un número de vacunas inferior a 0
+	 * @throws JSONException Excepción que se lanzará cuando surjan probelmas al crear el objeto JSON.
+	 */
 	@PostMapping(path="/api/addVaccines")
 	public void addVacunas(@RequestBody Map<String, Object> info) throws CentroNotFoundException, VacunasNoValidasException, JSONException {
 		JSONObject jso = new JSONObject(info);
@@ -40,6 +52,13 @@ public class CentroController {
 		centroDao.addVacunas(c.getId(), amount);
 	}
 	
+	/**
+	 * Metodo para crear un centro
+	 * @param datosCentro los datos del centro en formato json
+	 * @return devuelve un mensaje en formato String
+	 * @throws JSONException Excepción que se lanzará cuando surjan problemas al leer el json
+	 * @throws CentroExistException Excepción que se lanzará cuando el centro no exista
+	 */
 	@PostMapping(path="/api/centros/create")
 	public String crearCentro(@RequestBody Map<String, Object> datosCentro) throws JSONException, CentroExistException{
 		
@@ -65,11 +84,24 @@ public class CentroController {
 		return response.toString();
 	}
 	
+	/**
+	 * Metodo para obtener todos los centros de la BBDD
+	 * @return lista con los centros existentes 
+	 */
 	@GetMapping(path="/api/centros/obtener")
 	public List<Centro> obtenerCentros(){
 		return centroDao.getAllCitas();
 	}
 	
+	/**
+	 * Metodo para eliminar un centro que no contenga usuarios
+	 * @param emailJSON el jSON con el nombre del centro
+	 * @return string con el resultado del metodo para mostrar en el frontend
+	 * @throws JSONException Excepción que saltará si hay problemas al crear el JSON
+	 * @throws CentroNotFoundException Excepción que saltará si el centro no se encuentra
+	 * @throws CupoNotFoundException Excepción que saltará si algún cupo no se encuentra
+	 * @throws CentroNotEmptyException Excepción que saltara si el centro a eliminar no está vacío
+	 */
 	@PostMapping(path="api/centros/eliminar")
 	public String eliminarCentro(@RequestBody Map<String, Object> emailJSON) throws JSONException, CentroNotFoundException, CupoNotFoundException, CentroNotEmptyException{
 		JSONObject jso = new JSONObject(emailJSON);
@@ -83,6 +115,14 @@ public class CentroController {
     	return response.toString();
 	}
 	
+	/**
+	 * Metodo para modificar un centro
+	 * @param datosMCentro los nuevos datos para el centro
+	 * @return String para devolver el mensaje con el resultado de la petición
+	 * @throws JSONException Excepción relativa a problemas con el JSON
+	 * @throws CentroNotFoundException Excepción que se lanzará si el centro no se encuentra
+	 * @throws CentroExistException Excepción que se lanzará si el centro ya existe
+	 */
 	@PostMapping(path="/api/centro/modify")
 	public String modificarCentro(@RequestBody Map<String, Object> datosMCentro) throws JSONException, CentroNotFoundException, CentroExistException{
 		
