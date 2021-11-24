@@ -127,7 +127,7 @@ public class CupoDao {
 		LocalDateTime fechaInicial = LocalDateTime.now().withHour(configuracion.getHoraInicio().getHour()).withMinute(configuracion.getHoraInicio().getMinute()).withSecond(0).withNano(0).plusDays(1);
 		LocalDateTime fechaMax = LocalDateTime.parse("2022-01-31T23:59");
 		int dif;
-		if(configuracion.getHoraInicio() == configuracion.getHoraFin()) {
+		if(configuracion.getHoraInicio().equals(configuracion.getHoraFin())) {
 			dif = 24 * 3600;
 		} else {
 			dif = configuracion.getHoraFin().toSecondOfDay() - configuracion.getHoraInicio().toSecondOfDay();
@@ -162,7 +162,7 @@ public class CupoDao {
 		LocalDateTime fechaInicial = LocalDateTime.now().withHour(configuracion.getHoraInicio().getHour()).withMinute(configuracion.getHoraInicio().getMinute()).withSecond(0).withNano(0).plusDays(1);
 		LocalDateTime fechaMax = LocalDateTime.parse("2022-01-31T23:59");
 		int dif;
-		if(configuracion.getHoraInicio() == configuracion.getHoraFin()) {
+		if(configuracion.getHoraInicio().equals(configuracion.getHoraFin())) {
 			dif = 24 * 3600;
 		} else {
 			dif = configuracion.getHoraFin().toSecondOfDay() - configuracion.getHoraInicio().toSecondOfDay();

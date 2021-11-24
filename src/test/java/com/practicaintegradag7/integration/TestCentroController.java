@@ -1,5 +1,6 @@
 package com.practicaintegradag7.integration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,11 +54,23 @@ class TestCentroController {
 	
 	@Order(2)
 	@Test
+	void shouldModifyCentroThenReturn200() throws Exception {
+		Centro centro= new Centro("Hospital", "--", 10);
+		JSONObject json = new JSONObject();
+		json.put("nombre", centro.getNombre());
+		json.put("direccion", centro.getDireccion());
+		json.put("vacunas", "15");
+		mockMvc.perform( MockMvcRequestBuilders.post("/api/centro/modify").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
+		assertEquals(15, dao.buscarCentroByNombre(centro.getNombre()).getVacunas());
+	}
+	
+	@Order(3)
+	@Test
 	void testObtenerCentros() throws Exception {
 		mockMvc.perform( MockMvcRequestBuilders.get("/api/centros/obtener").accept(MediaType.ALL)).andExpect(status().isOk());
 	}
 	
-	@Order(3)
+	@Order(4)
 	@Test
 	void testDelete() throws Exception {
 		
@@ -67,6 +80,6 @@ class TestCentroController {
 
 		mockMvc.perform( MockMvcRequestBuilders.post("/api/centros/eliminar").contentType(MediaType.APPLICATION_JSON).content(json.toString())).andExpect(status().isOk());
 		assertTrue(true);
-	}
+	}	
 
 }

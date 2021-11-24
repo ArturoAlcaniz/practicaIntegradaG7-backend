@@ -154,6 +154,12 @@ class TestCitaIntegrated {
 		JSONObject json = new JSONObject();
 		json.put("email", "nonsense@shouldfail.com");
 		try {
+			citas.getCitasByEmail("nonsense@shouldfail.com");
+		}catch(CitaNotFoundException e) {
+			assertEquals("Este usuario no tiene citas", e.getMessage());
+		}
+		
+		try {
 			MvcResult aux = mockMvc.perform( MockMvcRequestBuilders.post("/api/citas/create").
 					contentType(MediaType.APPLICATION_JSON).content(json.toString())).andReturn();
 			String res = aux.getResponse().getContentAsString();
