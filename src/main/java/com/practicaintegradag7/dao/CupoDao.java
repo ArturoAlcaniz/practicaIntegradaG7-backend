@@ -158,8 +158,6 @@ public class CupoDao {
 	 * @param centro el centro para el cual se quiere crear los cupos
 	 */
 	public void autogenerarFranjaParaCentro(Configuration configuracion, Centro centro) {
-		//List<Cupo> all = cupoRepository.findAll();
-		//cupoRepository.deleteAll();
 		LocalDateTime fechaInicial = LocalDateTime.now().withHour(configuracion.getHoraInicio().getHour()).withMinute(configuracion.getHoraInicio().getMinute()).withSecond(0).withNano(0).plusDays(1);
 		LocalDateTime fechaMax = LocalDateTime.parse("2022-01-31T23:59");
 		int dif;
@@ -182,7 +180,6 @@ public class CupoDao {
 			
 		}
 		cupoRepository.saveAll(cupos);
-		//cupoRepository.saveAll(all);
 	}
 	
 	/**
